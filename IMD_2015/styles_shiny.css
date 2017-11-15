@@ -1,0 +1,37 @@
+/*  */
+div.shinyContainer 
+{
+  position: fixed;
+  top: 51px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  padding: 0;
+}
+
+.tab-content
+{
+  padding: 5px 5px 5px 15px;
+}
+
+#shinyControls
+{
+  top: 61px;
+}
+
+#controls 
+{
+    background-color: white;
+    padding: 0 20px 20px 20px;
+    border-radius: 15px;
+    opacity: 0.85;
+    top: 10px;
+    right: 10px;
+    width: 320px;
+}
+
+#info
+{
+  padding-left: 2px;
+}
