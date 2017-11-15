@@ -39,9 +39,11 @@ ui <- bootstrapPage(
                              tags$p("This application visualises the English Indices of Deprivation 2015 for Lower-layer Super Output Areas (LSOA) within Greater Manchester. Each LSOA contains approximately 1,500 residents or 650 households."),
                              tags$p("Each LSOA is ranked from 1 (most deprived) to 32,844 (least deprived) and assigned to a decile ranging from 1 (most deprived 10%) to 10 (least deprived 10%)."),
                              tags$h4("Sources"),
-                             "Data: ", tags$a(href="https://www.gov.uk/government/statistics/english-indices-of-deprivation-2015", "DCLG,2015", target="_blank"),
+                             "IMD data: ", tags$a(href="https://www.gov.uk/government/statistics/english-indices-of-deprivation-2015", "DCLG,2015", target="_blank"),
                              tags$br(),         
-                             "Boundary data: ", tags$a(href="http://geoportal.statistics.gov.uk/", "ONS Open Geography Portal", target="_blank"),
+                             "Boundary layers: ", tags$a(href="http://geoportal.statistics.gov.uk/", "ONS Open Geography Portal", target="_blank"),
+                             tags$br(),
+                             "Source code ", tags$a(href="https://github.com/traffordDataLab/apps/tree/master/IMD_2015", "available on GitHub", target="_blank"),
                              tags$br(),
                              tags$h4("Credits"),
                              "This", tags$a(href="https://cran.r-project.org/web/packages/shiny/index.html", "Shiny", target="_blank"), "app uses the following R packages:",
@@ -51,7 +53,6 @@ ui <- bootstrapPage(
                              tags$a(href="https://cran.r-project.org/web/packages/htmltools/index.html", "htmltools.", target="_blank")
                 )))))
              
-
 server <- function(input, output, session) {
   values <- reactiveValues(highlight = c())
   
@@ -73,16 +74,14 @@ server <- function(input, output, session) {
         HTML(paste("in ", tags$span(filteredData()[filteredData()$lsoa11cd == lsoaCode,]$wd16nm), " Ward, ",
                    tags$span(filteredData()[filteredData()$lsoa11cd == lsoaCode,]$lad16nm), sep = "")),
         br(), br(),
-        HTML("<table style='width: 100%'>
+        HTML("<table>
                <tr>
-               <th>Score</th>
                <th>Rank</th>
                <th>Decile</th>
                </tr>
                <tr>
-               <td style='width: 33%'>", filteredData()[filteredData()$lsoa11cd == lsoaCode,]$score, "</td>
-               <td style='width: 34%'>", formatC(filteredData()[filteredData()$lsoa11cd == lsoaCode,]$rank, format="f", big.mark = ",", digits=0), "</td>
-               <td style='width: 33%'>", filteredData()[filteredData()$lsoa11cd == lsoaCode,]$decile, "</td>
+               <td style='width: 75px'>", formatC(filteredData()[filteredData()$lsoa11cd == lsoaCode,]$rank, format="f", big.mark = ", ", digits=0), "</td>
+               <td>", filteredData()[filteredData()$lsoa11cd == lsoaCode,]$decile, "</td>
                </tr>
                </table>")
       ))
