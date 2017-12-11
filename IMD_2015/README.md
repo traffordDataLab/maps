@@ -13,6 +13,6 @@ The data derive from the [Department for Communities and Local Government](https
 To run the app locally execute the following code: 
 
 ``` r
-shiny::runGitHub("trafforddatalab/apps", subdir = "IMD_2015")
+shiny::runGitHub("trafforddatalab/maps", subdir = "IMD_2015")
 ```
 
