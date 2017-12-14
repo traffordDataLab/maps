@@ -72,5 +72,3 @@ browsable(
   ))
 )
 
-# save as HTML --------------------------------
-saveWidget(map, "defibrillators.html")
