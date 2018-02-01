@@ -58,10 +58,39 @@
                 defibMap.featureCache = null;
             }
 
+            function defibDetails(props) {
+                var content = '';
+
+                // format the address details
+                if (props.Address1 != null) content += props.Address1;
+                if (props.Address2 != null) {
+                    if (content != '') content += '<br />';
+                    content += props.Address2;
+                }
+                if (props.Address3 != null) {
+                    if (content != '') content += '<br />';
+                    content += props.Address3;
+                }
+                if (props.Postcode != null) {
+                    if (content != '') content += '<br />';
+                    content += props.Postcode;
+                }
+
+                if (content != '') content = '<p>' + content + '</p>';
+
+                // See if there are any notes to add
+                if (props.Notes != null) content += '<p>' + props.Notes + '</p>';
+
+                // add the header
+                content = '<h4 style="border-bottom: 2px dotted #ccc;">' + props.Location + '</h4>' + content;
+
+                return content;
+            }
+
             var defibMap = new LabLeafletMap({
                 title: 'Defibrillator locations in Trafford',
                 about: 'Locations of defibrillators across Trafford, (last updated 24<sup>th</sup> Jan 2017). Select the individual markers to view more information about each defibrillator. The locations may not be exact in all cases as they are derived from postcodes.',
-                info: 'Please note that these defibrillators may have restrictions on public availability and may not be available 24/7. If you know of a defibrillator that has not been included then please <a href="mailto:infotrafford@trafford.gov.uk">email</a> or <a href="https://twitter.com/trafforddatalab" target="_blank">tweet</a> the details.'
+                info: 'Please note that these defibrillators may have restrictions on public availability and may not be available 24/7. If you know of a defibrillator that has not been included then please <a href="mailto:infotrafford@trafford.gov.uk">email</a> or <a href="https://twitter.com/trafforddatalab" target="_blank">tweet</a> us.<h3 style="margin-bottom: 0px;">Download the data:</h3><a href="http://www.trafforddatalab.io/open_data/defibrillators/trafford_defibrillators.csv" target="_blank"><span class="fa fa-file-text-o" aria-hidden="true"></span> CSV</a> | <a href="http://www.trafforddatalab.io/open_data/defibrillators/trafford_defibrillators.geojson" target="_blank"><span class="fa fa-file-code-o" aria-hidden="true"></span> GeoJSON</a> | <a href="http://www.trafforddatalab.io/open_data/defibrillators/trafford_defibrillators.json" target="_blank"><span class="fa fa-file-code-o" aria-hidden="true"></span> JSON</a>'
             });
 
             // For ensuring we can reset the marker highlight is one is selected
@@ -106,12 +135,13 @@
                 L.geoJSON(data, {
                     pointToLayer: function (feature, latlng) {
 
-                        marker = L.marker(latlng, { icon: defaultMarker }).bindPopup(feature.properties.Location, { offset: [-7, 7] });
+                        marker = L.marker(latlng, { icon: defaultMarker }).bindPopup(defibDetails(feature.properties), { offset: [-7, 7] });
                         marker.on('click', highlightMarker);
                         marker.on('popupclose', resetMarker);
                         return marker;
 
-                    }
+                    },
+                    attribution: 'Defibrillator data released under <a href="http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">Open Government Licence</a>'
                 }).addTo(defibMap.map);
             });
         </script>
