@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Trafford Data Lab: Defibrillators</title>
+
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin=""/>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+        <link rel="stylesheet" href="http://www.trafforddatalab.io/css/labBase.css"/>
+        <link rel="stylesheet" href="http://www.trafforddatalab.io/assets/leaflet/labLeafletMap.css"/>
+        <link rel="stylesheet" href="http://www.trafforddatalab.io/assets/leaflet/extended_markers/extended_markers_base.css"/>
+        <link rel="stylesheet" href="http://www.trafforddatalab.io/assets/leaflet/extended_markers/extended_markers_mixed.css"/>
+
+        <style>
+            .mainPanelControl
+            {
+                width: 350px;
+            }
+
+            .infoDockContainer
+            {
+                max-height: 300px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="map" class="mapFullScreen"></div>
+
+        <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin=""></script>
+        <script src="http://www.trafforddatalab.io/assets/javascript/labError.js"></script>
+        <script src="http://www.trafforddatalab.io/assets/javascript/labAjax.js"></script>
+        <script src="http://www.trafforddatalab.io/assets/leaflet/leaflet.resetMapView.js"></script>
+        <script src="http://www.trafforddatalab.io/assets/leaflet/labCreateTileLayer.js"></script>
+        <script src="http://www.trafforddatalab.io/assets/leaflet/labLeafletMap.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.min.js"></script>
+
+        <script>
+            var defaultMarker = L.AwesomeMarkers.icon({
+                markerColor: 'pin-circle-orange-bright'
+            });
+
+            var selectedMarker = L.AwesomeMarkers.icon({
+                markerColor: 'pin-circle-yellow-bright'
+            });
+
+            function highlightMarker(e) {
+                if (defibMap.featureCache != null) {
+                    defibMap.featureCache.setIcon(defaultMarker);
+                }
+
+                defibMap.featureCache = e.target;
+                defibMap.featureCache.setIcon(selectedMarker);
+            }
+
+            function resetMarker() {
+                defibMap.featureCache.setIcon(defaultMarker);
+                defibMap.featureCache = null;
+            }
+
+            var defibMap = new LabLeafletMap({
+                title: 'Defibrillator locations in Trafford',
+                about: 'Locations of defibrillators across Trafford, (last updated 24<sup>th</sup> Jan 2017). Select the individual markers to view more information about each defibrillator. The locations may not be exact in all cases as they are derived from postcodes.',
+                info: 'Please note that these defibrillators may have restrictions on public availability and may not be available 24/7. If you know of a defibrillator that has not been included then please <a href="mailto:infotrafford@trafford.gov.uk">email</a> or <a href="https://twitter.com/trafforddatalab" target="_blank">tweet</a> the details.'
+            });
+
+            // For ensuring we can reset the marker highlight is one is selected
+            defibMap.featureCache = null;
+
+            defibMap.map.on('click', (function (e) {
+                resetMarker();
+            }));
+
+            // Choose the base/tile layer for the map
+            defibMap.baseLayers['Light'].addTo(defibMap.map);
+
+            // Add the Trafford boundary
+            labAjax('http://www.trafforddatalab.io/spatial_data/local_authority/2016/trafford_local_authority_full_resolution.geojson', function (data) {
+                var stylePoly = {
+                    color: '#212121',
+                    weight: 2,
+                    dashArray: '3',
+                    fillOpacity: 0
+                }
+
+                L.geoJSON(data, { attribution: defibMap.attributionOS, style: stylePoly }).addTo(defibMap.map);
+            });
+
+            // Add labels for the town centres
+            labAjax('http://www.trafforddatalab.io/spatial_data/town_centres/trafford_town_centres.geojson', function (data) {
+
+                var townCentres = L.geoJSON(data, {
+                    pointToLayer: function (feature, latlng) {
+                        return L.marker(latlng, { icon: L.divIcon({ iconSize: null }) }).bindTooltip(feature.properties.name, { direction: 'center', className: 'labLabels', opacity: 1, permanent: true });
+                    }
+                }).addTo(defibMap.map);
+
+                defibMap.overlayLayers['Town centres'] = townCentres;
+                defibMap.updateLayerControl();
+            });
+
+            // Add defibrillator locations within Trafford
+            labAjax('http://www.trafforddatalab.io/open_data/defibrillators/trafford_defibrillators.geojson', function (data) {
+                var marker;
+
+                L.geoJSON(data, {
+                    pointToLayer: function (feature, latlng) {
+
+                        marker = L.marker(latlng, { icon: defaultMarker }).bindPopup(feature.properties.Location, { offset: [-7, 7] });
+                        marker.on('click', highlightMarker);
+                        marker.on('popupclose', resetMarker);
+                        return marker;
+
+                    }
+                }).addTo(defibMap.map);
+            });
+        </script>
+    </body>
+</html>
