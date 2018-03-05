@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>Greenspace</title>
+
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin=""/>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+        <link rel="stylesheet" href="http://www.trafforddatalab.io/css/labBase.css"/>
+        <link rel="stylesheet" href="http://www.trafforddatalab.io/assets/leaflet/labLeafletMap.css"/>
+
+        <style>
+
+            .mainPanelControl
+            {
+                width: 400px;
+            }
+
+            .infoDockContainer
+            {
+               max-height: 300px;
+            }
+
+            .legendItemTrafford
+            {
+                border-bottom: 2px dashed #212121;
+            }
+
+            .legendItemAllotment
+            {
+                border-bottom: 3px solid #B79D97;
+            }
+
+            .legendItemGolf
+            {
+                border-bottom: 3px solid #DDE481;
+            }
+
+            .legendItemPlaySpace
+            {
+                border-bottom: 3px solid #FBB45D;
+            }
+
+            .legendItemPlayingField
+            {
+                border-bottom: 3px solid #86C587;
+            }
+
+            .legendItemPublicPark
+            {
+                border-bottom: 3px solid #50B6AB;
+            }
+
+            .legendItemReligiousGround
+            {
+                border-bottom: 3px solid #8582C1;
+            }
+
+            .legendItemSport
+            {
+                border-bottom: 3px solid #f0f0f0;
+            }
+
+            .legendItemAccessPoint
+            {
+                width: 10px;
+                height: 10px;
+                border-radius: 6px;
+                border: 1px solid #212121;
+                margin-left: 4px;
+                margin-right: 13px;
+            }
+
+            .legendItemPedestrianAccess
+            {
+                background-color: #149E1A;
+            }
+
+            .legendItemPedestrianAndVehicleAccess
+            {
+                background-color: #ffbf00;
+            }
+
+            .propertiesTable
+            {
+                width: 100%;
+                font-size: 12px;
+                background-color: rgba(240,240,240,0.5);
+            }
+            .propertiesTable td
+            {
+                vertical-align: top;
+            }
+            .propertiesTable td:nth-child(1)
+            {
+                font-weight: bold;
+                width: 1%;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="map" class="mapFullScreen"></div>
+
+        <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin=""></script>
+        <script src="http://www.trafforddatalab.io/assets/javascript/labError.js"></script>
+        <script src="http://www.trafforddatalab.io/assets/javascript/labAjax.js"></script>
+        <script src="http://www.trafforddatalab.io/assets/leaflet/leaflet.resetMapView.js"></script>
+        <script src="http://www.trafforddatalab.io/assets/leaflet/labCreateTileLayer.js"></script>
+        <script src="http://www.trafforddatalab.io/assets/leaflet/labLeafletMap.js"></script>
+
+        <script>
+            var labMap = new LabLeafletMap({
+                title: 'Green spaces in Trafford',
+                about: 'Explore the parks, playing fields, public gardens and other accessible recreational and leisure features in Trafford.',
+                info: 'Please select a Green Space site for further information.'
+            });
+
+            labMap.featureCache = null;
+
+            function siteStyle(feature) {
+                var featureType = feature.properties.site_type;
+                var featureColour;
+
+                switch (featureType) {
+                    case 'Allotments Or Community Growing Spaces':
+                        featureColour = '#B79D97';
+                        break;
+                    case 'Golf Course':
+                        featureColour = '#DDE481';
+                        break;
+                    case 'Play Space':
+                        featureColour = '#FBB45D';
+                        break;
+                    case 'Playing Field':
+                        featureColour = '#86C587';
+                        break;
+                    case 'Public Park Or Garden':
+                        featureColour = '#50B6AB';
+                        break;
+                    case 'Religious Ground and Cemetries':
+                        featureColour = '#8582C1';
+                        break;
+                    case 'Sports':
+                        featureColour = '#FDDA67';
+                        break;
+                    default:
+                        featureColour = '#f0f0f0';
+                }
+
+                return {
+                    color: featureColour,
+                    fillOpacity: 0.5
+                }
+            }
+
+            labMap.baseLayers['Light'].addTo(labMap.map);
+
+            function resetFeatureStyle(e) {
+                if (e != null) labMap.greenspaces.resetStyle(e.target);
+                labMap.featureCache = null;
+            }
+
+            function showInfo(e) {
+                var layer = e.target;
+                // reset the style of a previously selected feature
+                if (labMap.featureCache != null) {
+                    resetFeatureStyle(labMap.featureCache);
+                }
+                // set new selected feature
+                labMap.featureCache = e;
+
+                // highlight new selected feature
+                layer.setStyle({
+                    color: '#ffff00',
+                    fillOpacity: '0.8'
+                });
+
+                var strInfo = '<table class="propertiesTable">';
+                var siteName = layer.feature.properties.site_name;
+                if (siteName == null) siteName = 'No information available';
+
+                strInfo += '<tr><td>Name:</td><td>' + siteName + '</td></tr>';
+                strInfo += '<tr><td>Type:</td><td>' + layer.feature.properties.site_type + '</td></tr>';
+
+                strInfo += '</table>';
+
+                labMap.updateInfo(strInfo);
+            }
+
+            function geoJsonEachFeature(feature, layer) {
+                layer.on({
+                    click: showInfo
+                });
+            }
+
+            labMap.map.on('click', (function (e) {
+                resetFeatureStyle(labMap.featureCache);
+                labMap.updateInfo();
+            }));
+
+
+            labAjax('http://www.trafforddatalab.io/spatial_data/local_authority/2016/trafford_local_authority_full_resolution.geojson', function (data) {
+                var stylePoly = {
+                    'color': '#212121',
+                    'fillOpacity': 0,
+                    'dashArray': '3',
+                    'weight': '2'
+                }
+
+                var traffordBoundary = L.geoJSON(data, { attribution: labMap.attributionOS, style: stylePoly }).addTo(labMap.map);
+            });
+
+            // Green space sites
+            labAjax('http://www.trafforddatalab.io/spatial_data/greenspaces/trafford_greenspace_sites.geojson', function (data) {
+                labMap.greenspaces = L.geoJSON(data, { attribution: labMap.attributionOS, style: siteStyle, onEachFeature: geoJsonEachFeature, bubblingMouseEvents: false }).addTo(labMap.map);
+            });
+
+            // Access points to Green space sites
+            labAjax('http://www.trafforddatalab.io/spatial_data/greenspaces/trafford_greenspace_access_points.geojson', function (data) {
+                var greenspacesAccess = L.geoJSON(data, {
+                    attribution: labMap.attributionOS,
+                    pointToLayer: function (feature, latlng) {
+                        var featureType = feature.properties.access_type;
+                        var featureColour;
+
+                        switch (featureType) {
+                            case 'Pedestrian':
+                                featureColour = '#149E1A';
+                                break;
+                            case 'Motor Vehicle':
+                                featureColour = '#F45A32';
+                                break;
+                            case 'Motor Vehicle And Pedestrian':
+                                featureColour = '#ffbf00';
+                                break;
+                            default:
+                                featureColour = '#f0f0f0';
+                        }
+
+                        return L.circleMarker(latlng, { color: '#212121', weight: 1, fillColor: featureColour, fillOpacity: 0.8, radius: '5', pane: 'markerPane' });
+                    }
+                }).addTo(labMap.map);
+            });
+
+            var strLegend = '<div class="legendKey legendKeyLine legendItemTrafford"></div> Trafford boundary<br /><div class="legendKey legendKeyLine legendItemAllotment"></div> Allotments or Community Growing Space<br /><div class="legendKey legendKeyLine legendItemGolf"></div> Golf Course<br /><div class="legendKey legendKeyLine legendItemPlaySpace"></div> Play Space<br /><div class="legendKey legendKeyLine legendItemPlayingField"></div> Playing Field<br /><div class="legendKey legendKeyLine legendItemPublicPark"></div> Public Park or Garden<br /><div class="legendKey legendKeyLine legendItemReligiousGround"></div> Religious Ground and Cemetries<br /><div class="legendKey legendKeyLine legendItemSport"></div> Sports<br /><div class="legendKey legendItemAccessPoint legendItemPedestrianAccess"></div> Pedestrian Access<br /><div class="legendKey legendItemAccessPoint legendItemPedestrianAndVehicleAccess"></div> Vehicle and Pedestrian Access<br />';
+            labMap.updateLegend(strLegend);
+
+        </script>
+    </body>
+</html>
