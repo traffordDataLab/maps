@@ -2,7 +2,10 @@
 <html lang="en-GB">
     <head>
         <meta charset="UTF-8"/>
-        <title>Greenspace</title>
+        <meta name="keywords" content="greenspace, greenspaces, green space, green spaces, allotment, allotments, community, growing, allotments or community growing space, golf course, play space, playing field, public park, public garden, garden, gardens, religious ground, religious grounds, cemetery, cemeteries, sports"/>
+        <meta name="description" content="Green spaces in Trafford. Explore the parks, playing fields, public gardens and other accessible recreational and leisure features in Trafford."/>
+
+        <title>Trafford Data Lab: Greenspace</title>
 
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin=""/>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
@@ -118,6 +121,7 @@
             });
 
             labMap.featureCache = null;
+            labMap.attributionGreenspace = 'Greenspaces data provided by <a href="https://www.ordnancesurvey.co.uk/getoutside/greenspaces/" target="_blank">OS Greenspace</a>';
 
             function siteStyle(feature) {
                 var featureType = feature.properties.site_type;
@@ -214,13 +218,13 @@
 
             // Green space sites
             labAjax('http://www.trafforddatalab.io/spatial_data/greenspaces/trafford_greenspace_sites.geojson', function (data) {
-                labMap.greenspaces = L.geoJSON(data, { attribution: labMap.attributionOS, style: siteStyle, onEachFeature: geoJsonEachFeature, bubblingMouseEvents: false }).addTo(labMap.map);
+                labMap.greenspaces = L.geoJSON(data, { attribution: labMap.attributionGreenspace, style: siteStyle, onEachFeature: geoJsonEachFeature, bubblingMouseEvents: false }).addTo(labMap.map);
             });
 
             // Access points to Green space sites
             labAjax('http://www.trafforddatalab.io/spatial_data/greenspaces/trafford_greenspace_access_points.geojson', function (data) {
                 var greenspacesAccess = L.geoJSON(data, {
-                    attribution: labMap.attributionOS,
+                    attribution: labMap.attributionGreenspace,
                     pointToLayer: function (feature, latlng) {
                         var featureType = feature.properties.access_type;
                         var featureColour;
