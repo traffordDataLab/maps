@@ -28,37 +28,37 @@
 
             .legendItemAllotment
             {
-                border-bottom: 3px solid #B79D97;
+                border-bottom: 3px solid #66c2a5;
             }
 
             .legendItemGolf
             {
-                border-bottom: 3px solid #DDE481;
+                border-bottom: 3px solid #fc8d62;
             }
 
             .legendItemPlaySpace
             {
-                border-bottom: 3px solid #FBB45D;
+                border-bottom: 3px solid #8da0cb;
             }
 
             .legendItemPlayingField
             {
-                border-bottom: 3px solid #86C587;
+                border-bottom: 3px solid #e78ac3;
             }
 
             .legendItemPublicPark
             {
-                border-bottom: 3px solid #50B6AB;
+                border-bottom: 3px solid #a6d854;
             }
 
             .legendItemReligiousGround
             {
-                border-bottom: 3px solid #8582C1;
+                border-bottom: 3px solid #ffd92f;
             }
 
             .legendItemSport
             {
-                border-bottom: 3px solid #f0f0f0;
+                border-bottom: 3px solid #e5c494;
             }
 
             .legendItemAccessPoint
@@ -73,12 +73,12 @@
 
             .legendItemPedestrianAccess
             {
-                background-color: #149E1A;
+                background-color: #f7f7f7;
             }
 
             .legendItemPedestrianAndVehicleAccess
             {
-                background-color: #ffbf00;
+                background-color: #b3b3b3;
             }
 
             .propertiesTable
@@ -96,6 +96,7 @@
                 font-weight: bold;
                 width: 1%;
             }
+
         </style>
     </head>
 
@@ -124,25 +125,25 @@
 
                 switch (featureType) {
                     case 'Allotments Or Community Growing Spaces':
-                        featureColour = '#B79D97';
+                        featureColour = '#66c2a5';
                         break;
                     case 'Golf Course':
-                        featureColour = '#DDE481';
+                        featureColour = '#fc8d62';
                         break;
                     case 'Play Space':
-                        featureColour = '#FBB45D';
+                        featureColour = '#8da0cb';
                         break;
                     case 'Playing Field':
-                        featureColour = '#86C587';
+                        featureColour = '#e78ac3';
                         break;
                     case 'Public Park Or Garden':
-                        featureColour = '#50B6AB';
+                        featureColour = '#a6d854';
                         break;
                     case 'Religious Ground and Cemetries':
-                        featureColour = '#8582C1';
+                        featureColour = '#ffd92f';
                         break;
                     case 'Sports':
-                        featureColour = '#FDDA67';
+                        featureColour = '#e5c494';
                         break;
                     default:
                         featureColour = '#f0f0f0';
@@ -226,19 +227,19 @@
 
                         switch (featureType) {
                             case 'Pedestrian':
-                                featureColour = '#149E1A';
+                                featureColour = '#f7f7f7';
                                 break;
                             case 'Motor Vehicle':
-                                featureColour = '#F45A32';
+                                featureColour = '#1f78b4';
                                 break;
                             case 'Motor Vehicle And Pedestrian':
-                                featureColour = '#ffbf00';
+                                featureColour = '#b3b3b3';
                                 break;
                             default:
                                 featureColour = '#f0f0f0';
                         }
 
-                        return L.circleMarker(latlng, { color: '#212121', weight: 1, fillColor: featureColour, fillOpacity: 0.8, radius: '5', pane: 'markerPane' });
+                        return L.circleMarker(latlng, { color: '#212121', weight: 1, fillColor: featureColour, fillOpacity: 0.8, radius: '3', pane: 'markerPane' });
                     }
                 }).addTo(labMap.map);
             });
