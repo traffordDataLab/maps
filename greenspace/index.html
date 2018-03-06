@@ -64,6 +64,12 @@
                 border-bottom: 3px solid #e5c494;
             }
 
+            .legendToggleDivider
+            {
+                border-top: 1px solid #ccc;
+                margin: 6px 0px;
+            }
+
             .legendItemAccessPoint
             {
                 width: 10px;
@@ -193,18 +199,20 @@
                 labMap.updateInfo(strInfo);
             }
 
+            // Event handler for clicking on greenspace features
             function geoJsonEachFeature(feature, layer) {
                 layer.on({
                     click: showInfo
                 });
             }
 
+            // Event handler for clicking on the base map
             labMap.map.on('click', (function (e) {
                 resetFeatureStyle(labMap.featureCache);
                 labMap.updateInfo();
             }));
 
-            // Add/remove the access point layer depending on the map zoom level
+            // Event handler to add/remove the access point layer depending on the map zoom level
             labMap.map.on('zoomend', (function (e) {
                 if (labMap.map.getZoom() >= 15 ) {
                     // Add the access point layer and legend if not already present
@@ -221,7 +229,15 @@
                 }
             }));
 
+            // Prevent the map from scrolling/zooming when the mouse pointer is within the legend
+            L.DomEvent
+                .on(labMap.legendControlContainer, labMap.clickEventHandler, labMap.stopProp)
+                .on(labMap.legendControlContainer, 'mousedown', labMap.stopProp)
+                .on(labMap.legendControlContainer, 'dblclick', labMap.stopProp)
+                .on(labMap.legendControlContainer, 'mousewheel', labMap.stopProp)
 
+
+            // Trafford boundary line
             labAjax('http://www.trafforddatalab.io/spatial_data/local_authority/2016/trafford_local_authority_full_resolution.geojson', function (data) {
                 var stylePoly = {
                     'color': '#212121',
@@ -265,7 +281,7 @@
                 });
             });
 
-            labMap.legendGreenspaces = '<div class="legendKey legendKeyLine legendItemTrafford"></div> Trafford boundary<br /><div class="legendKey legendKeyLine legendItemAllotment"></div> Allotments or Community Growing Space<br /><div class="legendKey legendKeyLine legendItemGolf"></div> Golf Course<br /><div class="legendKey legendKeyLine legendItemPlaySpace"></div> Play Space<br /><div class="legendKey legendKeyLine legendItemPlayingField"></div> Playing Field<br /><div class="legendKey legendKeyLine legendItemPublicPark"></div> Public Park or Garden<br /><div class="legendKey legendKeyLine legendItemReligiousGround"></div> Religious Ground and Cemetries<br /><div class="legendKey legendKeyLine legendItemSport"></div> Sports';
+            labMap.legendGreenspaces = '<div class="legendKey legendKeyLine legendItemAllotment"></div> Allotments or Community Growing Space<br /><div class="legendKey legendKeyLine legendItemGolf"></div> Golf Course<br /><div class="legendKey legendKeyLine legendItemPlaySpace"></div> Play Space<br /><div class="legendKey legendKeyLine legendItemPlayingField"></div> Playing Field<br /><div class="legendKey legendKeyLine legendItemPublicPark"></div> Public Park or Garden<br /><div class="legendKey legendKeyLine legendItemReligiousGround"></div> Religious Ground and Cemetries<br /><div class="legendKey legendKeyLine legendItemSport"></div> Sports<br /><div class="legendToggleDivider"></div><div class="legendKey legendKeyLine legendItemTrafford"></div> Trafford boundary';
 
             labMap.legendGreenspacesAccess = '<br /><div class="legendKey legendItemAccessPoint legendItemPedestrianAccess"></div> Pedestrian Access<br /><div class="legendKey legendItemAccessPoint legendItemPedestrianAndVehicleAccess"></div> Vehicle and Pedestrian Access';
 
