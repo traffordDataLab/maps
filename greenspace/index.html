@@ -204,6 +204,23 @@
                 labMap.updateInfo();
             }));
 
+            // Add/remove the access point layer depending on the map zoom level
+            labMap.map.on('zoomend', (function (e) {
+                if (labMap.map.getZoom() >= 15 ) {
+                    // Add the access point layer and legend if not already present
+                    if (labMap.map.hasLayer(labMap.greenspacesAccess) == false) {
+                        labMap.greenspacesAccess.addTo(labMap.map);
+                        labMap.updateLegend(labMap.legendGreenspaces + labMap.legendGreenspacesAccess);
+                    }
+                }
+                else {
+                    if (labMap.map.hasLayer(labMap.greenspacesAccess)) {
+                        labMap.greenspacesAccess.removeFrom(labMap.map);
+                        labMap.updateLegend(labMap.legendGreenspaces);
+                    }
+                }
+            }));
+
 
             labAjax('http://www.trafforddatalab.io/spatial_data/local_authority/2016/trafford_local_authority_full_resolution.geojson', function (data) {
                 var stylePoly = {
@@ -223,7 +240,7 @@
 
             // Access points to Green space sites
             labAjax('http://www.trafforddatalab.io/spatial_data/greenspaces/trafford_greenspace_access_points.geojson', function (data) {
-                var greenspacesAccess = L.geoJSON(data, {
+                labMap.greenspacesAccess = L.geoJSON(data, {
                     attribution: labMap.attributionGreenspace,
                     pointToLayer: function (feature, latlng) {
                         var featureType = feature.properties.access_type;
@@ -245,11 +262,14 @@
 
                         return L.circleMarker(latlng, { color: '#212121', weight: 1, fillColor: featureColour, fillOpacity: 0.8, radius: '3', pane: 'markerPane' });
                     }
-                }).addTo(labMap.map);
+                });
             });
 
-            var strLegend = '<div class="legendKey legendKeyLine legendItemTrafford"></div> Trafford boundary<br /><div class="legendKey legendKeyLine legendItemAllotment"></div> Allotments or Community Growing Space<br /><div class="legendKey legendKeyLine legendItemGolf"></div> Golf Course<br /><div class="legendKey legendKeyLine legendItemPlaySpace"></div> Play Space<br /><div class="legendKey legendKeyLine legendItemPlayingField"></div> Playing Field<br /><div class="legendKey legendKeyLine legendItemPublicPark"></div> Public Park or Garden<br /><div class="legendKey legendKeyLine legendItemReligiousGround"></div> Religious Ground and Cemetries<br /><div class="legendKey legendKeyLine legendItemSport"></div> Sports<br /><div class="legendKey legendItemAccessPoint legendItemPedestrianAccess"></div> Pedestrian Access<br /><div class="legendKey legendItemAccessPoint legendItemPedestrianAndVehicleAccess"></div> Vehicle and Pedestrian Access<br />';
-            labMap.updateLegend(strLegend);
+            labMap.legendGreenspaces = '<div class="legendKey legendKeyLine legendItemTrafford"></div> Trafford boundary<br /><div class="legendKey legendKeyLine legendItemAllotment"></div> Allotments or Community Growing Space<br /><div class="legendKey legendKeyLine legendItemGolf"></div> Golf Course<br /><div class="legendKey legendKeyLine legendItemPlaySpace"></div> Play Space<br /><div class="legendKey legendKeyLine legendItemPlayingField"></div> Playing Field<br /><div class="legendKey legendKeyLine legendItemPublicPark"></div> Public Park or Garden<br /><div class="legendKey legendKeyLine legendItemReligiousGround"></div> Religious Ground and Cemetries<br /><div class="legendKey legendKeyLine legendItemSport"></div> Sports';
+
+            labMap.legendGreenspacesAccess = '<br /><div class="legendKey legendItemAccessPoint legendItemPedestrianAccess"></div> Pedestrian Access<br /><div class="legendKey legendItemAccessPoint legendItemPedestrianAndVehicleAccess"></div> Vehicle and Pedestrian Access';
+
+            labMap.updateLegend(labMap.legendGreenspaces);
 
         </script>
     </body>
