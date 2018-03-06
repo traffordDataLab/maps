@@ -120,6 +120,11 @@
         <script src="http://www.trafforddatalab.io/assets/leaflet/labLeafletMap.js"></script>
 
         <script>
+            /*
+                ### Set up the map and associated properties ###
+            */
+
+            // create the template and map object
             var labMap = new LabLeafletMap({
                 title: 'Green spaces in Trafford',
                 about: 'Explore the parks, playing fields, public gardens and other accessible recreational and leisure features in Trafford.',
@@ -128,7 +133,22 @@
 
             labMap.featureCache = null;
             labMap.attributionGreenspace = 'Greenspaces data provided by <a href="https://www.ordnancesurvey.co.uk/getoutside/greenspaces/" target="_blank">OS Greenspace</a>';
+            labMap.baseLayers['Light'].addTo(labMap.map);
 
+            // build the content for the legend - keeping the access points separate as these are added/removed depending on the map zoom
+            labMap.legendGreenspaces = '<div class="legendKey legendKeyLine legendItemAllotment"></div> Allotments or Community Growing Space<br /><div class="legendKey legendKeyLine legendItemGolf"></div> Golf Course<br /><div class="legendKey legendKeyLine legendItemPlaySpace"></div> Play Space<br /><div class="legendKey legendKeyLine legendItemPlayingField"></div> Playing Field<br /><div class="legendKey legendKeyLine legendItemPublicPark"></div> Public Park or Garden<br /><div class="legendKey legendKeyLine legendItemReligiousGround"></div> Religious Ground and Cemetries<br /><div class="legendKey legendKeyLine legendItemSport"></div> Sports<br /><div class="legendToggleDivider"></div><div class="legendKey legendKeyLine legendItemTrafford"></div> Trafford boundary';
+
+            labMap.legendGreenspacesAccess = '<br /><div class="legendKey legendItemAccessPoint legendItemPedestrianAccess"></div> Pedestrian Access<br /><div class="legendKey legendItemAccessPoint legendItemPedestrianAndVehicleAccess"></div> Vehicle and Pedestrian Access';
+
+            // Display the legend in the default state - no access points showing and all categories toggled on
+            labMap.updateLegend(labMap.legendGreenspaces);
+
+
+            /*
+                ### Functions required for the app to work - from drawing/styling features to showing information etc ###
+            */
+
+            // Styling for the different categories of greenspace
             function siteStyle(feature) {
                 var featureType = feature.properties.site_type;
                 var featureColour;
@@ -165,8 +185,7 @@
                 }
             }
 
-            labMap.baseLayers['Light'].addTo(labMap.map);
-
+            // Return a feature back to its original style from being highlighted by the user
             function resetFeatureStyle(e) {
                 if (e != null) labMap.greenspaces.resetStyle(e.target);
                 labMap.featureCache = null;
@@ -199,12 +218,25 @@
                 labMap.updateInfo(strInfo);
             }
 
-            // Event handler for clicking on greenspace features
-            function geoJsonEachFeature(feature, layer) {
-                layer.on({
-                    click: showInfo
-                });
+            // Draw the greenspace features
+            function drawGreenspace() {
+                labMap.greenspaces = L.geoJSON(labMap.greenspaceData, {
+                    attribution: labMap.attributionGreenspace,
+                    style: siteStyle,
+                    onEachFeature: function (feature, layer) {
+                        // Event handler for clicking on greenspace features
+                        layer.on({
+                            click: showInfo
+                        });
+                    },
+                    bubblingMouseEvents: false
+                }).addTo(labMap.map);
             }
+
+
+            /*
+                ### Map event handlers ###
+            */
 
             // Event handler for clicking on the base map
             labMap.map.on('click', (function (e) {
@@ -237,6 +269,10 @@
                 .on(labMap.legendControlContainer, 'mousewheel', labMap.stopProp)
 
 
+            /*
+                ### Loading GeoJSON external files ###
+            */
+
             // Trafford boundary line
             labAjax('http://www.trafforddatalab.io/spatial_data/local_authority/2016/trafford_local_authority_full_resolution.geojson', function (data) {
                 var stylePoly = {
@@ -249,10 +285,11 @@
                 var traffordBoundary = L.geoJSON(data, { attribution: labMap.attributionOS, style: stylePoly }).addTo(labMap.map);
             });
 
-            // Green space sites
+            // Load greespace data - don't cache in labAjax because we are going to store a copy in the labMap object for filtering later
             labAjax('http://www.trafforddatalab.io/spatial_data/greenspaces/trafford_greenspace_sites.geojson', function (data) {
-                labMap.greenspaces = L.geoJSON(data, { attribution: labMap.attributionGreenspace, style: siteStyle, onEachFeature: geoJsonEachFeature, bubblingMouseEvents: false }).addTo(labMap.map);
-            });
+                labMap.greenspaceData = data;
+                drawGreenspace();   // call the function for the first time to draw the greenspace features
+            }, { cache: false });
 
             // Access points to Green space sites
             labAjax('http://www.trafforddatalab.io/spatial_data/greenspaces/trafford_greenspace_access_points.geojson', function (data) {
@@ -280,13 +317,6 @@
                     }
                 });
             });
-
-            labMap.legendGreenspaces = '<div class="legendKey legendKeyLine legendItemAllotment"></div> Allotments or Community Growing Space<br /><div class="legendKey legendKeyLine legendItemGolf"></div> Golf Course<br /><div class="legendKey legendKeyLine legendItemPlaySpace"></div> Play Space<br /><div class="legendKey legendKeyLine legendItemPlayingField"></div> Playing Field<br /><div class="legendKey legendKeyLine legendItemPublicPark"></div> Public Park or Garden<br /><div class="legendKey legendKeyLine legendItemReligiousGround"></div> Religious Ground and Cemetries<br /><div class="legendKey legendKeyLine legendItemSport"></div> Sports<br /><div class="legendToggleDivider"></div><div class="legendKey legendKeyLine legendItemTrafford"></div> Trafford boundary';
-
-            labMap.legendGreenspacesAccess = '<br /><div class="legendKey legendItemAccessPoint legendItemPedestrianAccess"></div> Pedestrian Access<br /><div class="legendKey legendItemAccessPoint legendItemPedestrianAndVehicleAccess"></div> Vehicle and Pedestrian Access';
-
-            labMap.updateLegend(labMap.legendGreenspaces);
-
         </script>
     </body>
 </html>
