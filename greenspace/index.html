@@ -131,12 +131,23 @@
                 info: 'Please select a Green Space site for further information.'
             });
 
-            labMap.featureCache = null;
+            labMap.featureCache = null; // to store the currently selected feature
             labMap.attributionGreenspace = 'Greenspaces data provided by <a href="https://www.ordnancesurvey.co.uk/getoutside/greenspaces/" target="_blank">OS Greenspace</a>';
             labMap.baseLayers['Light'].addTo(labMap.map);
 
+            // object to hold toggle state for the greenspace categories
+            labMap.greenspaceCategories = {
+                'AllotmentsOrCommunityGrowingSpaces': 1,
+                'GolfCourse': 1,
+                'PlaySpace': 1,
+                'PlayingField': 1,
+                'PublicParkOrGarden': 1,
+                'ReligiousGroundandCemeteries': 1,
+                'Sports': 1
+            }
+
             // build the content for the legend - keeping the access points separate as these are added/removed depending on the map zoom
-            labMap.legendGreenspaces = '<div class="legendKey legendKeyLine legendItemAllotment"></div> Allotments or Community Growing Space<br /><div class="legendKey legendKeyLine legendItemGolf"></div> Golf Course<br /><div class="legendKey legendKeyLine legendItemPlaySpace"></div> Play Space<br /><div class="legendKey legendKeyLine legendItemPlayingField"></div> Playing Field<br /><div class="legendKey legendKeyLine legendItemPublicPark"></div> Public Park or Garden<br /><div class="legendKey legendKeyLine legendItemReligiousGround"></div> Religious Ground and Cemetries<br /><div class="legendKey legendKeyLine legendItemSport"></div> Sports<br /><div class="legendToggleDivider"></div><div class="legendKey legendKeyLine legendItemTrafford"></div> Trafford boundary';
+            labMap.legendGreenspaces = '<a href="javascript:void(0)" onclick="toggleGreenspace(\'AllotmentsOrCommunityGrowingSpaces\')"><div class="legendKey legendKeyLine legendItemAllotment"></div> Allotments or Community Growing Space</a><br /><a href="javascript:void(0)" onclick="toggleGreenspace(\'GolfCourse\')"><div class="legendKey legendKeyLine legendItemGolf"></div> Golf Course</a><br /><a href="javascript:void(0)" onclick="toggleGreenspace(\'PlaySpace\')"><div class="legendKey legendKeyLine legendItemPlaySpace"></div> Play Space</a><br /><a href="javascript:void(0)" onclick="toggleGreenspace(\'PlayingField\')"><div class="legendKey legendKeyLine legendItemPlayingField"></div> Playing Field</a><br /><a href="javascript:void(0)" onclick="toggleGreenspace(\'PublicParkOrGarden\')"><div class="legendKey legendKeyLine legendItemPublicPark"></div> Public Park or Garden</a><br /><a href="javascript:void(0)" onclick="toggleGreenspace(\'ReligiousGroundandCemeteries\')"><div class="legendKey legendKeyLine legendItemReligiousGround"></div> Religious Ground and Cemeteries</a><br /><a href="javascript:void(0)" onclick="toggleGreenspace(\'Sports\')"><div class="legendKey legendKeyLine legendItemSport"></div> Sports</a><br /><div class="legendToggleDivider"></div><div class="legendKey legendKeyLine legendItemTrafford"></div> Trafford boundary';
 
             labMap.legendGreenspacesAccess = '<br /><div class="legendKey legendItemAccessPoint legendItemPedestrianAccess"></div> Pedestrian Access<br /><div class="legendKey legendItemAccessPoint legendItemPedestrianAndVehicleAccess"></div> Vehicle and Pedestrian Access';
 
@@ -169,7 +180,7 @@
                     case 'Public Park Or Garden':
                         featureColour = '#a6d854';
                         break;
-                    case 'Religious Ground and Cemetries':
+                    case 'Religious Ground and Cemeteries':
                         featureColour = '#ffd92f';
                         break;
                     case 'Sports':
@@ -219,7 +230,11 @@
             }
 
             // Draw the greenspace features
-            function drawGreenspace() {
+            function drawGreenspace(filter) {
+                var siteType;
+
+                if (labMap.map.hasLayer(labMap.greenspaces)) labMap.greenspaces.removeFrom(labMap.map);
+
                 labMap.greenspaces = L.geoJSON(labMap.greenspaceData, {
                     attribution: labMap.attributionGreenspace,
                     style: siteStyle,
@@ -229,8 +244,27 @@
                             click: showInfo
                         });
                     },
+                    filter: function (feature, layer) {
+                        siteType = feature.properties.site_type.replace(/\s/g, ''); // remove the spaces in the site_type value
+
+                        if (filter == false || labMap.greenspaceCategories.hasOwnProperty(siteType) && labMap.greenspaceCategories[siteType] == 1) {
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
+                    },
                     bubblingMouseEvents: false
                 }).addTo(labMap.map);
+            }
+
+            // Handling the toggle state of the greenspace categories
+            function toggleGreenspace(category) {
+                if (labMap.greenspaceCategories.hasOwnProperty(category)) {
+                    // Toggle the category value between 0 and 1
+                    labMap.greenspaceCategories[category] = Math.abs(labMap.greenspaceCategories[category] - 1);
+                    drawGreenspace(true);   // redraw the greenspace features (true means we want to invoke the filter)
+                }
             }
 
 
@@ -261,13 +295,6 @@
                 }
             }));
 
-            // Prevent the map from scrolling/zooming when the mouse pointer is within the legend
-            L.DomEvent
-                .on(labMap.legendControlContainer, labMap.clickEventHandler, labMap.stopProp)
-                .on(labMap.legendControlContainer, 'mousedown', labMap.stopProp)
-                .on(labMap.legendControlContainer, 'dblclick', labMap.stopProp)
-                .on(labMap.legendControlContainer, 'mousewheel', labMap.stopProp)
-
 
             /*
                 ### Loading GeoJSON external files ###
@@ -285,10 +312,23 @@
                 var traffordBoundary = L.geoJSON(data, { attribution: labMap.attributionOS, style: stylePoly }).addTo(labMap.map);
             });
 
+            // Add labels for the town centres
+            labAjax('http://www.trafforddatalab.io/spatial_data/town_centres/trafford_town_centres.geojson', function (data) {
+
+                var townCentres = L.geoJSON(data, {
+                    pointToLayer: function (feature, latlng) {
+                        return L.marker(latlng, { icon: L.divIcon({ iconSize: null }) }).bindTooltip(feature.properties.name, { direction: 'center', className: 'labLabels', opacity: 1, permanent: true });
+                    }
+                }).addTo(labMap.map);
+
+                labMap.overlayLayers['Town centres'] = townCentres;
+                labMap.updateLayerControl();
+            });
+
             // Load greespace data - don't cache in labAjax because we are going to store a copy in the labMap object for filtering later
             labAjax('http://www.trafforddatalab.io/spatial_data/greenspaces/trafford_greenspace_sites.geojson', function (data) {
                 labMap.greenspaceData = data;
-                drawGreenspace();   // call the function for the first time to draw the greenspace features
+                drawGreenspace(false);   // call the function for the first time to draw the greenspace features (false indicates we don't want to filter the data)
             }, { cache: false });
 
             // Access points to Green space sites
