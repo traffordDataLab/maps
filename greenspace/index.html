@@ -176,9 +176,7 @@
             }
 
             // build the content for the legend - keeping the access points separate as these are added/removed depending on the map zoom
-            labMap.legendGreenspaces = '<div id="AllotmentsOrCommunityGrowingSpaces" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'AllotmentsOrCommunityGrowingSpaces\')"><div class="legendKey legendKeyLine legendItemAllotment"></div> Allotments or Community Growing Space</div><div id="GolfCourse" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'GolfCourse\')"><div class="legendKey legendKeyLine legendItemGolf"></div> Golf Course</div><div id="PlaySpace" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'PlaySpace\')"><div class="legendKey legendKeyLine legendItemPlaySpace"></div> Play Space</div><div id="PlayingField" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'PlayingField\')"><div class="legendKey legendKeyLine legendItemPlayingField"></div> Playing Field</div><div id="PublicParkOrGarden" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'PublicParkOrGarden\')"><div class="legendKey legendKeyLine legendItemPublicPark"></div> Public Park or Garden</div><div id="ReligiousGroundandCemeteries" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'ReligiousGroundandCemeteries\')"><div class="legendKey legendKeyLine legendItemReligiousGround"></div> Religious Ground and Cemeteries</div><div id="Sports" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'Sports\')"><div class="legendKey legendKeyLine legendItemSport"></div> Sports</div><div class="legendToggleDivider"></div><div class="legendItem"><div class="legendKey legendKeyLine legendItemTrafford"></div> Trafford boundary</div>';
-
-            labMap.legendGreenspacesAccess = '<div class="legendItem"><div class="legendKey legendItemAccessPoint legendItemPedestrianAccess"></div> Pedestrian Access</div><div class="legendItem"><div class="legendKey legendItemAccessPoint legendItemPedestrianAndVehicleAccess"></div> Vehicle and Pedestrian Access</div>';
+            labMap.legendGreenspaces = '<div id="AllotmentsOrCommunityGrowingSpaces" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'AllotmentsOrCommunityGrowingSpaces\')"><div class="legendKey legendKeyLine legendItemAllotment"></div> Allotments or Community Growing Space</div><div id="GolfCourse" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'GolfCourse\')"><div class="legendKey legendKeyLine legendItemGolf"></div> Golf Course</div><div id="PlaySpace" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'PlaySpace\')"><div class="legendKey legendKeyLine legendItemPlaySpace"></div> Play Space</div><div id="PlayingField" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'PlayingField\')"><div class="legendKey legendKeyLine legendItemPlayingField"></div> Playing Field</div><div id="PublicParkOrGarden" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'PublicParkOrGarden\')"><div class="legendKey legendKeyLine legendItemPublicPark"></div> Public Park or Garden</div><div id="ReligiousGroundandCemeteries" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'ReligiousGroundandCemeteries\')"><div class="legendKey legendKeyLine legendItemReligiousGround"></div> Religious Ground and Cemeteries</div><div id="Sports" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'Sports\')"><div class="legendKey legendKeyLine legendItemSport"></div> Sports</div><div class="legendToggleDivider"></div><div class="legendItem"><div class="legendKey legendKeyLine legendItemTrafford"></div> Trafford boundary</div><div id="legendAccessItemsContainer" class="hideContent"><div class="legendItem"><div class="legendKey legendItemAccessPoint legendItemPedestrianAccess"></div> Pedestrian Access</div><div class="legendItem"><div class="legendKey legendItemAccessPoint legendItemPedestrianAndVehicleAccess"></div> Vehicle and Pedestrian Access</div></div>';
 
             // Display the legend in the default state - no access points showing and all categories toggled on
             labMap.updateLegend(labMap.legendGreenspaces);
@@ -319,17 +317,19 @@
 
             // Event handler to add/remove the access point layer depending on the map zoom level
             labMap.map.on('zoomend', (function (e) {
+                var legendAccessItemsContainer = L.DomUtil.get('legendAccessItemsContainer');
+
                 if (labMap.map.getZoom() >= 15 ) {
-                    // Add the access point layer and legend if not already present
+                    // Add the access point layer and legend items if not already present
                     if (labMap.map.hasLayer(labMap.greenspacesAccess) == false) {
                         labMap.greenspacesAccess.addTo(labMap.map);
-                        labMap.updateLegend(labMap.legendGreenspaces + labMap.legendGreenspacesAccess);
+                        L.DomUtil.removeClass(legendAccessItemsContainer, 'hideContent');
                     }
                 }
                 else {
                     if (labMap.map.hasLayer(labMap.greenspacesAccess)) {
                         labMap.greenspacesAccess.removeFrom(labMap.map);
-                        labMap.updateLegend(labMap.legendGreenspaces);
+                        L.DomUtil.addClass(legendAccessItemsContainer, 'hideContent');
                     }
                 }
             }));
