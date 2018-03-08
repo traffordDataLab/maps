@@ -24,6 +24,41 @@
                max-height: 300px;
             }
 
+            /* The div surrounding all legend items, whether toggleable or not */
+            .legendItem
+            {
+                margin: 5px 0;
+            }
+
+            .legendItemToggle:hover
+            {
+                cursor: pointer;
+            }
+
+            /* Toggled items in their off state */
+            .legendItemDisabled div:nth-child(1)
+            {
+                border-bottom: 3px solid #ccc;
+            }
+
+            .legendItemDisabled
+            {
+                color: #ccc;
+            }
+
+            .legendItemDisabled:hover
+            {
+                color: #212121;
+            }
+
+            /* Divider between legend items that can/can't be toggled */
+            .legendToggleDivider
+            {
+                border-top: 1px solid #ccc;
+                margin: 6px 0px;
+            }
+
+            /* The legend keys for the different coloured boundary lines */
             .legendItemTrafford
             {
                 border-bottom: 2px dashed #212121;
@@ -62,12 +97,6 @@
             .legendItemSport
             {
                 border-bottom: 3px solid #e5c494;
-            }
-
-            .legendToggleDivider
-            {
-                border-top: 1px solid #ccc;
-                margin: 6px 0px;
             }
 
             .legendItemAccessPoint
@@ -127,8 +156,8 @@
             // create the template and map object
             var labMap = new LabLeafletMap({
                 title: 'Green spaces in Trafford',
-                about: 'Explore the parks, playing fields, public gardens and other accessible recreational and leisure features in Trafford.',
-                info: 'Please select a Green Space site for further information.'
+                about: '<p>Explore the parks, playing fields, public gardens and other green spaces that are likely to be publicly accessible in Trafford.</p><p>You can toggle the types of green space using the legend.</p>',
+                info: 'Please select a green space site for further information.'
             });
 
             labMap.featureCache = null; // to store the currently selected feature
@@ -147,9 +176,9 @@
             }
 
             // build the content for the legend - keeping the access points separate as these are added/removed depending on the map zoom
-            labMap.legendGreenspaces = '<a href="javascript:void(0)" onclick="toggleGreenspace(\'AllotmentsOrCommunityGrowingSpaces\')"><div class="legendKey legendKeyLine legendItemAllotment"></div> Allotments or Community Growing Space</a><br /><a href="javascript:void(0)" onclick="toggleGreenspace(\'GolfCourse\')"><div class="legendKey legendKeyLine legendItemGolf"></div> Golf Course</a><br /><a href="javascript:void(0)" onclick="toggleGreenspace(\'PlaySpace\')"><div class="legendKey legendKeyLine legendItemPlaySpace"></div> Play Space</a><br /><a href="javascript:void(0)" onclick="toggleGreenspace(\'PlayingField\')"><div class="legendKey legendKeyLine legendItemPlayingField"></div> Playing Field</a><br /><a href="javascript:void(0)" onclick="toggleGreenspace(\'PublicParkOrGarden\')"><div class="legendKey legendKeyLine legendItemPublicPark"></div> Public Park or Garden</a><br /><a href="javascript:void(0)" onclick="toggleGreenspace(\'ReligiousGroundandCemeteries\')"><div class="legendKey legendKeyLine legendItemReligiousGround"></div> Religious Ground and Cemeteries</a><br /><a href="javascript:void(0)" onclick="toggleGreenspace(\'Sports\')"><div class="legendKey legendKeyLine legendItemSport"></div> Sports</a><br /><div class="legendToggleDivider"></div><div class="legendKey legendKeyLine legendItemTrafford"></div> Trafford boundary';
+            labMap.legendGreenspaces = '<div id="AllotmentsOrCommunityGrowingSpaces" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'AllotmentsOrCommunityGrowingSpaces\')"><div class="legendKey legendKeyLine legendItemAllotment"></div> Allotments or Community Growing Space</div><div id="GolfCourse" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'GolfCourse\')"><div class="legendKey legendKeyLine legendItemGolf"></div> Golf Course</div><div id="PlaySpace" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'PlaySpace\')"><div class="legendKey legendKeyLine legendItemPlaySpace"></div> Play Space</div><div id="PlayingField" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'PlayingField\')"><div class="legendKey legendKeyLine legendItemPlayingField"></div> Playing Field</div><div id="PublicParkOrGarden" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'PublicParkOrGarden\')"><div class="legendKey legendKeyLine legendItemPublicPark"></div> Public Park or Garden</div><div id="ReligiousGroundandCemeteries" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'ReligiousGroundandCemeteries\')"><div class="legendKey legendKeyLine legendItemReligiousGround"></div> Religious Ground and Cemeteries</div><div id="Sports" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'Sports\')"><div class="legendKey legendKeyLine legendItemSport"></div> Sports</div><div class="legendToggleDivider"></div><div class="legendItem"><div class="legendKey legendKeyLine legendItemTrafford"></div> Trafford boundary</div>';
 
-            labMap.legendGreenspacesAccess = '<br /><div class="legendKey legendItemAccessPoint legendItemPedestrianAccess"></div> Pedestrian Access<br /><div class="legendKey legendItemAccessPoint legendItemPedestrianAndVehicleAccess"></div> Vehicle and Pedestrian Access';
+            labMap.legendGreenspacesAccess = '<div class="legendItem"><div class="legendKey legendItemAccessPoint legendItemPedestrianAccess"></div> Pedestrian Access</div><div class="legendItem"><div class="legendKey legendItemAccessPoint legendItemPedestrianAndVehicleAccess"></div> Vehicle and Pedestrian Access</div>';
 
             // Display the legend in the default state - no access points showing and all categories toggled on
             labMap.updateLegend(labMap.legendGreenspaces);
@@ -263,6 +292,16 @@
                 if (labMap.greenspaceCategories.hasOwnProperty(category)) {
                     // Toggle the category value between 0 and 1
                     labMap.greenspaceCategories[category] = Math.abs(labMap.greenspaceCategories[category] - 1);
+
+                    // Add or remove the CSS toggle class to make the legend item appear on or off
+                    var legendItem = L.DomUtil.get(category);
+                    if (labMap.greenspaceCategories[category] == 0) {
+                        L.DomUtil.addClass(legendItem, 'legendItemDisabled');
+                    }
+                    else {
+                        L.DomUtil.removeClass(legendItem, 'legendItemDisabled');
+                    }
+
                     drawGreenspace(true);   // redraw the greenspace features (true means we want to invoke the filter)
                 }
             }
