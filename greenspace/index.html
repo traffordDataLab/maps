@@ -16,7 +16,7 @@
 
             .mainPanelControl
             {
-                width: 400px;
+                width: 380px;
             }
 
             .infoDockContainer
@@ -38,12 +38,12 @@
             /* Toggled items in their off state */
             .legendItemDisabled div:nth-child(1)
             {
-                border-bottom: 3px solid #ccc;
+                border-bottom: 3px solid #a5a5a5;
             }
 
             .legendItemDisabled
             {
-                color: #ccc;
+                color: #a5a5a5;
             }
 
             .legendItemDisabled:hover
@@ -156,7 +156,7 @@
             // create the template and map object
             var labMap = new LabLeafletMap({
                 title: 'Green spaces in Trafford',
-                about: '<p>Explore the parks, playing fields, public gardens and other green spaces that are likely to be publicly accessible in Trafford.</p><p>You can toggle the types of green space using the legend.</p>',
+                about: '<p>Explore the parks, playing fields, gardens and other green spaces that are likely to be publicly accessible in Trafford. Site access points are displayed at certain zoom levels.</p><p>You can toggle the types of green space using the legend.</p>',
                 info: 'Please select a green space site for further information.'
             });
 
@@ -240,8 +240,11 @@
 
                 // highlight new selected feature
                 layer.setStyle({
-                    color: '#ffff00',
-                    fillOpacity: '0.8'
+                    fillColor: '#ffff00',
+                    fillOpacity: '0.5',
+                    color: '#ccc',
+                    opacity: '1',
+                    dashArray: '5',
                 });
 
                 var strInfo = '<table class="propertiesTable">';
@@ -300,7 +303,9 @@
                         L.DomUtil.removeClass(legendItem, 'legendItemDisabled');
                     }
 
-                    drawGreenspace(true);   // redraw the greenspace features (true means we want to invoke the filter)
+                    drawGreenspace(true);           // redraw the greenspace features (true means we want to invoke the filter)
+                    labMap.updateInfo();            // reset the info panel in case there is a currently selected item
+                    labMap.featureCache = null;     // clear the cache in case there is a currently selected item
                 }
             }
 
