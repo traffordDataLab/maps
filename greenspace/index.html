@@ -9,8 +9,8 @@
 
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin=""/>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
-        <link rel="stylesheet" href="http://www.trafforddatalab.io/css/labBase.css"/>
-        <link rel="stylesheet" href="http://www.trafforddatalab.io/assets/leaflet/labLeafletMap.css"/>
+        <link rel="stylesheet" href="https://www.trafforddatalab.io/css/labBase.css"/>
+        <link rel="stylesheet" href="https://www.trafforddatalab.io/assets/leaflet/labLeafletMap.css"/>
 
         <style>
 
@@ -137,11 +137,11 @@
         <div id="map" class="mapFullScreen"></div>
 
         <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin=""></script>
-        <script src="http://www.trafforddatalab.io/assets/javascript/labError.js"></script>
-        <script src="http://www.trafforddatalab.io/assets/javascript/labAjax.js"></script>
-        <script src="http://www.trafforddatalab.io/assets/leaflet/leaflet.resetMapView.js"></script>
-        <script src="http://www.trafforddatalab.io/assets/leaflet/labCreateTileLayer.js"></script>
-        <script src="http://www.trafforddatalab.io/assets/leaflet/labLeafletMap.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/javascript/labError.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/javascript/labAjax.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/leaflet/leaflet.resetMapView.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/leaflet/labCreateTileLayer.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/leaflet/labLeafletMap.js"></script>
 
         <script>
             /*
@@ -340,7 +340,7 @@
             */
 
             // Trafford boundary line
-            labAjax('http://www.trafforddatalab.io/spatial_data/local_authority/2016/trafford_local_authority_full_resolution.geojson', function (data) {
+            labAjax('https://www.trafforddatalab.io/spatial_data/local_authority/2016/trafford_local_authority_full_resolution.geojson', function (data) {
                 var stylePoly = {
                     'color': '#212121',
                     'fillOpacity': 0,
@@ -352,7 +352,7 @@
             });
 
             // Add labels for the town centres
-            labAjax('http://www.trafforddatalab.io/spatial_data/town_centres/trafford_town_centres.geojson', function (data) {
+            labAjax('https://www.trafforddatalab.io/spatial_data/town_centres/trafford_town_centres.geojson', function (data) {
 
                 var townCentres = L.geoJSON(data, {
                     pointToLayer: function (feature, latlng) {
@@ -365,13 +365,13 @@
             });
 
             // Load greespace data - don't cache in labAjax because we are going to store a copy in the labMap object for filtering later
-            labAjax('http://www.trafforddatalab.io/spatial_data/greenspaces/trafford_greenspace_sites.geojson', function (data) {
+            labAjax('https://www.trafforddatalab.io/spatial_data/greenspaces/trafford_greenspace_sites.geojson', function (data) {
                 labMap.greenspaceData = data;
                 drawGreenspace(false);   // call the function for the first time to draw the greenspace features (false indicates we don't want to filter the data)
             }, { cache: false });
 
             // Access points to Green space sites
-            labAjax('http://www.trafforddatalab.io/spatial_data/greenspaces/trafford_greenspace_access_points.geojson', function (data) {
+            labAjax('https://www.trafforddatalab.io/spatial_data/greenspaces/trafford_greenspace_access_points.geojson', function (data) {
                 labMap.greenspacesAccess = L.geoJSON(data, {
                     attribution: labMap.attributionGreenspace,
                     pointToLayer: function (feature, latlng) {
