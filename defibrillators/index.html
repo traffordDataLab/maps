@@ -8,10 +8,10 @@
 
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin=""/>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
-        <link rel="stylesheet" href="http://www.trafforddatalab.io/css/labBase.css"/>
-        <link rel="stylesheet" href="http://www.trafforddatalab.io/assets/leaflet/labLeafletMap.css"/>
-        <link rel="stylesheet" href="http://www.trafforddatalab.io/assets/leaflet/extended_markers/extended_markers_base.css"/>
-        <link rel="stylesheet" href="http://www.trafforddatalab.io/assets/leaflet/extended_markers/extended_markers_mixed.css"/>
+        <link rel="stylesheet" href="https://www.trafforddatalab.io/css/labBase.css"/>
+        <link rel="stylesheet" href="https://www.trafforddatalab.io/assets/leaflet/labLeafletMap.css"/>
+        <link rel="stylesheet" href="https://www.trafforddatalab.io/assets/leaflet/extended_markers/extended_markers_base.css"/>
+        <link rel="stylesheet" href="https://www.trafforddatalab.io/assets/leaflet/extended_markers/extended_markers_mixed.css"/>
 
         <style>
             .mainPanelControl
@@ -30,11 +30,11 @@
         <div id="map" class="mapFullScreen"></div>
 
         <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log==" crossorigin=""></script>
-        <script src="http://www.trafforddatalab.io/assets/javascript/labError.js"></script>
-        <script src="http://www.trafforddatalab.io/assets/javascript/labAjax.js"></script>
-        <script src="http://www.trafforddatalab.io/assets/leaflet/leaflet.resetMapView.js"></script>
-        <script src="http://www.trafforddatalab.io/assets/leaflet/labCreateTileLayer.js"></script>
-        <script src="http://www.trafforddatalab.io/assets/leaflet/labLeafletMap.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/javascript/labError.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/javascript/labAjax.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/leaflet/leaflet.resetMapView.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/leaflet/labCreateTileLayer.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/leaflet/labLeafletMap.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.min.js"></script>
 
         <script>
@@ -93,7 +93,7 @@
 
             var defibMap = new LabLeafletMap({
                 title: 'Defibrillators in Trafford',
-                about: 'Please note that these defibrillators may have restrictions on public availability and may not be available 24/7. The locations may not be exact in all cases as they are derived from postcodes. If you know of a defibrillator that has not been included then please <a href="mailto:infotrafford@trafford.gov.uk">email</a> or <a href="https://twitter.com/trafforddatalab" target="_blank">tweet</a> us.<br /><div style="margin-top: 10px;"><span style="font-weight:bold; color: #757575">Download:</span> <a href="http://www.trafforddatalab.io/open_data/defibrillators/trafford_defibrillators.csv" target="_blank"><span class="fa fa-file-text-o" aria-hidden="true"></span> CSV</a> | <a href="http://www.trafforddatalab.io/open_data/defibrillators/trafford_defibrillators.geojson" target="_blank"><span class="fa fa-file-code-o" aria-hidden="true"></span> GeoJSON</a> | <a href="http://www.trafforddatalab.io/open_data/defibrillators/trafford_defibrillators.json" target="_blank"><span class="fa fa-file-code-o" aria-hidden="true"></span> JSON</a><br />Updated 24 Jan 2017.</div>',
+                about: 'Please note that these defibrillators may have restrictions on public availability and may not be available 24/7. The locations may not be exact in all cases as they are derived from postcodes. If you know of a defibrillator that has not been included then please <a href="mailto:infotrafford@trafford.gov.uk">email</a> or <a href="https://twitter.com/trafforddatalab" target="_blank">tweet</a> us.<br /><div style="margin-top: 10px;"><span style="font-weight:bold; color: #757575">Download:</span> <a href="https://www.trafforddatalab.io/open_data/defibrillators/trafford_defibrillators.csv" target="_blank"><span class="fa fa-file-text-o" aria-hidden="true"></span> CSV</a> | <a href="https://www.trafforddatalab.io/open_data/defibrillators/trafford_defibrillators.geojson" target="_blank"><span class="fa fa-file-code-o" aria-hidden="true"></span> GeoJSON</a> | <a href="https://www.trafforddatalab.io/open_data/defibrillators/trafford_defibrillators.json" target="_blank"><span class="fa fa-file-code-o" aria-hidden="true"></span> JSON</a><br />Updated 24 Jan 2017.</div>',
                 info: 'Select the individual markers to view more information about each defibrillator.'
             });
 
@@ -108,7 +108,7 @@
             defibMap.baseLayers['Light'].addTo(defibMap.map);
 
             // Add the Trafford boundary
-            labAjax('http://www.trafforddatalab.io/spatial_data/local_authority/2016/trafford_local_authority_full_resolution.geojson', function (data) {
+            labAjax('https://www.trafforddatalab.io/spatial_data/local_authority/2016/trafford_local_authority_full_resolution.geojson', function (data) {
                 var stylePoly = {
                     color: '#212121',
                     weight: 2,
@@ -120,7 +120,7 @@
             });
 
             // Add labels for the town centres
-            labAjax('http://www.trafforddatalab.io/spatial_data/town_centres/trafford_town_centres.geojson', function (data) {
+            labAjax('https://www.trafforddatalab.io/spatial_data/town_centres/trafford_town_centres.geojson', function (data) {
 
                 var townCentres = L.geoJSON(data, {
                     pointToLayer: function (feature, latlng) {
@@ -133,7 +133,7 @@
             });
 
             // Add defibrillator locations within Trafford
-            labAjax('http://www.trafforddatalab.io/open_data/defibrillators/trafford_defibrillators.geojson', function (data) {
+            labAjax('https://www.trafforddatalab.io/open_data/defibrillators/trafford_defibrillators.geojson', function (data) {
                 var marker;
 
                 L.geoJSON(data, {
@@ -145,7 +145,7 @@
                         return marker;
 
                     },
-                    attribution: 'Defibrillator data released under <a href="http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">Open Government Licence</a>'
+                    attribution: 'Defibrillator data released under <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">Open Government Licence</a>'
                 }).addTo(defibMap.map);
             });
         </script>
