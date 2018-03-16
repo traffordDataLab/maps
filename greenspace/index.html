@@ -365,13 +365,13 @@
             });
 
             // Load greespace data - don't cache in labAjax because we are going to store a copy in the labMap object for filtering later
-            labAjax('https://www.trafforddatalab.io/spatial_data/greenspaces/trafford_greenspace_sites.geojson', function (data) {
+            labAjax('https://www.trafforddatalab.io/open_data/greenspaces/trafford_greenspace_sites.geojson', function (data) {
                 labMap.greenspaceData = data;
                 drawGreenspace(false);   // call the function for the first time to draw the greenspace features (false indicates we don't want to filter the data)
             }, { cache: false });
 
             // Access points to Green space sites
-            labAjax('https://www.trafforddatalab.io/spatial_data/greenspaces/trafford_greenspace_access_points.geojson', function (data) {
+            labAjax('https://www.trafforddatalab.io/open_data/greenspaces/trafford_greenspace_access_points.geojson', function (data) {
                 labMap.greenspacesAccess = L.geoJSON(data, {
                     attribution: labMap.attributionGreenspace,
                     pointToLayer: function (feature, latlng) {
