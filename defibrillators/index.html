@@ -21,7 +21,7 @@
 
             .infoDockContainer
             {
-                max-height: 300px;
+                max-height: 200px;
             }
         </style>
     </head>
@@ -55,11 +55,18 @@
 
                 defibMap.featureCache = e.target;
                 defibMap.featureCache.setIcon(selectedMarker);
+
+                defibMap.updateInfo(defibDetails(e.target.feature.properties));
             }
 
             function resetMarker() {
-                defibMap.featureCache.setIcon(defaultMarker);
-                defibMap.featureCache = null;
+                // In case of event bubbling - check we have a marker to reset
+                if (defibMap.featureCache != null) {
+                    defibMap.featureCache.setIcon(defaultMarker);
+                    defibMap.featureCache = null;
+                }
+
+                defibMap.updateInfo();
             }
 
             function defibDetails(props) {
@@ -86,7 +93,7 @@
                 if (props.Notes != null) content += '<p>' + props.Notes + '</p>';
 
                 // add the header
-                content = '<h4 style="border-bottom: 2px dotted #ccc;">' + props.Location + '</h4>' + content;
+                content = '<h4 style="font-weight: bold; margin-top: 0px; margin-bottom: 0px;">' + props.Location + '</h4>' + content;
 
                 return content;
             }
@@ -139,9 +146,8 @@
                 L.geoJSON(data, {
                     pointToLayer: function (feature, latlng) {
 
-                        marker = L.marker(latlng, { icon: defaultMarker }).bindPopup(defibDetails(feature.properties), { offset: [-7, 7] });
+                        marker = L.marker(latlng, { icon: defaultMarker }, { offset: [-7, 7] });
                         marker.on('click', highlightMarker);
-                        marker.on('popupclose', resetMarker);
                         return marker;
 
                     },
