@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-GB">
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
         <meta charset="UTF-8"/>
         <meta name="keywords" content="defibrillators, defibrillator, defibrillation, automated external defibrillator, aed, trafford, open data, map, mapping"/>
         <meta name="description" content="Map showing the location of defibrillators in Trafford"/>
@@ -14,9 +15,12 @@
         <link rel="stylesheet" href="https://www.trafforddatalab.io/assets/leaflet/extended_markers/extended_markers_mixed.css"/>
 
         <style>
-            .mainPanelControl
+            @media (min-width:621px)
             {
-                width: 350px;
+                .mainPanelControl
+                {
+                    width: 280px;
+                }
             }
 
             .infoDockContainer
@@ -99,9 +103,8 @@
             }
 
             var defibMap = new LabLeafletMap({
-                title: 'Defibrillators in Trafford',
-                about: 'Please note that these defibrillators may have restrictions on public availability and may not be available 24/7. The locations may not be exact in all cases as they are derived from postcodes. If you know of a defibrillator that has not been included then please <a href="mailto:infotrafford@trafford.gov.uk">email</a> or <a href="https://twitter.com/trafforddatalab" target="_blank">tweet</a> us.<br /><div style="margin-top: 10px;"><span style="font-weight:bold; color: #757575">Download:</span> <a href="https://www.trafforddatalab.io/open_data/defibrillators/trafford_defibrillators.csv" target="_blank"><span class="fa fa-file-text-o" aria-hidden="true"></span> CSV</a> | <a href="https://www.trafforddatalab.io/open_data/defibrillators/trafford_defibrillators.geojson" target="_blank"><span class="fa fa-file-code-o" aria-hidden="true"></span> GeoJSON</a> | <a href="https://www.trafforddatalab.io/open_data/defibrillators/trafford_defibrillators.json" target="_blank"><span class="fa fa-file-code-o" aria-hidden="true"></span> JSON</a><br />Updated 24 Jan 2017.</div>',
-                info: 'Select the individual markers to view more information about each defibrillator.'
+                title: 'Defibrillators',
+                about: 'Select a marker for more information on the defibrillators within Trafford. The locations may not be exact in all cases as they are derived from postcodes. There may also be restrictions on access and availability. If you know of a defibrillator that has not been included then please <a href="mailto:infotrafford@trafford.gov.uk">email</a> or <a href="https://twitter.com/trafforddatalab" target="_blank">tweet</a> us.<br /><div style="margin-top: 10px;"><span style="font-weight:bold; color: #757575">Download:</span> <a href="https://www.trafforddatalab.io/open_data/defibrillators/trafford_defibrillators.csv" target="_blank"><span class="fa fa-file-text-o" aria-hidden="true"></span> CSV</a> | <a href="https://www.trafforddatalab.io/open_data/defibrillators/trafford_defibrillators.geojson" target="_blank"><span class="fa fa-file-code-o" aria-hidden="true"></span> GeoJSON</a><br />Updated 24 Jan 2017.</div>'
             });
 
             // For ensuring we can reset the marker highlight is one is selected
@@ -123,7 +126,9 @@
                     fillOpacity: 0
                 }
 
-                L.geoJSON(data, { attribution: defibMap.attributionOS, style: stylePoly }).addTo(defibMap.map);
+                var traffordBoundary = L.geoJSON(data, { attribution: defibMap.attributionOS, style: stylePoly }).addTo(defibMap.map);
+
+                defibMap.map.fitBounds(traffordBoundary.getBounds());
             });
 
             // Add labels for the town centres

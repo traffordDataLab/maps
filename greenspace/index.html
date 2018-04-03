@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en-GB">
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
         <meta charset="UTF-8"/>
         <meta name="keywords" content="greenspace, greenspaces, green space, green spaces, allotment, allotments, community, growing, allotments or community growing space, golf course, play space, playing field, public park, public garden, garden, gardens, religious ground, religious grounds, cemetery, cemeteries, sports"/>
         <meta name="description" content="Green spaces in Trafford. Explore the parks, playing fields, public gardens and other accessible recreational and leisure features in Trafford."/>
 
-        <title>Trafford Data Lab: Greenspace</title>
+        <title>Trafford Data Lab: Greenspace in Trafford</title>
 
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin=""/>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
@@ -13,9 +14,12 @@
         <link rel="stylesheet" href="https://www.trafforddatalab.io/assets/leaflet/labLeafletMap.css"/>
 
         <style>
-            .mainPanelControl
+            @media (min-width:621px)
             {
-                width: 380px;
+                .mainPanelControl
+                {
+                    width: 280px;
+                }
             }
 
             .infoDockContainer
@@ -149,9 +153,8 @@
 
             // create the template and map object
             var labMap = new LabLeafletMap({
-                title: 'Green spaces in Trafford',
-                about: '<p>Explore the parks, playing fields, gardens and other green spaces that are likely to be publicly accessible in Trafford. Site access points are displayed at certain zoom levels.</p><p>You can toggle the types of green space using the legend.</p>',
-                info: 'Please select a green space site for further information.'
+                title: 'Green spaces',
+                about: '<p>Explore the parks, playing fields, gardens and other green spaces that are likely to be publicly accessible in Trafford. Site access points are displayed at certain zoom levels.</p><p>You can toggle the types of green space using the legend and view information by selecting a site.</p>'
             });
 
             labMap.featureCache = null; // to store the currently selected feature
@@ -348,6 +351,8 @@
                 }
 
                 var traffordBoundary = L.geoJSON(data, { attribution: labMap.attributionOS, style: stylePoly }).addTo(labMap.map);
+
+                labMap.map.fitBounds(traffordBoundary.getBounds());
             });
 
             // Add labels for the town centres
