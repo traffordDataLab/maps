@@ -56,19 +56,26 @@
         <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.62.0/dist/L.Control.Locate.min.js"></script>
         <script src="https://www.trafforddatalab.io/assets/javascript/labError.js"></script>
         <script src="https://www.trafforddatalab.io/assets/javascript/labAjax.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/javascript/labGetQryStrValByKey.js"></script>
         <script src="https://www.trafforddatalab.io/assets/leaflet/labCreateTileLayer.js"></script>
         <script src="https://www.trafforddatalab.io/assets/leaflet/labLeafletMap.js"></script>
 
 
         <script>
-            /*
-                GET THE QUERYSTRING VALUES IF THERE ARE ANY AND SET THE TITLE, ABOUT ETC. ACCORDINGLY
-            */
+            // ######### EXTERNAL DATA #########
+            var title = labGetQryStrValByKey('title');
+            var about = labGetQryStrValByKey('about');
+            var dataUrl = labGetQryStrValByKey('data');
+            var attr = labGetQryStrValByKey('attr');
+
+            if (title === null) title = 'Trafford';
+            if (about === null) about = 'Explore the different geographies within the Local Authority by choosing a layer and then selecting an area.';
+
 
             // ######### INITIALISATION #########
             var labMap = new LabLeafletMap({
-                title: 'Trafford',
-                about: 'Explore the different geographies within the Local Authority by choosing a layer and then selecting an area.'
+                title: title,
+                about: about
             });
 
             labMap.baseLayers['Light'].addTo(labMap.map);   // Choose the base/tile layer for the map
@@ -80,7 +87,7 @@
                 color: '#212121',
                 weight: 2,
                 fillOpacity: 0
-            }
+            };
 
             // Selected polygon styling
             labMap.polySelected = {
@@ -89,7 +96,7 @@
                 fillColor: '#ffff00',
                 fillOpacity: '0.5',
                 opacity: '1'
-            }
+            };
 
             // Point data feature styling
             labMap.marker = L.AwesomeMarkers.icon({
@@ -156,7 +163,16 @@
                         labMap.featureCache.target.setIcon(labMap.marker);
                     }
                     else {
-                        labMap.featureCache.target.setStyle(labMap.poly);
+                        //labMap.featureCache.target.setStyle(labMap.poly);
+                        // Reset the particular layer - not sure which object it belongs to so try all!
+                        labMap.boundaryLA.resetStyle(labMap.featureCache.target);
+                        labMap.boundaryLocalities.resetStyle(labMap.featureCache.target);
+                        labMap.boundaryWards.resetStyle(labMap.featureCache.target);
+                        labMap.boundaryMSOAs.resetStyle(labMap.featureCache.target);
+                        labMap.boundaryLSOAs.resetStyle(labMap.featureCache.target);
+                        labMap.boundaryOAs.resetStyle(labMap.featureCache.target);
+
+                        if (labMap.overlayData != null) labMap.overlayData.resetStyle(labMap.featureCache.target);
                     }
                 }
             }
@@ -179,16 +195,12 @@
                     layer.setStyle(labMap.polySelected);
                 }
 
-                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-                    layer.bringToFront();
-                }
-
                 // set new selected feature in the cache
                 labMap.featureCache = e;
 
                 // build the content for the properties table to be displayed
                 if (layer.feature.hasOwnProperty('properties')) {
-                    props = layer.feature.properties;
+                    var props = layer.feature.properties;
 
                     for (var key in props) {
                         if (props.hasOwnProperty(key)) propsTable += '<tr><td>' + key + '</td><td>' + props[key] + '</td></tr>';
@@ -196,6 +208,27 @@
 
                     if (propsTable != '') labMap.updateInfo('<table class="propertiesTable">' + propsTable + '</table>');
                 }
+            }
+
+            function styleOverlayData(feature) {
+                // This funciton is for styling non-point data loaded externally. If it has internal styling use that, otherwise use a default
+                var styles = {
+                    color: '#fc6721',
+                    fillColor: '#fc6721',
+                    opacity: 0.5,
+                    fillOpacity: 0.2
+                };
+
+                var props = feature.properties;
+                if (props != null) {
+                    if (props['stroke'] != null) styles['color'] = props['stroke'];
+                    if (props['stroke-width'] != null) styles['weight'] = props['stroke-width'];
+                    if (props['stroke-opacity'] != null) styles['opacity'] = props['stroke-opacity'];
+                    if (props['fill'] != null) styles['fillColor'] = props['fill'];
+                    if (props['fill-opacity'] != null) styles['fillOpacity'] = props['fill-opacity'];
+                }
+
+                return styles;
             }
 
 
@@ -256,6 +289,26 @@
                 labMap.overlayLayers['Output Areas (OA)'] = labMap.boundaryOAs;
                 labMap.updateLayerControl();
             });
+
+
+            // ######### OVERLAY DATA LAYER #########
+            if (dataUrl !== null) {
+                // Attempt to load GeoJSON specified in the URL
+                labAjax(dataUrl, function (data) {
+                    if (data !== null && data !== '') {
+                        try {
+                            labMap.overlayData = L.geoJSON(data, { style: styleOverlayData, attribution: attr, onEachFeature: featureEvents, pointToLayer: pointData }).addTo(labMap.map);
+                            labMap.map.fitBounds(labMap.overlayData.getBounds()); // adjust the zoom to fit the data to the screen size
+                        }
+                        catch (e) {
+                            labError(new LabException("Error attempting to create GeoJSON Leaflet layer: " + e.message));
+                        }
+                    }
+                    else {
+                        labError(new LabException("Couldn't find URL: " + dataUrl));
+                    }
+                });
+            }
         </script>
     </body>
 </html>
