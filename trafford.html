@@ -294,7 +294,7 @@
                 labAjax(dataUrl, function (data) {
                     if (data !== null && data !== '') {
                         try {
-                            labMap.overlayData = L.geoJSON(data, { style: styleOverlayData, attribution: attr, onEachFeature: featureEvents, pointToLayer: pointData }).addTo(labMap.map);
+                            labMap.overlayData = L.geoJSON(data, { style: styleOverlayData, attribution: attr, onEachFeature: featureEvents, pointToLayer: pointData, pane: 'pane_data_overlay' }).addTo(labMap.map);
                             labMap.map.fitBounds(labMap.overlayData.getBounds()); // adjust the zoom to fit the data to the screen size
                         }
                         catch (e) {
