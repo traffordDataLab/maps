@@ -296,6 +296,8 @@
                         try {
                             labMap.overlayData = L.geoJSON(data, { style: styleOverlayData, attribution: attr, onEachFeature: featureEvents, pointToLayer: pointData, pane: 'pane_data_overlay' }).addTo(labMap.map);
                             labMap.map.fitBounds(labMap.overlayData.getBounds()); // adjust the zoom to fit the data to the screen size
+
+                            document.title = 'Trafford Data Lab: ' + title; // set the page title to match the map title.
                         }
                         catch (e) {
                             labError(new LabException("Error attempting to create GeoJSON Leaflet layer: " + e.message));
