@@ -69,15 +69,25 @@
             var dataUrl = labGetQryStrValByKey('data');
             var attr = labGetQryStrValByKey('attr');
 
+            // defaults
             if (title === null) title = 'Trafford';
             if (about === null) about = 'Explore the different geographies within the Local Authority by choosing a layer and then selecting an area.';
+
+            // list of datasets - add new ones to the end
+            var arrDatasets = [
+                { name: 'Air quality', url: 'https://www.trafforddatalab.io/maps/trafford.html?title=Air%20quality&about=Air%20Quality%20Management%20Areas%20(AQMAs)%20in%20Trafford.&attr=Department%20for%20Environment%20Food%20%26%20Rural%20Affairs%20(Defra)&data=https://www.trafforddatalab.io/open_data/aqma/trafford_aqma_styled.geojson' },
+                { name: 'Care homes', url: 'https://www.trafforddatalab.io/maps/trafford.html?title=Care%20homes&about=Nursing%20and%20residential%20care%20homes%20in%20Trafford.&attr=Care%20Quality%20Commission&data=https://www.trafforddatalab.io/open_data/care_homes/trafford_care_homes.geojson' }
+            ];
 
 
             // ######### INITIALISATION #########
             var labMap = new LabLeafletMap({
                 title: title,
-                about: about
+                about: about + '<p>To load a dataset on the map, please choose from the following options:<br /><select name="frmDatasetList" onChange="location.href = this.value"></select></p>'
             });
+
+            //TODO: sort arrDatasets A-Z
+            //TODO: add arrDatasets as options to frmDatasetList
 
             labMap.baseLayers['Light'].addTo(labMap.map);   // Choose the base/tile layer for the map
 
