@@ -164,15 +164,23 @@
                     }
                     else {
                         //labMap.featureCache.target.setStyle(labMap.poly);
-                        // Reset the particular layer - not sure which object it belongs to so try all!
-                        labMap.boundaryLA.resetStyle(labMap.featureCache.target);
-                        labMap.boundaryLocalities.resetStyle(labMap.featureCache.target);
-                        labMap.boundaryWards.resetStyle(labMap.featureCache.target);
-                        labMap.boundaryMSOAs.resetStyle(labMap.featureCache.target);
-                        labMap.boundaryLSOAs.resetStyle(labMap.featureCache.target);
-                        labMap.boundaryOAs.resetStyle(labMap.featureCache.target);
 
-                        if (labMap.overlayData != null) labMap.overlayData.resetStyle(labMap.featureCache.target);
+                        if (labMap.overlayData != null && labMap.overlayData.hasLayer(labMap.featureCache.target)) {
+                            labMap.overlayData.resetStyle(labMap.featureCache.target);
+                        }
+                        else {
+                            labMap.featureCache.target.setStyle(labMap.poly);
+                        }
+
+                        // Reset the particular layer - not sure which object it belongs to so try all!
+                        //labMap.boundaryLA.resetStyle(labMap.featureCache.target);
+                        //labMap.boundaryLocalities.resetStyle(labMap.featureCache.target);
+                        //labMap.boundaryWards.resetStyle(labMap.featureCache.target);
+                        //labMap.boundaryMSOAs.resetStyle(labMap.featureCache.target);
+                        //labMap.boundaryLSOAs.resetStyle(labMap.featureCache.target);
+                        //labMap.boundaryOAs.resetStyle(labMap.featureCache.target);
+
+                        //if (labMap.overlayData != null) labMap.overlayData.resetStyle(labMap.featureCache.target);
                     }
                 }
             }
