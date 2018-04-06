@@ -5,7 +5,7 @@
         <meta charset="UTF-8"/>
         <meta name="keywords" content=""/>
         <meta name="description" content=""/>
-        <title>Trafford Data Lab: Trafford</title>
+        <title>Trafford Data Lab: The Borough of Trafford</title>
 
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==" crossorigin=""/>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
@@ -163,24 +163,13 @@
                         labMap.featureCache.target.setIcon(labMap.marker);
                     }
                     else {
-                        //labMap.featureCache.target.setStyle(labMap.poly);
-
+                        // work out if the feature is an overlay externally loaded layer or one of the geographies as the reset process is slightly different
                         if (labMap.overlayData != null && labMap.overlayData.hasLayer(labMap.featureCache.target)) {
                             labMap.overlayData.resetStyle(labMap.featureCache.target);
                         }
                         else {
                             labMap.featureCache.target.setStyle(labMap.poly);
                         }
-
-                        // Reset the particular layer - not sure which object it belongs to so try all!
-                        //labMap.boundaryLA.resetStyle(labMap.featureCache.target);
-                        //labMap.boundaryLocalities.resetStyle(labMap.featureCache.target);
-                        //labMap.boundaryWards.resetStyle(labMap.featureCache.target);
-                        //labMap.boundaryMSOAs.resetStyle(labMap.featureCache.target);
-                        //labMap.boundaryLSOAs.resetStyle(labMap.featureCache.target);
-                        //labMap.boundaryOAs.resetStyle(labMap.featureCache.target);
-
-                        //if (labMap.overlayData != null) labMap.overlayData.resetStyle(labMap.featureCache.target);
                     }
                 }
             }
