@@ -57,6 +57,7 @@
         <script src="https://www.trafforddatalab.io/assets/javascript/labError.js"></script>
         <script src="https://www.trafforddatalab.io/assets/javascript/labAjax.js"></script>
         <script src="https://www.trafforddatalab.io/assets/javascript/labGetQryStrValByKey.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/javascript/labSpinner.js"></script>
         <script src="https://www.trafforddatalab.io/assets/leaflet/labCreateTileLayer.js"></script>
         <script src="https://www.trafforddatalab.io/assets/leaflet/labLeafletMap.js"></script>
 
@@ -290,6 +291,8 @@
 
             // ######### OVERLAY DATA LAYER #########
             if (dataUrl !== null) {
+                startLabSpinner()  // inform the user that something is loading
+
                 // Attempt to load GeoJSON specified in the URL
                 labAjax(dataUrl, function (data) {
                     if (data !== null && data !== '') {
@@ -306,6 +309,8 @@
                     else {
                         labError(new LabException("Couldn't find URL: " + dataUrl));
                     }
+
+                    stopLabSpinner()   // remove the spinner as the data has loaded
                 });
             }
         </script>
