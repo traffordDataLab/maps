@@ -15,14 +15,6 @@
         <link rel="stylesheet" href="https://www.trafforddatalab.io/assets/leaflet/extended_markers/extended_markers_mixed.css"/>
 
         <style>
-            @media (min-width:621px)
-            {
-                .mainPanelControl
-                {
-                    width: 280px;   /* desired width when not on mobiles */
-                }
-            }
-
             .infoDockContainer
             {
                 max-height: 250px;
@@ -44,6 +36,19 @@
             {
                 font-weight: bold;
                 width: 1%;
+            }
+
+            .datasetSelect
+            {
+                width: 100%;
+            }
+
+            @media (min-width:621px)
+            {
+                .mainPanelControl
+                {
+                    width: 280px;   /* desired width when not on mobiles */
+                }
             }
         </style>
     </head>
@@ -217,7 +222,7 @@
             });
 
             // create the select element to choose the datasets
-            var datasetSelect = '<select name="frmDatasetList" onChange="location.href = this.value"><option value="" selected="selected">Select a dataset...</option>';
+            var datasetSelect = '<select name="frmDatasetList" onChange="location.href = this.value" class="datasetSelect"><option value="" selected="selected">Select a dataset...</option>';
 
             for (var i = 0; i < arrDatasets.length; i++) {
                 datasetSelect += '<option value="' + arrDatasets[i].url + '"';
