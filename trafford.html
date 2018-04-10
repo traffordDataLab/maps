@@ -196,7 +196,9 @@
 
 
             // ######### SETUP #########
-            var mainUrl = location.href.toLowerCase();
+            var baseUrl = location.protocol + '//' + location.hostname + location.pathname;     // everything but the querystring part of the URL
+            var queryUrl = location.search;                                                     // the querystring part of the URL
+
             var title = labGetQryStrValByKey('title');
             var about = labGetQryStrValByKey('about');
             var dataUrl = labGetQryStrValByKey('data');
@@ -208,8 +210,8 @@
 
             // list of datasets - add new ones to the end
             var arrDatasets = [
-                { name: 'Care homes', url: 'https://www.trafforddatalab.io/maps/trafford.html?title=Care%20homes&about=Nursing%20and%20residential%20care%20homes%20in%20Trafford.&attr=Care%20Quality%20Commission&data=https://www.trafforddatalab.io/open_data/care_homes/trafford_care_homes.geojson' },
-                { name: 'Air quality', url: 'https://www.trafforddatalab.io/maps/trafford.html?title=Air%20quality&about=Air%20Quality%20Management%20Areas%20(AQMAs)%20in%20Trafford.&attr=Department%20for%20Environment%20Food%20%26%20Rural%20Affairs%20(Defra)&data=https://www.trafforddatalab.io/open_data/aqma/trafford_aqma_styled.geojson' }
+                { name: 'Care homes', url: baseUrl + '?title=Care%20homes&about=Nursing%20and%20residential%20care%20homes%20in%20Trafford.&attr=Care%20Quality%20Commission&data=https://www.trafforddatalab.io/open_data/care_homes/trafford_care_homes.geojson' },
+                { name: 'Air quality', url: baseUrl + '?title=Air%20quality&about=Air%20Quality%20Management%20Areas%20(AQMAs)%20in%20Trafford.&attr=Department%20for%20Environment%20Food%20%26%20Rural%20Affairs%20(Defra)&data=https://www.trafforddatalab.io/open_data/AQMA/trafford_aqma_styled.geojson' }
             ];
 
             // sort the array to ensure A-Z order
@@ -226,7 +228,7 @@
 
             for (var i = 0; i < arrDatasets.length; i++) {
                 datasetSelect += '<option value="' + arrDatasets[i].url + '"';
-                if (mainUrl == arrDatasets[i].url.toLowerCase()) datasetSelect += ' selected="selected"';
+                if (baseUrl + queryUrl == arrDatasets[i].url) datasetSelect += ' selected="selected"';
                 datasetSelect += '>' + arrDatasets[i].name + '</option>';
             }
 
