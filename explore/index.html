@@ -161,7 +161,11 @@
                     var props = layer.feature.properties;
 
                     for (var key in props) {
-                        if (props.hasOwnProperty(key)) propsTable += '<tr><td>' + key + '</td><td>' + props[key] + '</td></tr>';
+                        if (props.hasOwnProperty(key)) {
+                            propsTable += '<tr><td>' + key + '</td><td>';
+                            propsTable += (props[key] == null) ? '' : props[key];
+                            propsTable += '</td></tr>';
+                        }
                     }
 
                     if (propsTable != '') labMap.updateInfo('<table class="propertiesTable">' + propsTable + '</table>');
@@ -214,7 +218,7 @@
                             try {
                                 // set the options for the GeoJSON layer
                                 var layerOptions = { style: styleOverlayData, onEachFeature: featureEvents, pointToLayer: pointData, pane: 'pane_data_overlay' };
-                                if (attr !== null) layerOptions['attribution'] = attr;
+                                if (attr !== null) layerOptions['attribution'] = 'data source: ' + attr;
 
                                 labMap.overlayData = L.geoJSON(data, layerOptions).addTo(labMap.map);
                             }
@@ -240,7 +244,14 @@
             // list of datasets - add new ones to the end
             var arrDatasets = [
                 { name: 'Air quality', url: baseUrl + '?title=Air%20quality&about=Air%20Quality%20Management%20Areas%20(AQMAs)%20in%20Trafford.&attr=Department%20for%20Environment%20Food%20%26%20Rural%20Affairs%20(Defra)&data=https://www.trafforddatalab.io/open_data/AQMA/trafford_aqma_styled.geojson' },
-                { name: 'Care homes', url: baseUrl + '?title=Care%20homes&about=Nursing%20and%20residential%20care%20homes%20in%20Trafford.&attr=Care%20Quality%20Commission&data=https://www.trafforddatalab.io/open_data/care_homes/trafford_care_homes.geojson' }
+                { name: 'Agricultural land', url: baseUrl + '?title=Agricultural%20land%20classification&about=Five%20grades%20of%20agricultural%20land%20(1%20%3D%20best%20quality%20to%205%20%3D%20poorest%20quality)%20with%20classifications%20for%20urban%20and%20non-agricultural%20land%20in%20Trafford.&attr=Natural%20England&data=https://www.trafforddatalab.io/open_data/agricultural_land_classification/trafford_agricultural_land_classification_styled.geojson' },
+                { name: 'Betting shops', url: baseUrl + '?title=Betting%20shops&about=Premises%20licence%20data%20for%20Greater%20Manchester.&attr=Gambling%20Commission&data=https://www.trafforddatalab.io/open_data/betting_shops/bettingshops_gm.geojson' },
+                { name: 'Buildings', url: baseUrl + '?title=Buildings&about=Buildings%20in%20Trafford%20derived%20from%20Ordnance%20Survey%27s%20OpenMap%20%2D%20Local.&attr=Ordnance%20Survey&data=https://www.trafforddatalab.io/open_data/buildings/trafford_buildings_styled.geojson' },
+                { name: 'Care homes', url: baseUrl + '?title=Care%20homes&about=Nursing%20and%20residential%20care%20homes%20in%20Trafford.&attr=Care%20Quality%20Commission&data=https://www.trafforddatalab.io/open_data/care_homes/trafford_care_homes.geojson' },
+                { name: 'Defibrillators', url: baseUrl + '?title=Defibrillators&about=Defibrillator%20locations%20within%20Trafford.&attr=Trafford%20Council&data=https://www.trafforddatalab.io/open_data/defibrillators/trafford_defibrillators.geojson' },
+                { name: 'Flood risk', url: baseUrl + '?title=Flood%20risk&about=The%20dataset%20shows%20the%20chance%20of%20flooding%20from%20rivers%20and%2for%20the%20sea%2c%20based%20on%2050m%20cells%20in%20Trafford.%20Each%20cell%20is%20allocated%20to%20one%20of%20four%20flood%20risk%20categories%2c%20taking%20into%20account%20flood%20defences%20and%20their%20condition.&attr=Environment%20Agency&data=https://www.trafforddatalab.io/open_data/flood_risk/trafford_flood_risk_styled.geojson' },
+                { name: 'GP practices', url: baseUrl + '?title=GP%20practices&about=General%20practice%20locations%20in%20Greater%20Manchester.&attr=Care%20Quality%20Commission&data=https://www.trafforddatalab.io/open_data/gp_practices/gp_practices.geojson' },
+                { name: 'Green spaces', url: baseUrl + '?title=Green%20spaces&about=Parks%2c%20playing%20fields%2c%20gardens%20and%20other%20green%20spaces%20that%20are%20likely%20to%20be%20publicly%20accessible%20in%20Trafford.&attr=Ordnance%20Survey&data=https://www.trafforddatalab.io/open_data/greenspaces/trafford_greenspace_sites_styled.geojson' }
             ];
 
             // sort the array to ensure A-Z order
