@@ -5,7 +5,7 @@
         <meta charset="UTF-8"/>
         <meta name="keywords" content=""/>
         <meta name="description" content=""/>
-        <title>Trafford Data Lab: Explorer</title>
+        <title>Trafford Data Lab: Explore</title>
 
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==" crossorigin=""/>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
@@ -69,9 +69,7 @@
         <script src="https://www.trafforddatalab.io/assets/javascript/labGetQryStrValByKey.js"></script>
         <script src="https://www.trafforddatalab.io/assets/javascript/labSpinner.js"></script>
         <script src="https://www.trafforddatalab.io/assets/leaflet/labCreateTileLayer.js"></script>
-        <!--script src="https://www.trafforddatalab.io/assets/leaflet/labLeafletMap.js"></script-->
-        <script src="labLeafletMap.js"></script>
-
+        <script src="https://www.trafforddatalab.io/assets/leaflet/labLeafletMap.js"></script>
 
         <script>
             // ######### FUNCTIONS #########
@@ -198,14 +196,14 @@
                 var dataUrl = labGetQryStrValByKey('data', queryStr);
                 var attr = labGetQryStrValByKey('attr', queryStr);
 
-                if (title === null) title = 'Trafford';
+                if (title === null) title = labMap.title;
                 document.title = 'Trafford Data Lab: ' + title; // set the page title to match the map title.
-                //TODO: set the map title
 
-                if (about === null) about = 'Explore the different geographies within the Local Authority by choosing a layer and then selecting an area.';
+                if (about === null) about = labMap.about;
                 labMap.updateAbout(about);
 
                 if (labMap.overlayData !== null) labMap.overlayData.removeFrom(labMap.map); // remove any current data layer
+                labMap.updateInfo();
 
                 if (dataUrl !== null) {
                     startLabSpinner()  // inform the user that something is loading
@@ -268,7 +266,7 @@
 
             // ######### INITIALISATION #########
             var labMap = new LabLeafletMap({
-                title: 'Explorer',
+                title: 'Explore',
                 about: 'Discover the different geographies within Trafford by choosing a layer and then selecting an area.',
                 filterGUI: datasetSelect
             });
@@ -317,7 +315,7 @@
             }));
 
 
-            // ######### SPATIAL GEOGRAPHY LAYERS #########
+            // ######### LOAD SPATIAL GEOGRAPHY LAYERS/LABELS #########
             // Add the Trafford boundary
             labAjax('https://www.trafforddatalab.io/spatial_data/local_authority/2016/trafford_local_authority_full_resolution.geojson', function (data) {
                 labMap.boundaryLA = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents }).addTo(labMap.map);
@@ -364,6 +362,19 @@
                 labMap.boundaryOAs = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents });
 
                 labMap.overlayLayers['4. Output Areas (OA)'] = labMap.boundaryOAs;
+                labMap.updateLayerControl();
+            });
+
+            // Add labels for the town centres
+            labAjax('https://www.trafforddatalab.io/spatial_data/town_centres/trafford_town_centres.geojson', function (data) {
+
+                labMap.townCentres = L.geoJSON(data, {
+                    pointToLayer: function (feature, latlng) {
+                        return L.marker(latlng, { icon: L.divIcon({ iconSize: null }) }).bindTooltip(feature.properties.name, { direction: 'center', className: 'labLabels', opacity: 1, permanent: true });
+                    }
+                });
+
+                labMap.overlayLayers['Town centre names'] = labMap.townCentres;
                 labMap.updateLayerControl();
             });
         </script>
