@@ -5,7 +5,7 @@
         <meta charset="UTF-8"/>
         <meta name="keywords" content=""/>
         <meta name="description" content=""/>
-        <title>Trafford Data Lab: The Borough of Trafford</title>
+        <title>Trafford Data Lab: Explorer</title>
 
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==" crossorigin=""/>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
@@ -15,6 +15,11 @@
         <link rel="stylesheet" href="https://www.trafforddatalab.io/assets/leaflet/extended_markers/extended_markers_mixed.css"/>
 
         <style>
+            .aboutContainer
+            {
+                margin-bottom: 10px;
+            }
+
             .infoDockContainer
             {
                 max-height: 250px;
@@ -64,7 +69,8 @@
         <script src="https://www.trafforddatalab.io/assets/javascript/labGetQryStrValByKey.js"></script>
         <script src="https://www.trafforddatalab.io/assets/javascript/labSpinner.js"></script>
         <script src="https://www.trafforddatalab.io/assets/leaflet/labCreateTileLayer.js"></script>
-        <script src="https://www.trafforddatalab.io/assets/leaflet/labLeafletMap.js"></script>
+        <!--script src="https://www.trafforddatalab.io/assets/leaflet/labLeafletMap.js"></script-->
+        <script src="labLeafletMap.js"></script>
 
 
         <script>
@@ -185,33 +191,58 @@
                 return styles;
             }
 
-            // Sorting the dataset array A-Z based on the name of the dataset
-            function sortDatasetsArray(a, b) {
-                var x = a.name.toLowerCase();
-                var y = b.name.toLowerCase();
-                if (x < y) return -1;
-                if (x > y) return 1;
-                return 0;
+            // for loading external data as an overlay layer
+            function loadOverlayData(queryStr) {
+                var title = labGetQryStrValByKey('title', queryStr);
+                var about = labGetQryStrValByKey('about', queryStr);
+                var dataUrl = labGetQryStrValByKey('data', queryStr);
+                var attr = labGetQryStrValByKey('attr', queryStr);
+
+                if (title === null) title = 'Trafford';
+                document.title = 'Trafford Data Lab: ' + title; // set the page title to match the map title.
+                //TODO: set the map title
+
+                if (about === null) about = 'Explore the different geographies within the Local Authority by choosing a layer and then selecting an area.';
+                labMap.updateAbout(about);
+
+                if (labMap.overlayData !== null) labMap.overlayData.removeFrom(labMap.map); // remove any current data layer
+
+                if (dataUrl !== null) {
+                    startLabSpinner()  // inform the user that something is loading
+
+                    // Attempt to load GeoJSON specified in the URL
+                    labAjax(dataUrl, function (data) {
+                        if (data !== null && data !== '') {
+                            try {
+                                // set the options for the GeoJSON layer
+                                var layerOptions = { style: styleOverlayData, onEachFeature: featureEvents, pointToLayer: pointData, pane: 'pane_data_overlay' };
+                                if (attr !== null) layerOptions['attribution'] = attr;
+
+                                labMap.overlayData = L.geoJSON(data, layerOptions).addTo(labMap.map);
+                            }
+                            catch (e) {
+                                labError(new LabException("Error attempting to create GeoJSON Leaflet layer: " + e.message));
+                            }
+                        }
+                        else {
+                            labError(new LabException("Couldn't find URL: " + dataUrl));
+                        }
+
+                        stopLabSpinner()   // remove the spinner as the data has loaded
+                    });
+                }
             }
 
 
             // ######### SETUP #########
+            // Get values from the URL to see if we are required to load overlay data
             var baseUrl = location.protocol + '//' + location.hostname + location.pathname;     // everything but the querystring part of the URL
             var queryUrl = location.search;                                                     // the querystring part of the URL
 
-            var title = labGetQryStrValByKey('title');
-            var about = labGetQryStrValByKey('about');
-            var dataUrl = labGetQryStrValByKey('data');
-            var attr = labGetQryStrValByKey('attr');
-
-            // defaults
-            if (title === null) title = 'Trafford';
-            if (about === null) about = 'Explore the different geographies within the Local Authority by choosing a layer and then selecting an area.';
-
             // list of datasets - add new ones to the end
             var arrDatasets = [
-                { name: 'Care homes', url: baseUrl + '?title=Care%20homes&about=Nursing%20and%20residential%20care%20homes%20in%20Trafford.&attr=Care%20Quality%20Commission&data=https://www.trafforddatalab.io/open_data/care_homes/trafford_care_homes.geojson' },
-                { name: 'Air quality', url: baseUrl + '?title=Air%20quality&about=Air%20Quality%20Management%20Areas%20(AQMAs)%20in%20Trafford.&attr=Department%20for%20Environment%20Food%20%26%20Rural%20Affairs%20(Defra)&data=https://www.trafforddatalab.io/open_data/AQMA/trafford_aqma_styled.geojson' }
+                { name: 'Air quality', url: baseUrl + '?title=Air%20quality&about=Air%20Quality%20Management%20Areas%20(AQMAs)%20in%20Trafford.&attr=Department%20for%20Environment%20Food%20%26%20Rural%20Affairs%20(Defra)&data=https://www.trafforddatalab.io/open_data/AQMA/trafford_aqma_styled.geojson' },
+                { name: 'Care homes', url: baseUrl + '?title=Care%20homes&about=Nursing%20and%20residential%20care%20homes%20in%20Trafford.&attr=Care%20Quality%20Commission&data=https://www.trafforddatalab.io/open_data/care_homes/trafford_care_homes.geojson' }
             ];
 
             // sort the array to ensure A-Z order
@@ -224,7 +255,7 @@
             });
 
             // create the select element to choose the datasets
-            var datasetSelect = '<select name="frmDatasetList" onChange="location.href = this.value" class="datasetSelect"><option value="" selected="selected">Select a dataset...</option>';
+            var datasetSelect = '<select name="frmDatasetList" onChange="loadOverlayData(this.value)" class="datasetSelect"><option value="" selected="selected">Select a dataset to visualise...</option>';
 
             for (var i = 0; i < arrDatasets.length; i++) {
                 datasetSelect += '<option value="' + arrDatasets[i].url + '"';
@@ -237,9 +268,13 @@
 
             // ######### INITIALISATION #########
             var labMap = new LabLeafletMap({
-                title: title,
-                about: about + '<p>To load a dataset on the map, please choose from the following options:<br />' + datasetSelect + '</p>'
+                title: 'Explorer',
+                about: 'Discover the different geographies within Trafford by choosing a layer and then selecting an area.',
+                filterGUI: datasetSelect
             });
+
+            labMap.overlayData = null;  // object to store overlay data
+            if (queryUrl !== '' && queryUrl !== null) loadOverlayData(queryUrl); // any external data to load?
 
             labMap.baseLayers['Light'].addTo(labMap.map);   // Choose the base/tile layer for the map
 
@@ -331,32 +366,6 @@
                 labMap.overlayLayers['4. Output Areas (OA)'] = labMap.boundaryOAs;
                 labMap.updateLayerControl();
             });
-
-
-            // ######### OVERLAY DATA LAYER #########
-            if (dataUrl !== null) {
-                startLabSpinner()  // inform the user that something is loading
-
-                // Attempt to load GeoJSON specified in the URL
-                labAjax(dataUrl, function (data) {
-                    if (data !== null && data !== '') {
-                        try {
-                            labMap.overlayData = L.geoJSON(data, { style: styleOverlayData, attribution: attr, onEachFeature: featureEvents, pointToLayer: pointData, pane: 'pane_data_overlay' }).addTo(labMap.map);
-                            labMap.map.fitBounds(labMap.overlayData.getBounds()); // adjust the zoom to fit the data to the screen size
-
-                            document.title = 'Trafford Data Lab: ' + title; // set the page title to match the map title.
-                        }
-                        catch (e) {
-                            labError(new LabException("Error attempting to create GeoJSON Leaflet layer: " + e.message));
-                        }
-                    }
-                    else {
-                        labError(new LabException("Couldn't find URL: " + dataUrl));
-                    }
-
-                    stopLabSpinner()   // remove the spinner as the data has loaded
-                });
-            }
         </script>
     </body>
 </html>
