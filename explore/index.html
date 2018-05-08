@@ -161,7 +161,8 @@
                     var props = layer.feature.properties;
 
                     for (var key in props) {
-                        if (props.hasOwnProperty(key)) {
+                        // ensure that the key is a valid property of the GeoJson object and isn't one of the styling options
+                        if (props.hasOwnProperty(key) && key != 'stroke' && key != 'stroke-width' && key != 'stroke-opacity' && key != 'fill' && key != 'fill-opacity') {
                             propsTable += '<tr><td>' + key + '</td><td>';
                             propsTable += (props[key] == null) ? '' : props[key];
                             propsTable += '</td></tr>';
