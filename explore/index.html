@@ -312,9 +312,9 @@
                 about: 'Discover the different geographies within Trafford by choosing a layer and then selecting an area.',
                 filterGUI: datasetSelect,
                 baseLayers: {
+                    "Aerial": labCreateTileLayer("Esri.WorldImagery"),
+                    "Detailed": labCreateTileLayer("OpenStreetMap.Mapnik"),
                     "Light": labCreateTileLayer("CartoDB.Positron"),
-                    "Satellite": labCreateTileLayer("Esri.WorldImagery"),
-                    "Street": labCreateTileLayer("OpenStreetMap.Mapnik"),
                     "None": labCreateTileLayer(null)
                 }
             });
@@ -369,15 +369,7 @@
                 labMap.boundaryLA = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents }).addTo(labMap.map);
                 labMap.map.fitBounds(labMap.boundaryLA.getBounds()); // adjust the zoom to fit the boundary to the screen size
 
-                labMap.overlayLayers['1. Authority boundary'] = labMap.boundaryLA;
-                labMap.updateLayerControl();
-            });
-
-            // Add the Trafford localities
-            labAjax('https://www.trafforddatalab.io/spatial_data/council_defined/trafford_localities.geojson', function (data) {
-                labMap.boundaryLocalities = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents });
-
-                labMap.overlayLayers['Localities (Trafford Council)'] = labMap.boundaryLocalities;
+                labMap.overlayLayers['1. Local authority'] = labMap.boundaryLA;
                 labMap.updateLayerControl();
             });
 
@@ -385,7 +377,7 @@
             labAjax('https://www.trafforddatalab.io/spatial_data/ward/2017/trafford_ward_full_resolution.geojson', function (data) {
                 labMap.boundaryWards = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents });
 
-                labMap.overlayLayers['2a. Electoral wards'] = labMap.boundaryWards;
+                labMap.overlayLayers['2. Wards'] = labMap.boundaryWards;
                 labMap.updateLayerControl();
             });
 
@@ -393,7 +385,7 @@
             labAjax('https://www.trafforddatalab.io/spatial_data/msoa/2011/trafford_msoa_full_resolution.geojson', function (data) {
                 labMap.boundaryMSOAs = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents });
 
-                labMap.overlayLayers['2b. Middle Layer Super Output Areas (MSOA)'] = labMap.boundaryMSOAs;
+                labMap.overlayLayers['3. MSOA'] = labMap.boundaryMSOAs;
                 labMap.updateLayerControl();
             });
 
@@ -401,7 +393,7 @@
             labAjax('https://www.trafforddatalab.io/spatial_data/lsoa/2011/trafford_lsoa_full_resolution.geojson', function (data) {
                 labMap.boundaryLSOAs = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents });
 
-                labMap.overlayLayers['3. Lower Layer Super Output Areas (LSOA)'] = labMap.boundaryLSOAs;
+                labMap.overlayLayers['4. LSOA'] = labMap.boundaryLSOAs;
                 labMap.updateLayerControl();
             });
 
@@ -409,7 +401,15 @@
             labAjax('https://www.trafforddatalab.io/spatial_data/oa/2011/trafford_oa_generalised.geojson', function (data) {
                 labMap.boundaryOAs = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents });
 
-                labMap.overlayLayers['4. Output Areas (OA)'] = labMap.boundaryOAs;
+                labMap.overlayLayers['5. OA'] = labMap.boundaryOAs;
+                labMap.updateLayerControl();
+            });
+
+            // Add the Trafford localities
+            labAjax('https://www.trafforddatalab.io/spatial_data/council_defined/trafford_localities.geojson', function (data) {
+                labMap.boundaryLocalities = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents });
+
+                labMap.overlayLayers['6. Localities'] = labMap.boundaryLocalities;
                 labMap.updateLayerControl();
             });
 
@@ -422,7 +422,7 @@
                     }
                 });
 
-                labMap.overlayLayers['Town centre names'] = labMap.townCentres;
+                labMap.overlayLayers['7. Town centres'] = labMap.townCentres;
                 labMap.updateLayerControl();
             });
         </script>
