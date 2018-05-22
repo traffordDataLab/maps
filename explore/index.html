@@ -318,13 +318,7 @@
             var labMap = new LabLeafletMap({
                 title: 'Explore',
                 about: 'Discover the different geographies within Trafford by choosing a layer and then selecting an area.',
-                filterGUI: datasetSelect,
-                baseLayers: {
-                    "Aerial": labCreateTileLayer("Esri.WorldImagery"),
-                    "High detail": labCreateTileLayer("OpenStreetMap.Mapnik"),
-                    "Low detail": labCreateTileLayer("CartoDB.Positron"),
-                    "None": labCreateTileLayer(null)
-                }
+                filterGUI: datasetSelect
             });
 
             labMap.overlayData = null;  // object to store overlay data
