@@ -173,7 +173,7 @@
                 }
             }
 
-            // This function is for styling non-point data loaded externally. If it has internal styling use that, otherwise use a default
+            // This function is for styling non-point data. If it has internal styling properties use them, otherwise use a default
             function styleOverlayData(feature) {
                 var styles = {
                     color: '#fc6721',
@@ -194,32 +194,29 @@
                 return styles;
             }
 
-            // for loading external data as an overlay layer
-            function loadOverlayData(queryStr) {
-                var title = labGetQryStrValByKey('title', queryStr);
-                var about = labGetQryStrValByKey('about', queryStr);
-                var dataUrl = labGetQryStrValByKey('data', queryStr);
-                var attr = labGetQryStrValByKey('attr', queryStr);
-
-                if (title === null) title = labMap.title;
-                document.title = 'Trafford Data Lab: ' + title; // set the page title to match the map title.
-
-                if (about === null) about = labMap.about;
-                labMap.updateAbout(about);
-
-                if (labMap.overlayData !== null) labMap.overlayData.removeFrom(labMap.map); // remove any current data layer
+            // for loading data as an overlay layer
+            function loadOverlayData(datasetKey) {
+                // Remove any current data layer and reset the info panel
+                if (labMap.overlayData !== null) labMap.overlayData.removeFrom(labMap.map);
                 labMap.updateInfo();
 
-                if (dataUrl !== null) {
+                // Check to see if the dataset key we've been given matches any datset objects
+                if (objDatasets.hasOwnProperty(datasetKey)) {
+                    // Set the page title to match the dataset title.
+                    document.title = 'Trafford Data Lab: ' + objDatasets[datasetKey].title;
+
+                    // Update the about section
+                    labMap.updateAbout(objDatasets[datasetKey].about);
+
                     startLabSpinner()  // inform the user that something is loading
 
                     // Attempt to load GeoJSON specified in the URL
-                    labAjax(dataUrl, function (data) {
+                    labAjax(objDatasets[datasetKey].url, function (data) {
                         if (data !== null && data !== '') {
                             try {
                                 // set the options for the GeoJSON layer
                                 var layerOptions = { style: styleOverlayData, onEachFeature: featureEvents, pointToLayer: pointData, pane: 'pane_data_overlay' };
-                                if (attr !== null) layerOptions['attribution'] = 'data source: ' + attr;
+                                if (objDatasets[datasetKey].attribution !== null) layerOptions['attribution'] = 'data source: ' + objDatasets[datasetKey].attribution;
 
                                 labMap.overlayData = L.geoJSON(data, layerOptions).addTo(labMap.map);
                             }
@@ -228,21 +225,106 @@
                             }
                         }
                         else {
-                            labError(new LabException("Couldn't find URL: " + dataUrl));
+                            labError(new LabException("Couldn't find URL: " + objDatasets[datasetKey].url));
                         }
 
                         stopLabSpinner()   // remove the spinner as the data has loaded
                     });
                 }
+                else {
+                    // No dataset found so reset the map to the initial state
+                    document.title = 'Trafford Data Lab: ' + labMap.title
+                    labMap.updateAbout(labMap.about);
+                }
             }
 
 
             // ######### SETUP #########
-            // Get values from the URL to see if we are required to load overlay data
-            var baseUrl = location.protocol + '//' + location.hostname + location.pathname;     // everything but the querystring part of the URL
-            var queryUrl = location.search;                                                     // the querystring part of the URL
-
             // list of datasets - add new ones to the end
+            var objDatasets = {
+                'agricultural_land': {
+                    title: 'Agricultural land',
+                    about: 'Five grades of agricultural land (1 = best quality to 5 = poorest quality) with classifications for urban and non-agricultural land in Trafford.<br /><br />Download: <a href="https://www.trafforddatalab.io/open_data/agricultural_land_classification/trafford_agricultural_land_classification.geojson" target="_blank">GeoJSON</a>.<br />Further resources available <a href="https://github.com/traffordDataLab/open_data/tree/master/agricultural_land_classification" target="_blank">on GitHub</a>.',
+                    attribution: 'Natural England',
+                    url: 'https://www.trafforddatalab.io/open_data/agricultural_land_classification/trafford_agricultural_land_classification_styled.geojson',
+                    theme: 'Environment'
+                },
+                'air_quality': {
+                    title: 'Air quality',
+                    about: 'Air Quality Management Areas (AQMAs) in Trafford.<br /><br />Download: <a href="https://www.trafforddatalab.io/open_data/AQMA/trafford_aqma.geojson" target="_blank">GeoJSON</a>.<br />Further resources available <a href="https://github.com/traffordDataLab/open_data/tree/master/AQMA" target="_blank">on GitHub</a>.',
+                    attribution: 'Department for Environment Food & Rural Affairs (Defra)',
+                    url: 'https://www.trafforddatalab.io/open_data/AQMA/trafford_aqma_styled.geojson',
+                    theme: 'Environment'
+                },
+                'betting_shops': {
+                    title: 'Betting shops',
+                    about: 'Premises licence data for Trafford.<br /><br />Download: <a href="https://www.trafforddatalab.io/open_data/betting_shops/bettingshops_trafford.csv" target="_blank">CSV</a> | <a href="https://www.trafforddatalab.io/open_data/betting_shops/bettingshops_trafford.geojson" target="_blank">GeoJSON</a>.<br />Further resources available <a href="https://github.com/traffordDataLab/open_data/tree/master/betting_shops" target="_blank">on GitHub</a>.',
+                    attribution: 'Gambling Commission',
+                    url: 'https://www.trafforddatalab.io/open_data/betting_shops/bettingshops_trafford.geojson',
+                    theme: 'Licenced premises'
+                },
+                'buildings': {
+                    title: 'Buildings',
+                    about: 'Buildings in Trafford derived from Ordnance Survey\'s OpenMap - Local.<br /><br />Download: <a href="https://www.trafforddatalab.io/open_data/buildings/trafford_buildings.geojson" target="_blank">GeoJSON</a>.<br />Further resources available <a href="https://github.com/traffordDataLab/open_data/tree/master/buildings" target="_blank">on GitHub</a>.',
+                    attribution: 'Ordnance Survey',
+                    url: 'https://www.trafforddatalab.io/open_data/buildings/trafford_buildings_styled.geojson',
+                    theme: 'Housing'
+                },
+                'care_homes': {
+                    title: 'Care homes',
+                    about: 'Nursing and residential care homes in Trafford.<br /><br />Download: <a href="https://www.trafforddatalab.io/open_data/care_homes/trafford_care_homes.csv" target="_blank">CSV</a> | <a href="https://www.trafforddatalab.io/open_data/care_homes/trafford_care_homes.geojson" target="_blank">GeoJSON</a>.<br />Further resources available <a href="https://github.com/traffordDataLab/open_data/tree/master/care_homes" target="_blank">on GitHub</a>.',
+                    attribution: 'Care Quality Commission',
+                    url: 'https://www.trafforddatalab.io/open_data/care_homes/trafford_care_homes.geojson',
+                    theme: 'Health'
+                }
+
+                /* TEMPLATE
+                '': {
+                    title: '',
+                    about: '',
+                    attribution: '',
+                    url: '',
+                    theme: ''
+                }
+                */
+            }
+
+            var arrSelectList = [];     // array to hold the contents of the select list to choose the dataset to visualise
+
+            // Loop through the objDatasets object adding the main key, title and theme to the array
+            for (key in objDatasets) {
+                if (objDatasets.hasOwnProperty(key)) {
+                    arrSelectList.push({ dataset: key, title: objDatasets[key].title, theme: objDatasets[key].theme });
+                }
+            }
+
+            // Sort the select list array by the themes first as these form the optgroup headings, then by the dataset titles
+            arrSelectList.sort(function(a, b) {
+                var themeA = a.theme.toLowerCase();
+                var themeB = b.theme.toLowerCase();
+                var titleA = a.title.toLowerCase();
+                var titleB = b.title.toLowerCase();
+
+                // attempt sorting by theme first
+                if (themeA < themeB) return -1;
+                if (themeA > themeB) return 1;
+
+                // if the theme is the same, sort by the title
+                if (titleA < titleB) return -1;
+                if (titleA > titleB) return 1;
+                return 0;
+            });
+
+
+
+
+
+
+
+
+
+
+            /*
             var arrDatasets = [
                 { name: 'Agricultural land', url: baseUrl + '?title=Agricultural%20land%20classification&about=Five%20grades%20of%20agricultural%20land%20(1%20%3D%20best%20quality%20to%205%20%3D%20poorest%20quality)%20with%20classifications%20for%20urban%20and%20non-agricultural%20land%20in%20Trafford.%3cbr%20%2f%3e%3cbr%20%2f%3eDownload%3a%20%3ca%20href%3d%22https%3a%2f%2fwww.trafforddatalab.io%2fopen_data%2fagricultural_land_classification%2ftrafford_agricultural_land_classification.geojson%22%20target%3d%22_blank%22%3eGeoJSON%3c%2fa%3e.%3cbr%20%2f%3eFurther%20resources%20available%20%3ca%20href%3d%22https%3a%2f%2fgithub.com%2ftraffordDataLab%2fopen_data%2ftree%2fmaster%2fagricultural_land_classification%22%20target%3d%22_blank%22%3eon%20GitHub%3c%2fa%3e.&attr=Natural%20England&data=https://www.trafforddatalab.io/open_data/agricultural_land_classification/trafford_agricultural_land_classification_styled.geojson' },
 
@@ -302,26 +384,31 @@
 
                 { name: 'Woodland', url: baseUrl + '?title=Woodland&about=Woodland%20in%20Trafford%20from%20OS%20OpenMap%20-%20Local.%3cbr%20%2f%3e%3cbr%20%2f%3eDownload%3a%20%3ca%20href%3d%22https%3a%2f%2fwww.trafforddatalab.io%2fopen_data%2fwoodland%2ftrafford_woodland.geojson%22%20target%3d%22_blank%22%3eGeoJSON%3c%2fa%3e.%3cbr%20%2f%3eFurther%20resources%20available%20%3ca%20href%3d%22https%3a%2f%2fgithub.com%2ftraffordDataLab%2fopen_data%2ftree%2fmaster%2fwoodland%22%20target%3d%22_blank%22%3eon%20GitHub%3c%2fa%3e.&attr=Ordnance%20Survey&data=https://www.trafforddatalab.io/open_data/woodland/trafford_woodland_styled.geojson' }
             ];
+            */
 
-            // sort the array to ensure A-Z order
-            arrDatasets.sort(function (a, b) {
-                var x = a.name.toLowerCase();
-                var y = b.name.toLowerCase();
-                if (x < y) return -1;
-                if (x > y) return 1;
-                return 0;
-            });
+            // Check the URL for a Query String
+            var datasetQS = labGetQryStrValByKey('dataset');
 
-            // create the select element to choose the datasets
+            // Create the select element to choose the objDatasets
             var datasetSelect = '<select name="frmDatasetList" onChange="loadOverlayData(this.value)" class="datasetSelect"><option value="" selected="selected">Select a dataset to visualise...</option>';
 
-            for (var i = 0; i < arrDatasets.length; i++) {
-                datasetSelect += '<option value="' + arrDatasets[i].url + '"';
-                if (baseUrl + queryUrl == arrDatasets[i].url) datasetSelect += ' selected="selected"';
-                datasetSelect += '>' + arrDatasets[i].name + '</option>';
+            var optGroupTheme = '';     // ensure we create new optgroup tags based on the themes
+
+            for (var i = 0; i < arrSelectList.length; i++) {
+                // Write out new optgroup tag
+                if (optGroupTheme != arrSelectList[i].theme) {
+                    if (optGroupTheme != '') datasetSelect += '</optgroup>';
+                    datasetSelect += '<optgroup label="' + arrSelectList[i].theme + '">';
+                    optGroupTheme = arrSelectList[i].theme;
+                }
+
+                // Write out the objDatasets
+                datasetSelect += '<option value="' + arrSelectList[i].dataset + '"';
+                if (datasetQS == arrSelectList[i].dataset) datasetSelect += ' selected="selected"';
+                datasetSelect += '>' + arrSelectList[i].title + '</option>';
             }
 
-            datasetSelect += '</select>';
+            datasetSelect += '</optgroup></select>';
 
 
             // ######### INITIALISATION #########
@@ -331,12 +418,9 @@
                 filterGUI: datasetSelect
             });
 
-            labMap.overlayData = null;  // object to store overlay data
-            if (queryUrl !== '' && queryUrl !== null) loadOverlayData(queryUrl); // any external data to load?
-
             labMap.baseLayers['Low detail'].addTo(labMap.map);   // Choose the base/tile layer for the map
-
-            labMap.featureCache = null;    // for caching the feature currently selected
+            labMap.overlayData = null;  // object to store overlay data
+            labMap.featureCache = null; // for caching the feature currently selected
 
             // Polygon feature styling
             labMap.poly = {
@@ -365,6 +449,9 @@
                 markerColor: 'pin-circle-yellow-bright',
                 iconSize: [20, 39]
             });
+
+            // Check if there is a dataset to load via the Query String
+            if (datasetQS !== null) loadOverlayData(datasetQS);
 
 
             // ######### EVENTS #########
