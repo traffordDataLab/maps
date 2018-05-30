@@ -233,8 +233,14 @@
 
                                 // Are we requiring marker clustering?
                                 if (objDatasets[datasetKey].hasOwnProperty('cluster') && objDatasets[datasetKey].cluster === true) {
-                                    labMap.datasetLayer = L.markerClusterGroup();            // create a Leaflet marker cluster
-                                    labMap.datasetLayer.addLayer(labMap.datasetGeoJson);     // add the GeoJSON to the cluster object - necessary to preserve GeoJSON containing both points and polygons
+                                    // create a Leaflet marker cluster object
+                                    labMap.datasetLayer = L.markerClusterGroup({
+                                        spiderLegPolylineOptions: { weight: 2, color: '#fc6721', opacity: 0.5 },
+                                        polygonOptions: { weight: 2, color: '#fc6721', opacity: 0.5, dashArray: '5' }
+                                    });
+
+                                    // add the GeoJSON to the cluster object - necessary to preserve GeoJSON containing both points and polygons
+                                    labMap.datasetLayer.addLayer(labMap.datasetGeoJson);
                                 }
                                 else {
                                     labMap.datasetLayer = labMap.datasetGeoJson;             // set the overlay object equal to the GeoJSON object as we are not using clusering
