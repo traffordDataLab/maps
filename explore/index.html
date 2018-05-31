@@ -57,6 +57,11 @@
                     width: 280px;   /* desired width when not on mobiles */
                 }
             }
+
+            .toggleCluster
+            {
+                font-size: 12px;
+            }
         </style>
     </head>
 
@@ -133,6 +138,14 @@
 
             // To setup any point data features within GeoJSON
             function pointData (feature, latlng) {
+                if (labMap.datasetCluster == null) {
+                    // create the marker cluster object in case we require this feature - also indicates to the application that we have point data in the dataset
+                    labMap.datasetCluster = L.markerClusterGroup({
+                        spiderLegPolylineOptions: { weight: 2, color: '#fc6721', opacity: 0.5 },
+                        polygonOptions: { weight: 2, color: '#fc6721', opacity: 0.5, dashArray: '5' }
+                    });
+                }
+
                 if (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('featureRadius') && feature.properties.featureRadius !== '') {
                     return L.circle(latlng, { radius: feature.properties.featureRadius });
                 }
@@ -203,12 +216,17 @@
 
             // for loading data as an overlay layer
             function loadDatasetLayer(datasetKey) {
-                // Remove any current data layer and reset the info panel
+                // Remove any current data layer and reset the variables
                 if (labMap.datasetLayer !== null) {
                     labMap.datasetLayer.removeFrom(labMap.map);
                     labMap.datasetLayer = null;
                     labMap.datasetGeoJson = null;
+                    labMap.datasetCluster = null;
+
+                    if (L.DomUtil.hasClass(labMap.toggleClusterContainer, 'hideContent') == false) L.DomUtil.addClass(labMap.toggleClusterContainer, 'hideContent');
                 }
+
+                //reset the info panel
                 labMap.updateInfo();
 
                 // Check to see if the dataset key we've been given matches any datset objects
@@ -231,22 +249,28 @@
 
                                 labMap.datasetGeoJson = L.geoJSON(data, layerOptions);     // create and store the GeoJSON object
 
-                                // Are we requiring marker clustering?
-                                if (objDatasets[datasetKey].hasOwnProperty('cluster') && objDatasets[datasetKey].cluster === true) {
-                                    // create a Leaflet marker cluster object
-                                    labMap.datasetLayer = L.markerClusterGroup({
-                                        spiderLegPolylineOptions: { weight: 2, color: '#fc6721', opacity: 0.5 },
-                                        polygonOptions: { weight: 2, color: '#fc6721', opacity: 0.5, dashArray: '5' }
-                                    });
+                                // do we have point data in the dataset?
+                                if (labMap.datasetCluster != null) {
+                                    labMap.datasetCluster.addLayer(labMap.datasetGeoJson);  // add the GeoJSON to the cluster object - point data will be clustered but polygons/lines won't
 
-                                    // add the GeoJSON to the cluster object - necessary to preserve GeoJSON containing both points and polygons
-                                    labMap.datasetLayer.addLayer(labMap.datasetGeoJson);
+                                    // do we want the clustering to be on by default
+                                    if (objDatasets[datasetKey].hasOwnProperty('cluster') && objDatasets[datasetKey].cluster === true) {
+                                        labMap.datasetLayer = labMap.datasetCluster;    // the layer we are going to add to the map is the clustered version
+                                        document.getElementById('toggleClustering').checked = true;
+                                    }
+                                    else {
+                                        labMap.datasetLayer = labMap.datasetGeoJson;    // the layer we are going to add to the map is the straight GeoJSON we loaded
+                                        document.getElementById('toggleClustering').checked = false;
+                                    }
+
+                                    L.DomUtil.removeClass(labMap.toggleClusterContainer, 'hideContent');    // show the clustering checkbox
                                 }
                                 else {
-                                    labMap.datasetLayer = labMap.datasetGeoJson;             // set the overlay object equal to the GeoJSON object as we are not using clusering
+                                    labMap.datasetLayer = labMap.datasetGeoJson;    // the layer we are going to add to the map is the straight GeoJSON we loaded
                                 }
 
-                                labMap.datasetLayer.addTo(labMap.map);                       // add the dataset layer to the map
+                                // add the dataset layer to the map
+                                labMap.datasetLayer.addTo(labMap.map);
                             }
                             catch (e) {
                                 labError(new LabException("Error attempting to create GeoJSON Leaflet layer: " + e.message));
@@ -264,6 +288,20 @@
                     document.title = 'Trafford Data Lab: ' + labMap.title
                     labMap.updateAbout(labMap.about);
                 }
+            }
+
+            // Handles clustering and de-clustering of point data - called via click event on clustering checkbox
+            function toggleClustering() {
+                labMap.datasetLayer.removeFrom(labMap.map);
+
+                if (document.getElementById('toggleClustering').checked) {
+                    labMap.datasetLayer = labMap.datasetCluster;    // the layer we are going to add to the map is the clustered version
+                }
+                else {
+                    labMap.datasetLayer = labMap.datasetGeoJson;    // the layer we are going to add to the map is the straight GeoJSON we loaded
+                }
+
+                labMap.datasetLayer.addTo(labMap.map);
             }
 
 
@@ -303,7 +341,8 @@
                     about: 'Nursing and residential care homes in Trafford.<br /><br />Download: <a href="https://www.trafforddatalab.io/open_data/care_homes/trafford_care_homes.csv" target="_blank">CSV</a> | <a href="https://www.trafforddatalab.io/open_data/care_homes/trafford_care_homes.geojson" target="_blank">GeoJSON</a>.<br />Further resources available <a href="https://github.com/traffordDataLab/open_data/tree/master/care_homes" target="_blank">on GitHub</a>.',
                     attribution: 'Care Quality Commission',
                     url: 'https://www.trafforddatalab.io/open_data/care_homes/trafford_care_homes.geojson',
-                    theme: 'Health'
+                    theme: 'Health',
+                    cluster: true
                 },
                 'cctv': {
                     title: 'CCTV',
@@ -383,7 +422,8 @@
                     about: 'General practice (GP) locations in Trafford.<br /><br />Download: <a href="https://www.trafforddatalab.io/open_data/general_practice/trafford_general_practices.csv" target="_blank">CSV</a> | <a href="https://www.trafforddatalab.io/open_data/general_practice/trafford_general_practices.geojson" target="_blank">GeoJSON</a>.<br />Further resources available <a href="https://github.com/traffordDataLab/open_data/tree/master/general_practice" target="_blank">on GitHub</a>.',
                     attribution: 'Care Quality Commission',
                     url: 'https://www.trafforddatalab.io/open_data/general_practice/trafford_general_practices.geojson',
-                    theme: 'Health'
+                    theme: 'Health',
+                    cluster: true
                 },
                 'green_spaces': {
                     title: 'Green spaces',
@@ -545,13 +585,15 @@
             var labMap = new LabLeafletMap({
                 title: 'Explore',
                 about: 'Discover the different geographies within Trafford by choosing a layer and then selecting an area.',
-                filterGUI: datasetSelect
+                filterGUI: datasetSelect + '<div id="toggleClusteringContainer" class="hideContent"><input type="checkbox" id="toggleClustering" onClick="toggleClustering()"/><label for="toggleClustering" class="toggleCluster">cluster markers</label></div>'
             });
 
             labMap.baseLayers['Low detail'].addTo(labMap.map);   // Choose the base/tile layer for the map
-            labMap.datasetGeoJson = null;   // object to store GeoJSON created from datasets loaded from the select list. ***NOTE*** this object is important for the resetting of styles for clusered marker datasets
-            labMap.datasetLayer = null;     // either a copy of labMap.datasetGeoJson or a leaflet.markercluster object containing labMap.datasetGeoJson layers - depends on whether we are clustering point data or not
-            labMap.featureCache = null;     // for caching the currently selected feature
+            labMap.datasetGeoJson = null;       // object to store GeoJSON created from datasets loaded from the select list. ***NOTE*** this object is important for the resetting of styles for clusered marker datasets
+            labMap.datasetCluster = null;       // object to store a leaflet.markercluster object - created if the dataset contains point data
+            labMap.datasetLayer = null;         // either a copy of labMap.datasetGeoJson or labMap.datasetCluster containing labMap.datasetGeoJson layers - depends on whether we are clustering point data or not
+            labMap.featureCache = null;         // for caching the currently selected feature
+            labMap.toggleClusterContainer = document.getElementById('toggleClusteringContainer');
 
             // Polygon feature styling
             labMap.poly = {
