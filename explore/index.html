@@ -219,10 +219,13 @@
                 // Remove any current data layer and reset the variables
                 if (labMap.datasetLayer !== null) {
                     labMap.datasetLayer.removeFrom(labMap.map);
+                    labMap.attribution.removeAttribution(labMap.datasetGeoJson.getAttribution());   // have to remove the attribution manually due to a seeming bug in Leaflet.MarkerCluster not handling it automatically
+
                     labMap.datasetLayer = null;
                     labMap.datasetGeoJson = null;
                     labMap.datasetCluster = null;
 
+                    // ensure the cluster checkbox is hidden
                     if (L.DomUtil.hasClass(labMap.toggleClusterContainer, 'hideContent') == false) L.DomUtil.addClass(labMap.toggleClusterContainer, 'hideContent');
                 }
 
@@ -252,6 +255,9 @@
                                 // do we have point data in the dataset?
                                 if (labMap.datasetCluster != null) {
                                     labMap.datasetCluster.addLayer(labMap.datasetGeoJson);  // add the GeoJSON to the cluster object - point data will be clustered but polygons/lines won't
+
+                                    // the following is a patch for a seeming bug in Leaflet.MarkerCluster not handling the layer attribution automatically
+                                    if (objDatasets[datasetKey].attribution !== null) labMap.attribution.addAttribution('data source: ' + objDatasets[datasetKey].attribution);
 
                                     // do we want the clustering to be on by default
                                     if (objDatasets[datasetKey].hasOwnProperty('cluster') && objDatasets[datasetKey].cluster === true) {
