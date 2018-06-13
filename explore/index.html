@@ -537,6 +537,15 @@
                     attribution: 'Transport for Greater Manchester',
                     url: 'https://www.trafforddatalab.io/open_data/transport/trains/stops/trafford_train_stops.geojson',
                     theme: 'Transport'
+                },
+                'betting_shops': {
+                    title: 'Betting shops',
+                    about: 'Premises licence data for Greater Manchester.<br /><br />Download: <a href="https://www.trafforddatalab.io/projects/opengovintelligence/apps/production/work%3Cness/data/betting_shops/bettingshops_gm.geojson" target="_blank">GeoJSON</a>.<br />Further resources available <a href="https://github.com/traffordDataLab/projects/tree/master/opengovintelligence/apps/production/work%3Cness/data/betting_shops" target="_blank">on GitHub</a>.',
+                    attribution: 'Gambling Commission',
+                    url: 'https://www.trafforddatalab.io/projects/opengovintelligence/apps/production/work%3Cness/data/betting_shops/bettingshops_gm.geojson',
+                    theme: 'Licenced premises',
+                    cluster: true,
+                    hidden: true
                 }
 
                 /* Add new datasets using the contruct below:
@@ -545,16 +554,18 @@
                     about: '',
                     attribution: '',
                     url: '',
-                    theme: ''
+                    theme: '',
+                    cluster: true,  // OPTIONAL
+                    hidden: true    // OPTIONAL
                 }
                 */
             }
 
             var arrSelectList = [];     // array to hold the contents of the select list to choose the dataset to visualise
 
-            // Loop through the objDatasets object adding the main key, title and theme to the array
+            // Loop through the objDatasets object adding the main key, title and theme to the array so long as the key is a dataset and we don't want it hidden
             for (key in objDatasets) {
-                if (objDatasets.hasOwnProperty(key)) {
+                if (objDatasets.hasOwnProperty(key) && (!objDatasets[key].hasOwnProperty('hidden') || (objDatasets[key].hasOwnProperty('hidden') && objDatasets[key].hidden !== true))) {
                     arrSelectList.push({ dataset: key, title: objDatasets[key].title, theme: objDatasets[key].theme });
                 }
             }
