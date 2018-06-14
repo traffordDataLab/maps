@@ -229,8 +229,9 @@
                     if (L.DomUtil.hasClass(labMap.toggleClusterContainer, 'hideContent') == false) L.DomUtil.addClass(labMap.toggleClusterContainer, 'hideContent');
                 }
 
-                //reset the info panel
+                //reset the info panel and legend
                 labMap.updateInfo();
+                labMap.updateLegend();
 
                 // Check to see if the dataset key we've been given matches any datset objects
                 if (objDatasets.hasOwnProperty(datasetKey)) {
@@ -277,6 +278,9 @@
 
                                 // add the dataset layer to the map
                                 labMap.datasetLayer.addTo(labMap.map);
+
+                                // add legend content if applicable
+                                if (objDatasets[datasetKey].hasOwnProperty('legend') && objDatasets[datasetKey].legend != null && objDatasets[datasetKey].legend !== '') labMap.updateLegend(objDatasets[datasetKey].legend);
                             }
                             catch (e) {
                                 labError(new LabException("Error attempting to create GeoJSON Leaflet layer: " + e.message));
@@ -553,7 +557,8 @@
                     attribution: 'Trafford Council',
                     url: 'https://www.trafforddatalab.io/open_data/leisure_centres/trafford_leisure_centres_styled.geojson',
                     theme: 'Community Services',
-                    hidden: true
+                    hidden: true,
+                    legend: '<div class="legendKey legendKeyLine" style="border-bottom: 3px solid #fc6721;"></div> Leisure Centres<br /><div class="legendKey legendKeyLine" style="border-bottom: 3px solid #e5c494;"></div> On-site parking'
                 }
 
                 /* Add new datasets using the contruct below:
