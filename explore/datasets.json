@@ -1,0 +1,246 @@
+{
+    "agricultural_land": {
+        "title": "Agricultural land",
+        "about": "Five grades of agricultural land (1 = best quality to 5 = poorest quality) with classifications for urban and non-agricultural land in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/agricultural_land_classification/trafford_agricultural_land_classification.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/agricultural_land_classification' target='_blank'>on GitHub</a>.",
+        "attribution": "Natural England",
+        "url": "https://www.trafforddatalab.io/open_data/agricultural_land_classification/trafford_agricultural_land_classification_styled.geojson",
+        "theme": "Environment",
+        "legend": "<div class='legendKey legendKeyLine' style='border-bottom: 3px solid #a1d99b;'></div> Grade 2<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #74c476;'></div> Grade 3<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #31a354;'></div> Grade 4<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #ae8552;'></div> Non Agricultural<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #828282;'></div> Urban"
+    },
+    "air_quality": {
+        "title": "Air quality",
+        "about": "Air Quality Management Areas (AQMAs) in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/AQMA/trafford_aqma.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/AQMA' target='_blank'>on GitHub</a>.",
+        "attribution": "Department for Environment Food & Rural Affairs (Defra)",
+        "url": "https://www.trafforddatalab.io/open_data/AQMA/trafford_aqma_styled.geojson",
+        "theme": "Environment"
+    },
+    "buildings": {
+        "title": "Buildings",
+        "about": "Buildings in Trafford derived from Ordnance Survey\"s OpenMap - Local.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/buildings/trafford_buildings.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/buildings' target='_blank'>on GitHub</a>.",
+        "attribution": "Ordnance Survey",
+        "url": "https://www.trafforddatalab.io/open_data/buildings/trafford_buildings_styled.geojson",
+        "theme": "Housing"
+    },
+    "care_homes": {
+        "title": "Care homes",
+        "about": "Nursing and residential care homes in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/care_homes/trafford_care_homes.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/care_homes/trafford_care_homes.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/care_homes' target='_blank'>on GitHub</a>.",
+        "attribution": "Care Quality Commission",
+        "url": "https://www.trafforddatalab.io/open_data/care_homes/trafford_care_homes.geojson",
+        "theme": "Health",
+        "cluster": true
+    },
+    "cctv": {
+        "title": "CCTV",
+        "about": "Locations of Local Authority controlled CCTV cameras in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/cctv/CCTV_cameras_trafford.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/cctv/CCTV_cameras_trafford.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/cctv' target='_blank'>on GitHub</a>.",
+        "attribution": "Trafford Council",
+        "url": "https://www.trafforddatalab.io/open_data/cctv/CCTV_cameras_trafford.geojson",
+        "theme": "Community Safety",
+        "cluster": true
+    },
+    "defibrillators": {
+        "title": "Defibrillators",
+        "about": "Defibrillator locations within Trafford. Please note that there may be restrictions on access and availability and locations are approximate.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/defibrillators/trafford_defibrillators.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/defibrillators/trafford_defibrillators.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/defibrillators' target='_blank'>on GitHub</a>.",
+        "attribution": "Trafford Council",
+        "url": "https://www.trafforddatalab.io/open_data/defibrillators/trafford_defibrillators.geojson",
+        "theme": "Health",
+        "cluster": true
+    },
+    "further_education_colleges": {
+        "title": "Further education colleges",
+        "about": "Further education colleges in Trafford from OS OpenMap - Local.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/education/further/trafford_further_education.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/education/further' target='_blank'>on GitHub</a>.",
+        "attribution": "Ordnance Survey",
+        "url": "https://www.trafforddatalab.io/open_data/education/further/trafford_further_education_styled.geojson",
+        "theme": "Education"
+    },
+    "primary_schools": {
+        "title": "Primary schools",
+        "about": "Primary schools in Trafford from OS OpenMap - Local.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/education/primary/trafford_primary_schools.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/education/primary' target='_blank'>on GitHub</a>.",
+        "attribution": "Ordnance Survey",
+        "url": "https://www.trafforddatalab.io/open_data/education/primary/trafford_primary_schools_styled.geojson",
+        "theme": "Education"
+    },
+    "secondary_schools": {
+        "title": "Secondary schools",
+        "about": "Secondary schools in Trafford from OS OpenMap - Local.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/education/secondary/trafford_secondary_schools.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/education/secondary' target='_blank'>on GitHub</a>.",
+        "attribution": "Ordnance Survey",
+        "url": "https://www.trafforddatalab.io/open_data/education/secondary/trafford_secondary_schools_styled.geojson",
+        "theme": "Education"
+    },
+    "special_schools": {
+        "title": "Special schools",
+        "about": "Special schools in Trafford from OS OpenMap - Local.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/education/special/trafford_special_schools.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/education/special' target='_blank'>on GitHub</a>.",
+        "attribution": "Ordnance Survey",
+        "url": "https://www.trafforddatalab.io/open_data/education/special/trafford_special_schools_styled.geojson",
+        "theme": "Education"
+    },
+    "electric_car_charging_points": {
+        "title": "Electric car charging points",
+        "about": "Electric car charging points in Trafford from OS OpenMap - Local.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/car_charging_points/trafford_car_charging_points.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/car_charging_points/trafford_car_charging_points.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/car_charging_points' target='_blank'>on GitHub</a>.",
+        "attribution": "Ordnance Survey",
+        "url": "https://www.trafforddatalab.io/open_data/car_charging_points/trafford_car_charging_points.geojson",
+        "theme": "Transport",
+        "cluster": true
+    },
+    "fire_stations": {
+        "title": "Fire stations",
+        "about": "Fire stations in Trafford from OS OpenMap - Local.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/fire_stations/trafford_fire_stations.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/fire_stations' target='_blank'>on GitHub</a>.",
+        "attribution": "Ordnance Survey",
+        "url": "https://www.trafforddatalab.io/open_data/fire_stations/trafford_fire_stations_styled.geojson",
+        "theme": "Community Safety"
+    },
+    "flood_risk": {
+        "title": "Flood risk",
+        "about": "The dataset shows the chance of flooding from rivers and/or the sea, based on 50m cells in Trafford. Each cell is allocated to one of four flood risk categories, taking into account flood defences and their condition.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/flood_risk/trafford_flood_risk.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/flood_risk' target='_blank'>on GitHub</a>.",
+        "attribution": "Environment Agency",
+        "url": "https://www.trafforddatalab.io/open_data/flood_risk/trafford_flood_risk_styled.geojson",
+        "theme": "Environment"
+    },
+    "food_banks": {
+        "title": "Food banks",
+        "about": "Location of food banks, pantries and food clubs across Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/food_banks/trafford_food_banks.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/food_banks/trafford_food_banks.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/food_banks' target='_blank'>on GitHub</a>.",
+        "attribution": "GM Poverty Action",
+        "url": "https://www.trafforddatalab.io/open_data/food_banks/trafford_food_banks.geojson",
+        "theme": "Labour Market"
+    },
+    "general_practices": {
+        "title": "General practices",
+        "about": "General practice (GP) locations in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/general_practice/trafford_general_practices.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/general_practice/trafford_general_practices.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/general_practice' target='_blank'>on GitHub</a>.",
+        "attribution": "Care Quality Commission",
+        "url": "https://www.trafforddatalab.io/open_data/general_practice/trafford_general_practices.geojson",
+        "theme": "Health",
+        "cluster": true
+    },
+    "green_spaces": {
+        "title": "Green spaces",
+        "about": "Parks, playing fields, gardens and other green spaces that are likely to be publicly accessible in Trafford.<br /><br />Please also see our <a href='https://www.trafforddatalab.io/maps/greenspace/'>enhanced version</a> of this map for more details.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/greenspaces/trafford_greenspace_sites.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/greenspaces' target='_blank'>on GitHub</a>.",
+        "attribution": "Ordnance Survey",
+        "url": "https://www.trafforddatalab.io/open_data/greenspaces/trafford_greenspace_sites_styled.geojson",
+        "theme": "Environment",
+        "legend": "<div class='legendKey legendKeyLine' style='border-bottom: 3px solid #66c2a5;'></div> Allotments or Community Growing Space<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #fc8d62;'></div> Golf Course<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #8da0cb;'></div> Play Space<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #e78ac3;'></div> Playing Field<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #a6d854;'></div> Public Park or Garden<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #ffd92f;'></div> Religious Ground and Cemeteries<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #e5c494;'></div> Sports"
+    },
+    "hospitals": {
+        "title": "Hospitals",
+        "about": "Hospitals in Trafford from OS OpenMap - Local.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/hospitals/trafford_hospitals.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/hospitals' target='_blank'>on GitHub</a>.",
+        "attribution": "Ordnance Survey",
+        "url": "https://www.trafforddatalab.io/open_data/hospitals/trafford_hospitals_styled.geojson",
+        "theme": "Health"
+    },
+    "jobcentre_plus": {
+        "title": "Jobcentre Plus",
+        "about": "Jobcentre Plus offices in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/job_centre_plus/jobcentreplus_trafford_trafford.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/job_centre_plus/jobcentreplus_trafford.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/job_centre_plus' target='_blank'>on GitHub</a>.",
+        "attribution": "Department for Work and Pensions",
+        "url": "https://www.trafforddatalab.io/open_data/job_centre_plus/jobcentreplus_trafford.geojson",
+        "theme": "Labour Market"
+    },
+    "listed_buildings": {
+        "title": "Listed buildings",
+        "about": "Listed buildings in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/listed_buildings/trafford_listed_buildings.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/listed_buildings/trafford_listed_buildings.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/listed_buildings' target='_blank'>on GitHub</a>.",
+        "attribution": "Historic England (English Heritage)",
+        "url": "https://www.trafforddatalab.io/open_data/listed_buildings/trafford_listed_buildings.geojson",
+        "theme": "Historical Interest",
+        "cluster": true
+    },
+    "metrolink_stops": {
+        "title": "Metrolink stops",
+        "about": "Metrolink stops in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/transport/metrolink/stops/trafford_metrolink_stops.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/transport/metrolink/stops/trafford_metrolink_stops.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/transport/metrolink/stops' target='_blank'>on GitHub</a>.",
+        "attribution": "Transport for Greater Manchester",
+        "url": "https://www.trafforddatalab.io/open_data/transport/metrolink/stops/trafford_metrolink_stops.geojson",
+        "theme": "Transport"
+    },
+    "motorway_junctions": {
+        "title": "Motorway junctions",
+        "about": "Motorway junctions in Trafford from OS Open Roads.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/open_roads/trafford_motorwayJunction.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/open_roads' target='_blank'>on GitHub</a>.",
+        "attribution": "Ordnance Survey",
+        "url": "https://www.trafforddatalab.io/open_data/open_roads/trafford_motorwayJunction.geojson",
+        "theme": "Transport"
+    },
+    "open_plaques": {
+        "title": "Open plaques",
+        "about": "Inscriptions on and locations of commemorative plaques in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/open_plaques/open_plaques_trafford.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/open_plaques/open_plaques_trafford.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/open_plaques' target='_blank'>on GitHub</a>.",
+        "attribution": "Data gathered by Open Plaques",
+        "url": "https://www.trafforddatalab.io/open_data/open_plaques/open_plaques_trafford.geojson",
+        "theme": "Historical Interest"
+    },
+    "pharmacies": {
+        "title": "Pharmacies",
+        "about": "Locations of pharmacies in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/pharmacies/trafford_pharmacies.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/pharmacies/trafford_pharmacies.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/pharmacies' target='_blank'>on GitHub</a>.",
+        "attribution": "Trafford Council",
+        "url": "https://www.trafforddatalab.io/open_data/pharmacies/trafford_pharmacies.geojson",
+        "theme": "Health",
+        "cluster": true
+    },
+    "roads": {
+        "title": "Roads",
+        "about": "Road links in Trafford from OS Open Roads.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/open_roads/trafford_roadLink.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/open_roads' target='_blank'>on GitHub</a>.",
+        "attribution": "Ordnance Survey",
+        "url": "https://www.trafforddatalab.io/open_data/open_roads/trafford_roadLink_styled.geojson",
+        "theme": "Transport"
+    },
+    "terrain_contours": {
+        "title": "Terrain contours",
+        "about": "10m contours constrained by the boundary of Trafford borough from OS Terrain 50.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/terrain/trafford_terrain_lines.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/terrain' target='_blank'>on GitHub</a>.",
+        "attribution": "Ordnance Survey",
+        "url": "https://www.trafforddatalab.io/open_data/terrain/trafford_terrain_lines_styled.geojson",
+        "theme": "Environment"
+    },
+    "terrain_spot_heights": {
+        "title": "Terrain spot heights",
+        "about": "Spot heights constrained by the boundary of Trafford borough from OS Terrain 50.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/terrain/trafford_terrain_points.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/terrain' target='_blank'>on GitHub</a>.",
+        "attribution": "Ordnance Survey",
+        "url": "https://www.trafforddatalab.io/open_data/terrain/trafford_terrain_points.geojson",
+        "theme": "Environment"
+    },
+    "watercourses": {
+        "title": "Watercourses",
+        "about": "Rivers and other waterways constrained by the boundary of Trafford borough from OS Open Rivers.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/watercourses/trafford_watercourses.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/watercourses' target='_blank'>on GitHub</a>.",
+        "attribution": "Ordnance Survey",
+        "url": "https://www.trafforddatalab.io/open_data/watercourses/trafford_watercourses_styled.geojson",
+        "theme": "Environment"
+    },
+    "woodland": {
+        "title": "Woodland",
+        "about": "Woodland in Trafford from OS OpenMap - Local.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/woodland/trafford_woodland.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/woodland' target='_blank'>on GitHub</a>.",
+        "attribution": "Ordnance Survey",
+        "url": "https://www.trafforddatalab.io/open_data/woodland/trafford_woodland_styled.geojson",
+        "theme": "Environment"
+    },
+    "libraries_points": {
+        "title": "Libraries (point data)",
+        "about": "Locations of libraries within Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/libraries/trafford_libraries.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/libraries/trafford_libraries_points.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/libraries' target='_blank'>on GitHub</a>.",
+        "attribution": "Trafford Council",
+        "url": "https://www.trafforddatalab.io/open_data/libraries/trafford_libraries_points.geojson",
+        "theme": "Community Services"
+    },
+    "libraries_polygons": {
+        "title": "Libraries (building polygons)",
+        "about": "Locations of libraries within Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/libraries/trafford_libraries.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/libraries/trafford_libraries_polygons.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/libraries' target='_blank'>on GitHub</a>.",
+        "attribution": "Trafford Council",
+        "url": "https://www.trafforddatalab.io/open_data/libraries/trafford_libraries_polygons_styled.geojson",
+        "theme": "Community Services"
+    },
+    "train_stops": {
+        "title": "Train stops",
+        "about": "Train stops/stations in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/transport/trains/stops/trafford_train_stops.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/transport/trains/stops/trafford_train_stops.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/transport/trains/stops' target='_blank'>on GitHub</a>.",
+        "attribution": "Transport for Greater Manchester",
+        "url": "https://www.trafforddatalab.io/open_data/transport/trains/stops/trafford_train_stops.geojson",
+        "theme": "Transport"
+    },
+    "betting_shops": {
+        "title": "Betting shops",
+        "about": "Premises licence data for Greater Manchester.<br /><br />Download: <a href='https://www.trafforddatalab.io/projects/opengovintelligence/apps/production/work%3Cness/data/betting_shops/bettingshops_gm.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/projects/tree/master/opengovintelligence/apps/production/work%3Cness/data/betting_shops' target='_blank'>on GitHub</a>.",
+        "attribution": "Gambling Commission",
+        "url": "https://www.trafforddatalab.io/projects/opengovintelligence/apps/production/work%3Cness/data/betting_shops/bettingshops_gm.geojson",
+        "theme": "Licenced premises",
+        "cluster": true,
+        "hidden": true
+    },
+    "leisure_centres": {
+        "title": "Leisure Centres",
+        "about": "Leisure Centres and associated car parks in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/leisure_centres/trafford_leisure_centres.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/leisure_centres/trafford_leisure_centres.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/leisure_centres' target='_blank'>on GitHub</a>.",
+        "attribution": "Trafford Council",
+        "url": "https://www.trafforddatalab.io/open_data/leisure_centres/trafford_leisure_centres_styled.geojson",
+        "theme": "Community Services",
+        "hidden": true,
+        "legend": "<div class='legendKey legendKeyLine' style='border-bottom: 3px solid #fc6721;'></div> Leisure Centres<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #e5c494;'></div> On-site parking"
+    }
+}
