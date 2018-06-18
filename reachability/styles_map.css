@@ -1,0 +1,54 @@
+/*  */
+.leaflet-container
+{
+  background-color: white;
+}
+
+.controls
+{
+  background-color: white;
+  padding: 0 20px 20px 20px;
+  border-radius: 15px;
+  opacity: 0.85;
+  width: 340px;
+  right: 10px;
+}
+
+#controls a:hover
+{
+  color: #fc6721;
+}
+
+#controls
+{
+  top: 10px;
+}
+
+/* reduce size of layer control button */
+.leaflet-control-layers-toggle
+{ 
+    height: 44;
+    width: 44;
+}
+
+.leaflet-bar a, .leaflet-bar a:hover, .leaflet-touch .leaflet-bar a, .leaflet-touch .leaflet-bar a:hover
+{
+  height: 34px; 
+  width: 34px;
+  line-height: 34px;
+}
+
+.leaflet-control-zoom-in, .leaflet-touch .leaflet-control-zoom-in
+{
+  font-size: 22px;
+}
+
+.leaflet-control-zoom-out, .leaflet-touch .leaflet-control-zoom-out
+{
+  font-size: 24px;
+}
+
+.legend
+{
+  white-space: nowrap;
+}
