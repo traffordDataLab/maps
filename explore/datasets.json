@@ -218,9 +218,9 @@
         "url": "https://www.trafforddatalab.io/open_data/libraries/trafford_libraries_polygons_styled.geojson",
         "theme": "Community Services"
     },
-    "train_stops": {
-        "title": "Train stops",
-        "about": "Train stops/stations in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/transport/trains/stops/trafford_train_stops.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/transport/trains/stops/trafford_train_stops.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/transport/trains/stops' target='_blank'>on GitHub</a>.",
+    "train_stations": {
+        "title": "Train stations",
+        "about": "Train stations in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/transport/trains/stops/trafford_train_stops.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/transport/trains/stops/trafford_train_stops.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/transport/trains/stops' target='_blank'>on GitHub</a>.",
         "attribution": "Transport for Greater Manchester",
         "url": "https://www.trafforddatalab.io/open_data/transport/trains/stops/trafford_train_stops.geojson",
         "theme": "Transport"
@@ -236,8 +236,8 @@
     },
     "leisure_centres": {
         "title": "Leisure Centres",
-        "about": "Leisure Centres and associated car parks in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/leisure_centres/trafford_leisure_centres.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/leisure_centres/trafford_leisure_centres.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/leisure_centres' target='_blank'>on GitHub</a>.",
-        "attribution": "Trafford Council",
+        "about": "Leisure Centres managed by Trafford Leisure CIC Limited and associated parking facilities.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/leisure_centres/trafford_leisure_centres.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/leisure_centres/trafford_leisure_centres.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/leisure_centres' target='_blank'>on GitHub</a>.",
+        "attribution": "Trafford Council &amp; Trafford Leisure CIC",
         "url": "https://www.trafforddatalab.io/open_data/leisure_centres/trafford_leisure_centres_styled.geojson",
         "theme": "Community Services",
         "hidden": true,
