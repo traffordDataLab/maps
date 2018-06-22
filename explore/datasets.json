@@ -240,7 +240,6 @@
         "attribution": "Trafford Council &amp; Trafford Leisure CIC",
         "url": "https://www.trafforddatalab.io/open_data/leisure_centres/trafford_leisure_centres_styled.geojson",
         "theme": "Community Services",
-        "hidden": true,
         "legend": "<div class='legendKey legendKeyLine' style='border-bottom: 3px solid #fc6721;'></div> Leisure Centres<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #e5c494;'></div> On-site parking"
     }
 }
