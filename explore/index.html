@@ -260,8 +260,10 @@
                                     // the following is a patch for a seeming bug in Leaflet.MarkerCluster not handling the layer attribution automatically
                                     if (labMap.objDatasets[datasetKey].attribution !== null) labMap.attribution.addAttribution('data source: ' + labMap.objDatasets[datasetKey].attribution);
 
-                                    // do we want the clustering to be on by default
-                                    if (labMap.objDatasets[datasetKey].hasOwnProperty('cluster') && labMap.objDatasets[datasetKey].cluster === true) {
+                                    // do we want clustering on or off?
+                                    var clusterQS = labGetQryStrValByKey('cluster');
+
+                                    if (clusterQS === 'true' || (clusterQS !== 'false' && labMap.objDatasets[datasetKey].hasOwnProperty('cluster') && labMap.objDatasets[datasetKey].cluster === true)) {
                                         labMap.datasetLayer = labMap.datasetCluster;    // the layer we are going to add to the map is the clustered version
                                         document.getElementById('toggleClustering').checked = true;
                                     }
