@@ -241,5 +241,23 @@
         "url": "https://www.trafforddatalab.io/open_data/leisure_centres/trafford_leisure_centres_styled.geojson",
         "theme": "Community Services",
         "legend": "<div class='legendKey legendKeyLine' style='border-bottom: 3px solid #fc6721;'></div> Leisure Centres<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #e5c494;'></div> On-site parking"
+    },
+    "sports_clubs": {
+        "title": "Sports Clubs",
+        "about": "Sports Clubs in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/sports_clubs/sports_clubs.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/sports_clubs/sports_clubs.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/sports_clubs' target='_blank'>on GitHub</a>.",
+        "attribution": "Trafford Council",
+        "url": "https://www.trafforddatalab.io/open_data/sports_clubs/sports_clubs_styled.geojson",
+        "theme": "Community Services",
+        "cluster": true,
+        "hidden": true
+    },
+    "fast_food_outlets": {
+        "title": "Fast Food Outlets",
+        "about": "The location of fast food outlets in Trafford from the Food Standards Agency, Food Hygiene Rating Scheme.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/fast_food_outlets/trafford_fast_food_outlets.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/fast_food_outlets/trafford_fast_food_outlets.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/fast_food_outlets' target='_blank'>on GitHub</a>.",
+        "attribution": "Food Standards Agency",
+        "url": "https://www.trafforddatalab.io/open_data/fast_food_outlets/trafford_fast_food_outlets_styled.geojson",
+        "theme": "Other",
+        "cluster": true,
+        "hidden": true
     }
 }
