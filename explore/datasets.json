@@ -129,7 +129,7 @@
         "title": "Jobcentre Plus",
         "about": "Jobcentre Plus offices in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/job_centre_plus/jobcentreplus_trafford_trafford.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/job_centre_plus/jobcentreplus_trafford.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/job_centre_plus' target='_blank'>on GitHub</a>.",
         "attribution": "Department for Work and Pensions",
-        "url": "https://www.trafforddatalab.io/open_data/job_centre_plus/jobcentreplus_trafford.geojson",
+        "url": "https://www.trafforddatalab.io/open_data/job_centre_plus/jobcentreplus_trafford_styled.geojson",
         "theme": "Labour Market"
     },
     "listed_buildings": {
