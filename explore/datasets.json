@@ -259,5 +259,12 @@
         "theme": "Other",
         "cluster": true,
         "hidden": true
+    },
+    "religious_buildings": {
+        "title": "Religious buildings",
+        "about": "Religious buildings/places of worship within Trafford. Data derived from OS OpenMap - Local.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/places_of_worship/trafford_places_of_worship.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/places_of_worship' target='_blank'>on GitHub</a>.",
+        "attribution": "Ordnance Survey & Trafford Council",
+        "url": "https://www.trafforddatalab.io/open_data/places_of_worship/trafford_places_of_worship_styled.geojson",
+        "theme": "Religion"
     }
 }
