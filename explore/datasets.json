@@ -33,7 +33,7 @@
         "title": "CCTV",
         "about": "Locations of Local Authority controlled CCTV cameras in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/cctv/CCTV_cameras_trafford.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/cctv/CCTV_cameras_trafford.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/cctv' target='_blank'>on GitHub</a>.",
         "attribution": "Trafford Council",
-        "url": "https://www.trafforddatalab.io/open_data/cctv/CCTV_cameras_trafford.geojson",
+        "url": "https://www.trafforddatalab.io/open_data/cctv/CCTV_cameras_trafford_styled.geojson",
         "theme": "Community Safety",
         "cluster": true
     },
