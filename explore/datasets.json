@@ -268,7 +268,7 @@
         "theme": "Religion"
     },
     "mental_health_services": {
-        "title": "Mental Health Services for Trafford Residents",
+        "title": "Mental Health Services",
         "about": "Locations of organisations within and around the borough of Trafford offering mental health services to Trafford residents.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/mental_health/trafford_mental_health_services.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/mental_health/trafford_mental_health_services.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/mental_health' target='_blank'>on GitHub</a>.",
         "attribution": "Trafford Council",
         "url": "https://www.trafforddatalab.io/open_data/mental_health/trafford_mental_health_services_styled.geojson",
