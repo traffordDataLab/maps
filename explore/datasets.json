@@ -273,7 +273,6 @@
         "attribution": "Trafford Council",
         "url": "https://www.trafforddatalab.io/open_data/mental_health/trafford_mental_health_services_styled.geojson",
         "theme": "Health",
-        "cluster": true,
-        "hidden": true
+        "cluster": true
     }
 }
