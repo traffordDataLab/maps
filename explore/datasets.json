@@ -248,8 +248,7 @@
         "attribution": "Trafford Council",
         "url": "https://www.trafforddatalab.io/open_data/sports_clubs/sports_clubs_styled.geojson",
         "theme": "Community Services",
-        "cluster": true,
-        "hidden": true
+        "cluster": true
     },
     "fast_food_outlets": {
         "title": "Fast Food Outlets",
