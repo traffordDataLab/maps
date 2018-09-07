@@ -45,32 +45,11 @@
         "theme": "Health",
         "cluster": true
     },
-    "further_education_colleges": {
-        "title": "Further education colleges",
-        "about": "Further education colleges in Trafford from OS OpenMap - Local.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/education/further/trafford_further_education.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/education/further' target='_blank'>on GitHub</a>.",
-        "attribution": "Ordnance Survey",
-        "url": "https://www.trafforddatalab.io/open_data/education/further/trafford_further_education_styled.geojson",
-        "theme": "Education"
-    },
-    "primary_schools": {
-        "title": "Primary schools",
-        "about": "Primary schools in Trafford from OS OpenMap - Local.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/education/primary/trafford_primary_schools.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/education/primary' target='_blank'>on GitHub</a>.",
-        "attribution": "Ordnance Survey",
-        "url": "https://www.trafforddatalab.io/open_data/education/primary/trafford_primary_schools_styled.geojson",
-        "theme": "Education"
-    },
-    "secondary_schools": {
-        "title": "Secondary schools",
-        "about": "Secondary schools in Trafford from OS OpenMap - Local.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/education/secondary/trafford_secondary_schools.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/education/secondary' target='_blank'>on GitHub</a>.",
-        "attribution": "Ordnance Survey",
-        "url": "https://www.trafforddatalab.io/open_data/education/secondary/trafford_secondary_schools_styled.geojson",
-        "theme": "Education"
-    },
-    "special_schools": {
-        "title": "Special schools",
-        "about": "Special schools in Trafford from OS OpenMap - Local.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/education/special/trafford_special_schools.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/education/special' target='_blank'>on GitHub</a>.",
-        "attribution": "Ordnance Survey",
-        "url": "https://www.trafforddatalab.io/open_data/education/special/trafford_special_schools_styled.geojson",
+    "schools_and_colleges": {
+        "title": "Schools and Colleges",
+        "about": "Schools and Colleges in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/schools_and_colleges/trafford_schools_and_colleges.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/schools_and_colleges/trafford_schools_and_colleges.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/schools_and_colleges' target='_blank'>on GitHub</a>.",
+        "attribution": "Department for Education",
+        "url": "https://www.trafforddatalab.io/open_data/schools_and_colleges/trafford_schools_and_colleges.geojson",
         "theme": "Education"
     },
     "electric_car_charging_points": {
