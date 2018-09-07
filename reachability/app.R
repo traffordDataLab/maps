@@ -1,7 +1,7 @@
 ## Reachability app ##
 
 ## load R packages ---------------------------
-library(shiny); library(tidyverse) ; library(httr) ; library(geojsonio) ; library(jsonlite) ; library(sf) ; library(leaflet) 
+library(shiny); library(tidyverse) ; library(httr) ; library(geojsonio) ; library(jsonlite) ; library(sf) ; library(leaflet) ; library(leaflet.extras)
 
 ## load geospatial data ---------------------------
 
@@ -11,12 +11,11 @@ trafford <- st_read("https://www.traffordDataLab.io/spatial_data/local_authority
 # Trafford town centres
 centres <- st_read("https://www.traffordDataLab.io/spatial_data/town_centres/trafford_town_centres.geojson")
 
-# General Practices
-gp <- st_read("https://www.traffordDataLab.io/open_data/general_practice/trafford_general_practices.geojson")
+# Schools and colleges
+edu <- st_read("https://www.traffordDataLab.io/open_data/schools_and_colleges/trafford_schools_and_colleges.geojson")
 
-# Pharmacies
-pharma <- st_read("https://www.traffordDataLab.io/open_data/pharmacies/trafford_pharmacies.geojson")
-
+# Fast food outlets
+fast_food <- st_read("https://github.com/traffordDataLab/open_data/raw/master/fast_food_outlets/trafford_fast_food_outlets.geojson")
 
 ui <- bootstrapPage(
   tags$head(includeCSS("styles_base.css"), includeCSS("styles_shiny.css"), includeCSS("styles_map.css"),
@@ -24,18 +23,18 @@ ui <- bootstrapPage(
             leafletOutput("map", width = "100%", height = "100%"),
             absolutePanel(id = "shinyControls", class = "panel panel-default controls", fixed = TRUE, draggable = FALSE,
                           fluidRow(
-                            tags$h4("Areas of reachability"),
+                            tags$h4("Measuring the proximity of schools to fast food outlets"),
                             tabsetPanel(
                               tabPanel("Controls",
                                        radioButtons(inputId = "measure",
                                                     label = NULL,
                                                     choices = c("Distance" = "distance", "Travel time" = "time"),
-                                                    selected = "distance"),
+                                                    selected = "time"),
                                        conditionalPanel(
                                          condition = "input.measure == 'time'",
                                          selectInput(inputId = "mode",
                                                      label = NULL,
-                                                     choices = c("Bike" = "cycling-regular","Car" = "driving-car", "Walk" = "foot-walking"),
+                                                     choices = c("Bike" = "cycling-regular", "Car" = "driving-car", "Walk" = "foot-walking"),
                                                      selected = "foot-walking"),
                                          sliderInput("time_slider", 
                                                      label = h5("Range (minutes)"), 
@@ -50,13 +49,9 @@ ui <- bootstrapPage(
                                        tags$small("© Powered by ", tags$a(href="https://openrouteservice.org/", "openrouteservice"))),
                               tabPanel("Info",
                                        tags$br(),
-                                       tags$p("How many services are within 500 metres of a location? What is the catchment area of a particular service? This app will help you to answer these questions."),
+                                       tags$p("How many fast food outlets are within a 5 minute walk of a particular school? This app will help you to find out."),
                                        tags$h4("Instructions:"),
-                                       tags$p("Select a location using the crosshairs on the map and then choose your measure of reachability: distance or travel time. The measures produce equal distance or travel time polygons from a given location."),
-                                       tags$p("Distance draws reachability areas from a given start location using network distance. Rather than calculate the distance 'as the crow flies' which creates circular buffers the algorithm uses the distance along the road network. 
-                                              The resulting polygons are irregular and better represent the actual distance between points along a constrained network. 
-                                              Travel time returns the cycle, drive and walking time from your chosen location."),
-                                       tags$p("You can download the displayed equal distance / travel time polygon contours as a GeoJSON for use in a GIS."))
+                                       tags$p("Enter the name of a school into the search bar. Select the school's location on the map with the crosshairs and then choose a measure of reachability: distance or travel time. Toggle on the fast food outlets and count how many fall within your chosen distance or travel time polygon(s)."))
 )))))
 
 server <- function(input, output, session) {
@@ -110,28 +105,15 @@ server <- function(input, output, session) {
   
   output$map <- renderLeaflet({
     
+    fast_food_pop <- paste0("<span style='text-align: center; font-size: 15px;'><strong>", fast_food$name, "</strong></span>")
+    
     html_logo <- "<a href='https://trafforddatalab.github.io' target='_blank'><img src='https://trafforddatalab.github.io/assets/logo/trafforddatalab_logo.svg' style='width: 93px; border: 0;' alt='Trafford Data Lab' border='0'></a>"
     
     leaflet() %>% 
-      addTiles(urlTemplate = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", 
-               attribution = 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community | <a href="https://www.ons.gov.uk/methodology/geography/licences"> Contains OS data © Crown copyright and database right (2017)</a>', 
-               group = "Aerial",
-               options = providerTileOptions(minZoom = 10, maxZoom = 17)) %>%
       addTiles(urlTemplate = "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png",
-               attribution = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://cartodb.com/attributions">CartoDB</a> | <a href="https://www.ons.gov.uk/methodology/geography/licences">Contains OS data © Crown copyright and database right (2017)</a>',
+               attribution = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://cartodb.com/attributions">CartoDB</a> | <a href="https://www.ons.gov.uk/methodology/geography/licences">Contains OS data © Crown copyright and database right (2018)</a>',
                group = "Low Detail",
                options = providerTileOptions(minZoom = 10, maxZoom = 17)) %>% 
-      addTiles(urlTemplate = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-               attribution = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>  | <a href="https://www.ons.gov.uk/methodology/geography/licences">Contains OS data © Crown copyright and database right (2017)</a>',
-               group = "High Detail",
-               options = providerTileOptions(minZoom = 10, maxZoom = 17)) %>% 
-      addTiles(urlTemplate = "https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}{r}.png",
-               attribution = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://cartodb.com/attributions">CartoDB</a> | <a href="https://www.ons.gov.uk/methodology/geography/licences">Contains OS data © Crown copyright and database right (2017)</a>',
-               group = "Dark",
-               options = providerTileOptions(minZoom = 10, maxZoom = 17)) %>% 
-      addTiles(urlTemplate = "", 
-               attribution = '<a href="https://www.ons.gov.uk/methodology/geography/licences">Contains OS data © Crown copyright and database right (2018)</a>',
-               group = "None") %>% 
       setView(-2.35533522781156, 53.419025498197, zoom = 12) %>% 
       addPolylines(data = trafford, stroke = TRUE, weight = 3, color = "#212121", opacity = 1) %>% 
       addLabelOnlyMarkers(data = centres, lng = ~lon, lat = ~lat, label = ~as.character(name), 
@@ -139,13 +121,19 @@ server <- function(input, output, session) {
                                                       style = list(
                                                         "color"="white",
                                                         "text-shadow" = "-1px -1px 10px #757575, 1px -1px 10px #757575, 1px 1px 10px #757575, -1px 1px 10px #757575"))) %>%
-      addAwesomeMarkers(data = gp, popup = ~as.character(name), icon = ~makeAwesomeIcon(icon = "stethoscope", library = "fa", iconColor = "#fff", markerColor = "pink"), group = "GPs", options = markerOptions(riseOnHover = TRUE, opacity = 0.75)) %>% 
-      addAwesomeMarkers(data = pharma, popup = ~as.character(provider), icon = ~makeAwesomeIcon(icon = "medkit", library = "fa", iconColor = " #000000", markerColor = "blue"), group = "Pharmacies", options = markerOptions(riseOnHover = TRUE, opacity = 0.75)) %>% 
+      addAwesomeMarkers(data = edu, label = ~Name, icon = ~makeAwesomeIcon(icon = "graduation-cap", library = "fa", iconColor = "#000000", markerColor = "blue"), group = "Schools and colleges", options = markerOptions(riseOnHover = TRUE, opacity = 0.75)) %>% 
+      addAwesomeMarkers(data = fast_food, popup = fast_food_pop, icon = ~makeAwesomeIcon(icon = "pizza", library = "ion", iconColor = " #000000", markerColor = "lightred"), group = "Fast food outlets", options = markerOptions(riseOnHover = TRUE, opacity = 0.75)) %>% 
+      addSearchFeatures(targetGroups = 'Schools and colleges',
+                        options = searchFeaturesOptions(
+                          zoom = 17,
+                          openPopup = FALSE,
+                          collapsed = FALSE,
+                          position = "topleft",
+                          textPlaceholder = "Search schools...")) %>% 
       addLayersControl(position = 'topleft',
-                       baseGroups = c("Aerial", "Dark", "High Detail", "Low Detail", "None"),
-                       overlayGroups = c("GPs", "Pharmacies"), 
-                       options = layersControlOptions(collapsed = TRUE)) %>% 
-      hideGroup(c("GPs", "Pharmacies")) %>% 
+                       overlayGroups = "Fast food outlets", 
+                       options = layersControlOptions(collapsed = FALSE)) %>% 
+      hideGroup("Fast food outlets") %>% 
       addControl(html = html_logo, position = "bottomright") %>% 
       htmlwidgets::onRender(
         " function(el, t) {

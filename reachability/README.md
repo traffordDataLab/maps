@@ -1,7 +1,7 @@
 ## Reachability
 [Shiny](https://cran.r-project.org/web/packages/shiny/index.html) app using the [OpenRouteService](https://openrouteservice.org/) API to generate equal distance and travel time polygons.
 
-The geospatial data for General Practices derive from the the [Care Quality Commission](http://www.cqc.org.uk/about-us/transparency/using-cqc-data) and Pharmacies from Trafford Council.
+The geospatial data for schools and colleges derive from the the [Department for Education](https://get-information-schools.service.gov.uk/) and fast food outlets from the [Food Standards Agency](http://ratings.food.gov.uk/open-data/en-GB).
 
 <br>
 
