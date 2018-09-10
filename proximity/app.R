@@ -51,8 +51,13 @@ ui <- bootstrapPage(
                                        tags$br(),
                                        tags$p("How many fast food outlets are within a 5 minute walk or 500 metres of a particular school? This app will help you to find out."),
                                        tags$h4("Instructions:"),
-                                       tags$p("Enter the name of a school into the search bar. Select the school's location on the map with the crosshairs and then choose a measure of reachability: distance or travel time. Toggle on the fast food outlets and count how many fall within your chosen distance or travel time polygon(s)."))
+                                       tags$p("Enter the name of a school into the search bar. Select the school's location on the map with the crosshairs and then choose a measure of reachability: distance or travel time. Toggle on the fast food outlets and count how many fall within your chosen distance or travel time polygon(s)."),
+                                       tags$h4("Data:"),
+                                       tags$p("The location of schools and colleges in Trafford derive from the", tags$a(href="https://get-information-schools.service.gov.uk/", "Department of Education."),
+                                       "Fast food outlet locations were extracted from the ", 
+                                       tags$a(href="http://ratings.food.gov.uk/open-data/en-GBFood", "Food Standards Agency.")))
 )))))
+                                            
 
 server <- function(input, output, session) {
   

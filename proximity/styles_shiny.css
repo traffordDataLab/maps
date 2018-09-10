@@ -18,6 +18,7 @@ div.shinyContainer
 #shinyControls
 {
   top: 10px;
+  padding-left: 25px;
 }
 
 #controls 
