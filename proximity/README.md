@@ -6,7 +6,7 @@ The geospatial data for schools and colleges derive from the the [Department for
 
 <br>
 
-<img src="https://github.com/traffordDataLab/shiny/blob/master/reachability/screenshot.png" width="800">
+<img src="https://github.com/traffordDataLab/shiny/blob/master/proximity/screenshot.png" width="800">
 
 <br />
 
