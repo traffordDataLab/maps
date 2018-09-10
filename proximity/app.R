@@ -1,4 +1,4 @@
-## Reachability app ##
+## Promiximity between schools and fast food outlets ##
 
 ## load R packages ---------------------------
 library(shiny); library(tidyverse) ; library(httr) ; library(geojsonio) ; library(jsonlite) ; library(sf) ; library(leaflet) ; library(leaflet.extras)
@@ -49,7 +49,7 @@ ui <- bootstrapPage(
                                        tags$small("© Powered by ", tags$a(href="https://openrouteservice.org/", "openrouteservice"))),
                               tabPanel("Info",
                                        tags$br(),
-                                       tags$p("How many fast food outlets are within a 5 minute walk of a particular school? This app will help you to find out."),
+                                       tags$p("How many fast food outlets are within a 5 minute walk or 500 metres of a particular school? This app will help you to find out."),
                                        tags$h4("Instructions:"),
                                        tags$p("Enter the name of a school into the search bar. Select the school's location on the map with the crosshairs and then choose a measure of reachability: distance or travel time. Toggle on the fast food outlets and count how many fall within your chosen distance or travel time polygon(s)."))
 )))))
