@@ -1,6 +1,6 @@
 ## Proximity 
 
-This [Shiny](https://cran.r-project.org/web/packages/shiny/index.html) app using the [OpenRouteService](https://openrouteservice.org/) API to measure the proximity (distance and travel time) of fast food outlets to schools.
+This [Shiny](https://cran.r-project.org/web/packages/shiny/index.html) app uses the [OpenRouteService](https://openrouteservice.org/) API to measure the proximity (distance and travel time) of fast food outlets to schools.
 
 The geospatial data for schools and colleges derive from the the [Department for Education](https://get-information-schools.service.gov.uk/) and fast food outlets from the [Food Standards Agency](http://ratings.food.gov.uk/open-data/en-GB).
 
