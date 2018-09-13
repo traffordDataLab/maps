@@ -16,6 +16,9 @@
         <link rel="stylesheet" href="https://www.trafforddatalab.io/assets/leaflet/extended_markers/extended_markers_base.css"/>
         <link rel="stylesheet" href="https://www.trafforddatalab.io/assets/leaflet/extended_markers/extended_markers_mixed.css"/>
 
+        <link rel="stylesheet" href="../../assets/leaflet/isochrones_plugin/leaflet.isochrones.css"/>
+        <link rel="stylesheet" href="../../assets/leaflet/isochrones_plugin/leaflet.isochrones_lab.css"/>
+
         <style>
             .aboutContainer
             {
@@ -78,6 +81,9 @@
         <script src="https://www.trafforddatalab.io/assets/javascript/labSpinner.js"></script>
         <script src="https://www.trafforddatalab.io/assets/leaflet/labCreateTileLayer.js"></script>
         <script src="https://www.trafforddatalab.io/assets/leaflet/labLeafletMap.js"></script>
+
+        <script src="../../assets/leaflet/isochrones_plugin/leaflet.isochrones_lab_setup.js"></script>
+        <script src="../../assets/leaflet/isochrones_plugin/leaflet.isochrones.js"></script>
 
         <script>
             // ######### FUNCTIONS #########
@@ -161,9 +167,12 @@
                         labMap.featureCache.setIcon(labMap.marker);
                     }
                     else {
-                        // work out if the feature belongs to a dataset or one of the boundary geographies as the reset process is slightly different
+                        // work out if the feature belongs to a dataset, an isochrone or one of the boundary geographies as the reset process is slightly different
                         if (labMap.datasetGeoJson != null && labMap.datasetGeoJson.hasLayer(labMap.featureCache)) {
                             labMap.datasetGeoJson.resetStyle(labMap.featureCache);
+                        }
+                        else if (labMap.isoControl.isochrones != null && labMap.isoControl.isochrones.hasLayer(labMap.featureCache)) {
+                            labMap.isoControl.isochrones.resetStyle(labMap.featureCache);
                         }
                         else {
                             // The currently selected feature is a polygon and could be from any one of the geography boundary layers.
@@ -323,6 +332,17 @@
                 title: 'Explore',
                 about: 'Discover the different geographies within Trafford by choosing a layer and then selecting an area.'
             });
+
+            // Add the isochrones plugin
+            labMap.isoControl = labSetupIsochronesPlugin({
+                // Common options are taken care of in the function, however the options below are extra
+                styleFn: styleOverlayData,
+                clickFn: showLayerProps,
+                ajaxRequestFn: labAjax,
+                pane: 'pane_geography_overlay'
+            });
+            labMap.isoControl.addTo(labMap.map);
+
             labMap.baseLayers['Low detail'].addTo(labMap.map);   // Choose the base/tile layer for the map
 
             labMap.datasetGeoJson = null;       // object to store GeoJSON created from datasets loaded from the select list. ***NOTE*** this object is important for the resetting of styles for clusered marker datasets
@@ -365,6 +385,16 @@
                 resetFeatureStyle();    // reset the style of a previously selected feature
                 labMap.updateInfo();    // clear and hide the info panel
             }));
+
+            labMap.map.on('isochrones:api_call_start', function (e) {
+                // example to listen for the start of the API call
+                startLabSpinner();
+            });
+
+            labMap.map.on('isochrones:api_call_end', function (e) {
+                // example to listen for the end of the API call
+                stopLabSpinner();
+            });
 
 
             // ######### DATASET METADATA & SELECTION UI  #########
