@@ -166,24 +166,51 @@
             function resetFeatureStyle() {
                 if (labMap.featureCache != null) {
                     if (labMap.featureCache.type == 'marker') {
+                        // Specific reset implementation for markers
                         labMap.featureCache.setIcon(labMap.marker);
                     }
+                    else if (labMap.datasetGeoJson != null && labMap.datasetGeoJson.hasLayer(labMap.featureCache)) {
+                        // The feature belongs to a dataset that has been loaded
+                        labMap.datasetGeoJson.resetStyle(labMap.featureCache);
+                    }
                     else {
-                        // work out if the feature belongs to a dataset, an isochrone or one of the boundary geographies as the reset process is slightly different
-                        if (labMap.datasetGeoJson != null && labMap.datasetGeoJson.hasLayer(labMap.featureCache)) {
-                            labMap.datasetGeoJson.resetStyle(labMap.featureCache);
+                        // The selected feature is either an isochrone or else we assume it to be a polygon from a geography boundary. Test below to find out if it's an isochrone.
+                        var isIsochrone = false;
+
+                        // First check that the isochrone control is added to the map and that we have some isochrones displayed, otherwise the selected feature must be from a geography boundary
+                        if (labMap.isoControl != null && labMap.map.hasLayer(labMap.isoControl.isochronesGroup)) {
+                            /*
+                                The following do-while loop is seemingly required as the expected code: labMap.isoControl.isochronesGroup.hasLayer(labMap.featureCache) doesn't work.
+                                Each isochrone or set of isochrones (if intervals were created) are added to .isochronesGroup as a L.geoJSON object, thus they are effectively sub groups of .isochronesGroup.
+                                The do-while loop iterates through each sub group and checks if the layer stored in labMap.featureCache is present. If so we stop checking.
+                                We could've implemented it using the .eachLayer method on .isochronesGroup, however this would continue checking all sub groups irrespective of whether we'd already found a match.
+                            */
+                            var arrGroups = labMap.isoControl.isochronesGroup.getLayers();
+                            var i = 0;
+
+                            do {
+                                if (arrGroups[i].hasLayer(labMap.featureCache)) isIsochrone = true;
+                                i++;
+                            }
+                            while (isIsochrone == false && i < arrGroups.length);
                         }
-                        else if (labMap.isoControl.isochrones != null && labMap.isoControl.isochrones.hasLayer(labMap.featureCache)) {
-                            labMap.isoControl.isochrones.resetStyle(labMap.featureCache);
+
+                        if (isIsochrone) {
+                            // The feature belongs to an isochrone
+                            labMap.isoControl.isochronesGroup.resetStyle(labMap.featureCache);
                         }
                         else {
-                            // The currently selected feature is a polygon and could be from any one of the geography boundary layers.
-                            // It is therefore easier to set the style to the non-selected default than use the Leaflet GeoJSON resetStyle function to achieve the same.
-                            // This is because we would have to know which geoJson object the selected layer was from.
-                            // We also know what the non-selected style should be for these features as they cannot be styled using attributes within the properties object
+                            /*
+                                The currently selected feature is a polygon and could be from any one of the geography boundary layers.
+                                It is therefore easier to set the style to the non-selected default than use the Leaflet GeoJSON resetStyle function to achieve the same.
+                                This is because we would have to know which geoJson object the selected layer was from.
+                                We also know what the non-selected style should be for these features as they cannot be styled using attributes within the properties object
+                            */
                             labMap.featureCache.setStyle(labMap.poly);
                         }
                     }
+
+                    labMap.featureCache = null; // clear the cache to prevent a situation where no feature is currently selected but the cache still contains the previously selected layer
                 }
             }
 
@@ -197,6 +224,9 @@
                 // reset the style of a previously selected feature
                 resetFeatureStyle();
 
+                // add new selected feature to the cache
+                labMap.featureCache = layer;
+
                 // set the highlight style of the selected feature
                 if (layer.type == 'marker') {
                     layer.setIcon(labMap.markerSelected);
@@ -204,9 +234,6 @@
                 else {
                     layer.setStyle(labMap.polySelected);
                 }
-
-                // set new selected feature in the cache
-                labMap.featureCache = layer;
 
                 // build the content for the properties table to be displayed
                 if (layer.feature.hasOwnProperty('properties')) {
@@ -338,9 +365,8 @@
             // Add the isochrones plugin
             labMap.isoControl = labSetupIsochronesPlugin({
                 // Common options are taken care of in the function, however the options below are extra
-                styleFn: styleOverlayData,
+                styleFn: labStyleIsochrones,
                 clickFn: showLayerProps,
-                ajaxRequestFn: labAjax,
                 pane: 'pane_geography_overlay'
             });
             labMap.isoControl.addTo(labMap.map);
