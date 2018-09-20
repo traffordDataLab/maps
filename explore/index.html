@@ -233,6 +233,20 @@
                 }
                 else {
                     layer.setStyle(labMap.polySelected);
+
+                    // Does the polygon layer belong to either a dataset or boundary geography? If so we want to bring that layer to the front
+                    // It's really important that we don't do this for isochrones otherwise the user couldn't select intervals
+                    if (labMap.datasetLayer != null && labMap.datasetLayer.hasLayer(layer)) {
+                        layer.bringToFront();
+                    }
+                    else {
+                        for (key in labMap.objGeographies) {
+                            if (labMap.objGeographies[key].hasLayer(layer)) {
+                                layer.bringToFront();
+                                break;
+                            }
+                        }
+                    }
                 }
 
                 // build the content for the properties table to be displayed
@@ -388,9 +402,7 @@
             // Selected polygon styling
             labMap.polySelected = {
                 color: '#ffea00',
-                weight: 3,
-                fillColor: '#ffff00',
-                fillOpacity: '0.5',
+                weight: 5,
                 opacity: '1'
             };
 
@@ -504,65 +516,66 @@
 
 
             // ######### SPATIAL GEOGRAPHY LAYERS/LABELS #########
+            labMap.objGeographies = {};   // object to hold all the boundary L.geoJSON objects so that we can test in a loop for which layer belongs to which geography
+
             // Add the Trafford boundary
             labAjax('https://www.trafforddatalab.io/spatial_data/local_authority/2016/trafford_local_authority_full_resolution.geojson', function (data) {
-                labMap.boundaryLA = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents }).addTo(labMap.map);
-                labMap.map.fitBounds(labMap.boundaryLA.getBounds()); // adjust the zoom to fit the boundary to the screen size
+                labMap.objGeographies['LA'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents }).addTo(labMap.map);
+                labMap.map.fitBounds(labMap.objGeographies['LA'].getBounds()); // adjust the zoom to fit the boundary to the screen size
 
-                labMap.overlayLayers['1. Local authority'] = labMap.boundaryLA;
+                labMap.overlayLayers['1. Local authority'] = labMap.objGeographies['LA'];
                 labMap.updateLayerControl();
             });
 
             // Add the Trafford wards
             labAjax('https://www.trafforddatalab.io/spatial_data/ward/2017/trafford_ward_full_resolution.geojson', function (data) {
-                labMap.boundaryWards = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents });
+                labMap.objGeographies['Ward'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents });
 
-                labMap.overlayLayers['2. Wards'] = labMap.boundaryWards;
+                labMap.overlayLayers['2. Ward'] = labMap.objGeographies['Ward'];
                 labMap.updateLayerControl();
             });
 
             // Add the Trafford MSOAs
             labAjax('https://www.trafforddatalab.io/spatial_data/msoa/2011/trafford_msoa_full_resolution.geojson', function (data) {
-                labMap.boundaryMSOAs = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents });
+                labMap.objGeographies['MSOA'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents });
 
-                labMap.overlayLayers['3. MSOA'] = labMap.boundaryMSOAs;
+                labMap.overlayLayers['3. MSOA'] = labMap.objGeographies['MSOA'];
                 labMap.updateLayerControl();
             });
 
             // Add the Trafford LSOAs
             labAjax('https://www.trafforddatalab.io/spatial_data/lsoa/2011/trafford_lsoa_full_resolution.geojson', function (data) {
-                labMap.boundaryLSOAs = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents });
+                labMap.objGeographies['LSOA'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents });
 
-                labMap.overlayLayers['4. LSOA'] = labMap.boundaryLSOAs;
+                labMap.overlayLayers['4. LSOA'] = labMap.objGeographies['LSOA'];
                 labMap.updateLayerControl();
             });
 
             // Add the Trafford OAs
             labAjax('https://www.trafforddatalab.io/spatial_data/oa/2011/trafford_oa_generalised.geojson', function (data) {
-                labMap.boundaryOAs = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents });
+                labMap.objGeographies['OA'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents });
 
-                labMap.overlayLayers['5. OA'] = labMap.boundaryOAs;
+                labMap.overlayLayers['5. OA'] = labMap.objGeographies['OA'];
                 labMap.updateLayerControl();
             });
 
             // Add the Trafford localities
             labAjax('https://www.trafforddatalab.io/spatial_data/council_defined/trafford_localities.geojson', function (data) {
-                labMap.boundaryLocalities = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents });
+                labMap.objGeographies['Localities'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents });
 
-                labMap.overlayLayers['6. Localities'] = labMap.boundaryLocalities;
+                labMap.overlayLayers['6. Localities'] = labMap.objGeographies['Localities'];
                 labMap.updateLayerControl();
             });
 
-            // Add labels for the town centres
+            // Add labels for the town centres - this is not a boundary layer so it is not added to objGeographies
             labAjax('https://www.trafforddatalab.io/spatial_data/town_centres/trafford_town_centres.geojson', function (data) {
 
-                labMap.townCentres = L.geoJSON(data, {
+                labMap.overlayLayers['7. Town centres'] = L.geoJSON(data, {
                     pointToLayer: function (feature, latlng) {
                         return L.marker(latlng, { icon: L.divIcon({ iconSize: null }) }).bindTooltip(feature.properties.name, { direction: 'center', className: 'labLabels', opacity: 1, permanent: true });
                     }
                 });
 
-                labMap.overlayLayers['7. Town centres'] = labMap.townCentres;
                 labMap.updateLayerControl();
             });
         </script>
