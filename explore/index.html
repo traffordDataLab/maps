@@ -15,6 +15,8 @@
         <link rel="stylesheet" href="https://www.trafforddatalab.io/assets/leaflet/labLeafletMap.css"/>
         <link rel="stylesheet" href="https://www.trafforddatalab.io/assets/leaflet/extended_markers/extended_markers_base.css"/>
         <link rel="stylesheet" href="https://www.trafforddatalab.io/assets/leaflet/extended_markers/extended_markers_mixed.css"/>
+        <link rel="stylesheet" href="https://www.trafforddatalab.io/assets/leaflet/isochrones_plugin/leaflet.isochrones.css"/>
+        <link rel="stylesheet" href="https://www.trafforddatalab.io/assets/leaflet/isochrones_plugin/leaflet.isochrones_lab.css"/>
 
         <style>
             .aboutContainer
@@ -37,12 +39,14 @@
             .propertiesTable td
             {
                 vertical-align: top;
+                border-bottom: 1px dotted #ccc;
             }
 
             .propertiesTable td:nth-child(1)
             {
                 font-weight: bold;
                 width: 1%;
+                white-space: nowrap;
             }
 
             .datasetSelect
@@ -78,6 +82,8 @@
         <script src="https://www.trafforddatalab.io/assets/javascript/labSpinner.js"></script>
         <script src="https://www.trafforddatalab.io/assets/leaflet/labCreateTileLayer.js"></script>
         <script src="https://www.trafforddatalab.io/assets/leaflet/labLeafletMap.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/leaflet/isochrones_plugin/leaflet.isochrones_lab_setup.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/leaflet/isochrones_plugin/leaflet.isochrones.js"></script>
 
         <script>
             // ######### FUNCTIONS #########
@@ -157,22 +163,28 @@
             // Reset the styling of a previously selected feature
             function resetFeatureStyle() {
                 if (labMap.featureCache != null) {
-                    if (labMap.featureCache.type == 'marker') {
-                        labMap.featureCache.setIcon(labMap.marker);
+                    var layer = labMap.featureCache;
+
+                    if (layer.type == 'marker') {
+                        // Specific reset implementation for markers
+                        layer.setIcon(labMap.marker);
+                    }
+                    else if (isDatasetLayer(layer)) {
+                        // The feature belongs to a dataset that has been loaded
+                        labMap.datasetGeoJson.resetStyle(layer);
                     }
                     else {
-                        // work out if the feature belongs to a dataset or one of the boundary geographies as the reset process is slightly different
-                        if (labMap.datasetGeoJson != null && labMap.datasetGeoJson.hasLayer(labMap.featureCache)) {
-                            labMap.datasetGeoJson.resetStyle(labMap.featureCache);
+                        // The selected feature is either an isochrone or else we assume it to be a polygon from a geography boundary. The reset style method depends on what type of layer it is.
+                        if (isIsochroneLayer(layer)) {
+                            labMap.isoControl.isochronesGroup.resetStyle(layer);
                         }
                         else {
-                            // The currently selected feature is a polygon and could be from any one of the geography boundary layers.
-                            // It is therefore easier to set the style to the non-selected default than use the Leaflet GeoJSON resetStyle function to achieve the same.
-                            // This is because we would have to know which geoJson object the selected layer was from.
-                            // We also know what the non-selected style should be for these features as they cannot be styled using attributes within the properties object
-                            labMap.featureCache.setStyle(labMap.poly);
+                            // Easier to just set the style back to the default than resetting it via the L.geoJSON method
+                            layer.setStyle(labMap.poly);
                         }
                     }
+
+                    labMap.featureCache = null; // clear the cache to prevent a situation where no feature is currently selected but the cache still contains the previously selected layer
                 }
             }
 
@@ -186,16 +198,20 @@
                 // reset the style of a previously selected feature
                 resetFeatureStyle();
 
+                // add new selected feature to the cache
+                labMap.featureCache = layer;
+
                 // set the highlight style of the selected feature
                 if (layer.type == 'marker') {
                     layer.setIcon(labMap.markerSelected);
                 }
                 else {
                     layer.setStyle(labMap.polySelected);
-                }
 
-                // set new selected feature in the cache
-                labMap.featureCache = layer;
+                    // Does the polygon layer belong to either a dataset or boundary geography? If so we want to bring that layer to the front
+                    // It's really important that we don't do this for isochrones otherwise the user couldn't select intervals
+                    if (isIsochroneLayer(layer) == false) layer.bringToFront();
+                }
 
                 // build the content for the properties table to be displayed
                 if (layer.feature.hasOwnProperty('properties')) {
@@ -316,6 +332,37 @@
                 labMap.datasetLayer.addTo(labMap.map);
             }
 
+            // Determines whether the layer provided is an isochrone
+            function isIsochroneLayer(layer) {
+                if (labMap.isoControl != null && labMap.isoControl.isochronesGroup != null) {
+                    /*
+                        The following iteration is seemingly required as the expected code: labMap.isoControl.isochronesGroup.hasLayer(layer) doesn't work.
+                        Each isochrone or set of isochrones (if intervals were created) are added to .isochronesGroup as a L.geoJSON object, thus they are effectively sub groups of .isochronesGroup.
+                        The loop iterates through each sub group and checks if the layer is present. If so we stop checking.
+                    */
+                    var arrGroups = labMap.isoControl.isochronesGroup.getLayers();
+                    for (var i = 0; i < arrGroups.length; i++) {
+                        if (arrGroups[i].hasLayer(layer)) return true;
+                    }
+                }
+
+                return false;
+            }
+
+            // Determines whether the layer provided is a geography boundary
+            function isGeographyLayer(layer) {
+                for (key in labMap.objGeographies) {
+                    if (labMap.objGeographies[key].hasLayer(layer)) return true;
+                }
+
+                return false;
+            }
+
+            // Determines whether the layer provided is a dataset layer
+            function isDatasetLayer(layer) {
+                return (labMap.datasetLayer != null && labMap.datasetLayer.hasLayer(layer));
+            }
+
 
             // ######### INITIALISATION #########
             // Set up the basic map environment
@@ -323,6 +370,16 @@
                 title: 'Explore',
                 about: 'Discover the different geographies within Trafford by choosing a layer and then selecting an area.'
             });
+
+            // Add the isochrones plugin
+            labMap.isoControl = labSetupIsochronesPlugin({
+                // Common options are taken care of in the function, however the options below are extra
+                styleFn: labStyleIsochrones,
+                clickFn: showLayerProps,
+                pane: 'pane_geography_overlay'
+            });
+            labMap.isoControl.addTo(labMap.map);
+
             labMap.baseLayers['Low detail'].addTo(labMap.map);   // Choose the base/tile layer for the map
 
             labMap.datasetGeoJson = null;       // object to store GeoJSON created from datasets loaded from the select list. ***NOTE*** this object is important for the resetting of styles for clusered marker datasets
@@ -340,9 +397,7 @@
             // Selected polygon styling
             labMap.polySelected = {
                 color: '#ffea00',
-                weight: 3,
-                fillColor: '#ffff00',
-                fillOpacity: '0.5',
+                weight: 5,
                 opacity: '1'
             };
 
@@ -365,6 +420,29 @@
                 resetFeatureStyle();    // reset the style of a previously selected feature
                 labMap.updateInfo();    // clear and hide the info panel
             }));
+
+            labMap.map.on('isochrones:api_call_start', function (e) {
+                // example to listen for the start of the API call
+                startLabSpinner();
+            });
+
+            labMap.map.on('isochrones:api_call_end', function (e) {
+                // example to listen for the end of the API call
+                stopLabSpinner();
+            });
+
+            labMap.map.on('isochrones:delete', function (e) {
+                // Check that the recently deleted isochrone wasn't currently selected
+                if (labMap.featureCache != null) {
+                    var layer = labMap.featureCache;
+
+                    if (isIsochroneLayer(layer) == false && isGeographyLayer(layer) == false && isDatasetLayer(layer) == false) {
+                        // The currently cached layer must've been an isochrone which has now been deleted so reset the info panel and cache
+                        labMap.updateInfo();
+                        labMap.featureCache = null;
+                    }
+                }
+            });
 
 
             // ######### DATASET METADATA & SELECTION UI  #########
@@ -446,65 +524,66 @@
 
 
             // ######### SPATIAL GEOGRAPHY LAYERS/LABELS #########
+            labMap.objGeographies = {};   // object to hold all the boundary L.geoJSON objects so that we can test in a loop for which layer belongs to which geography
+
             // Add the Trafford boundary
             labAjax('https://www.trafforddatalab.io/spatial_data/local_authority/2016/trafford_local_authority_full_resolution.geojson', function (data) {
-                labMap.boundaryLA = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents }).addTo(labMap.map);
-                labMap.map.fitBounds(labMap.boundaryLA.getBounds()); // adjust the zoom to fit the boundary to the screen size
+                labMap.objGeographies['LA'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents }).addTo(labMap.map);
+                labMap.map.fitBounds(labMap.objGeographies['LA'].getBounds()); // adjust the zoom to fit the boundary to the screen size
 
-                labMap.overlayLayers['1. Local authority'] = labMap.boundaryLA;
+                labMap.overlayLayers['1. Local authority'] = labMap.objGeographies['LA'];
                 labMap.updateLayerControl();
             });
 
             // Add the Trafford wards
             labAjax('https://www.trafforddatalab.io/spatial_data/ward/2017/trafford_ward_full_resolution.geojson', function (data) {
-                labMap.boundaryWards = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents });
+                labMap.objGeographies['Ward'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents });
 
-                labMap.overlayLayers['2. Wards'] = labMap.boundaryWards;
+                labMap.overlayLayers['2. Ward'] = labMap.objGeographies['Ward'];
                 labMap.updateLayerControl();
             });
 
             // Add the Trafford MSOAs
             labAjax('https://www.trafforddatalab.io/spatial_data/msoa/2011/trafford_msoa_full_resolution.geojson', function (data) {
-                labMap.boundaryMSOAs = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents });
+                labMap.objGeographies['MSOA'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents });
 
-                labMap.overlayLayers['3. MSOA'] = labMap.boundaryMSOAs;
+                labMap.overlayLayers['3. MSOA'] = labMap.objGeographies['MSOA'];
                 labMap.updateLayerControl();
             });
 
             // Add the Trafford LSOAs
             labAjax('https://www.trafforddatalab.io/spatial_data/lsoa/2011/trafford_lsoa_full_resolution.geojson', function (data) {
-                labMap.boundaryLSOAs = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents });
+                labMap.objGeographies['LSOA'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents });
 
-                labMap.overlayLayers['4. LSOA'] = labMap.boundaryLSOAs;
+                labMap.overlayLayers['4. LSOA'] = labMap.objGeographies['LSOA'];
                 labMap.updateLayerControl();
             });
 
             // Add the Trafford OAs
             labAjax('https://www.trafforddatalab.io/spatial_data/oa/2011/trafford_oa_generalised.geojson', function (data) {
-                labMap.boundaryOAs = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents });
+                labMap.objGeographies['OA'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents });
 
-                labMap.overlayLayers['5. OA'] = labMap.boundaryOAs;
+                labMap.overlayLayers['5. OA'] = labMap.objGeographies['OA'];
                 labMap.updateLayerControl();
             });
 
             // Add the Trafford localities
             labAjax('https://www.trafforddatalab.io/spatial_data/council_defined/trafford_localities.geojson', function (data) {
-                labMap.boundaryLocalities = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents });
+                labMap.objGeographies['Localities'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: labMap.poly, onEachFeature: featureEvents });
 
-                labMap.overlayLayers['6. Localities'] = labMap.boundaryLocalities;
+                labMap.overlayLayers['6. Localities'] = labMap.objGeographies['Localities'];
                 labMap.updateLayerControl();
             });
 
-            // Add labels for the town centres
+            // Add labels for the town centres - this is not a boundary layer so it is not added to objGeographies
             labAjax('https://www.trafforddatalab.io/spatial_data/town_centres/trafford_town_centres.geojson', function (data) {
 
-                labMap.townCentres = L.geoJSON(data, {
+                labMap.overlayLayers['7. Town centres'] = L.geoJSON(data, {
                     pointToLayer: function (feature, latlng) {
                         return L.marker(latlng, { icon: L.divIcon({ iconSize: null }) }).bindTooltip(feature.properties.name, { direction: 'center', className: 'labLabels', opacity: 1, permanent: true });
                     }
                 });
 
-                labMap.overlayLayers['7. Town centres'] = labMap.townCentres;
                 labMap.updateLayerControl();
             });
         </script>
