@@ -252,5 +252,13 @@
         "url": "https://www.trafforddatalab.io/open_data/mental_health/trafford_mental_health_services_styled.geojson",
         "theme": "Health",
         "cluster": true
+    },
+    "public_transport_accessibility": {
+        "title": "Public transport accessibility",
+        "about": "Greater Manchester Accessibility Levels (GMAL) is a measure which rates locations by their distance from frequent public transport services. The accessibility index score is categorised into eight levels, 1 to 8, where level 8 represents a high level of accessibility and level 1 a low level of accessibility.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/GM_Accessibility_Levels/GMAL_trafford.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/GM_Accessibility_Levels' target='_blank'>on GitHub</a>.",
+        "attribution": "Transport for Greater Manchester",
+        "url": "https://www.trafforddatalab.io/open_data/GM_Accessibility_Levels/GMAL_trafford.geojson",
+        "theme": "Transport",
+        "legend": "<div class='legendKey legendKeyLine' style='border-bottom: 3px solid #500001;'></div> Level 8. High accessibility<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #D63027;'></div> Level 7<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #FF8001;'></div> Level 6<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #FED861;'></div> Level 5<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #8FFF90;'></div> Level 4<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #50C4FF;'></div> Level 3<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #3175FF;'></div> Level 2<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #020060;'></div> Level 1. Low accessibility"
     }
 }
