@@ -165,48 +165,24 @@
             // Reset the styling of a previously selected feature
             function resetFeatureStyle() {
                 if (labMap.featureCache != null) {
-                    if (labMap.featureCache.type == 'marker') {
+                    var layer = labMap.featureCache;
+
+                    if (layer.type == 'marker') {
                         // Specific reset implementation for markers
-                        labMap.featureCache.setIcon(labMap.marker);
+                        layer.setIcon(labMap.marker);
                     }
-                    else if (labMap.datasetGeoJson != null && labMap.datasetGeoJson.hasLayer(labMap.featureCache)) {
+                    else if (isDatasetLayer(layer)) {
                         // The feature belongs to a dataset that has been loaded
-                        labMap.datasetGeoJson.resetStyle(labMap.featureCache);
+                        labMap.datasetGeoJson.resetStyle(layer);
                     }
                     else {
-                        // The selected feature is either an isochrone or else we assume it to be a polygon from a geography boundary. Test below to find out if it's an isochrone.
-                        var isIsochrone = false;
-
-                        // First check that the isochrone control is added to the map and that we have some isochrones displayed, otherwise the selected feature must be from a geography boundary
-                        if (labMap.isoControl != null && labMap.map.hasLayer(labMap.isoControl.isochronesGroup)) {
-                            /*
-                                The following do-while loop is seemingly required as the expected code: labMap.isoControl.isochronesGroup.hasLayer(labMap.featureCache) doesn't work.
-                                Each isochrone or set of isochrones (if intervals were created) are added to .isochronesGroup as a L.geoJSON object, thus they are effectively sub groups of .isochronesGroup.
-                                The do-while loop iterates through each sub group and checks if the layer stored in labMap.featureCache is present. If so we stop checking.
-                                We could've implemented it using the .eachLayer method on .isochronesGroup, however this would continue checking all sub groups irrespective of whether we'd already found a match.
-                            */
-                            var arrGroups = labMap.isoControl.isochronesGroup.getLayers();
-                            var i = 0;
-
-                            do {
-                                if (arrGroups[i].hasLayer(labMap.featureCache)) isIsochrone = true;
-                                i++;
-                            }
-                            while (isIsochrone == false && i < arrGroups.length);
-                        }
-
-                        if (isIsochrone) {
-                            // The feature belongs to an isochrone
-                            labMap.isoControl.isochronesGroup.resetStyle(labMap.featureCache);
+                        // The selected feature is either an isochrone or else we assume it to be a polygon from a geography boundary. The reset style method depends on what type of layer it is.
+                        if (isIsochroneLayer(layer)) {
+                            labMap.isoControl.isochronesGroup.resetStyle(layer);
                         }
                         else {
-                            /*
-                                The currently selected feature is a polygon and could be from any one of the geography boundary layers.
-                                It is therefore easier to set the style to the non-selected default than use the Leaflet GeoJSON resetStyle function to achieve the same.
-                                This is because we would have to know which geoJson object the selected layer was from.
-                                We also know what the non-selected style should be for these features as they cannot be styled using attributes within the properties object
-                            */
-                            labMap.featureCache.setStyle(labMap.poly);
+                            // Easier to just set the style back to the default than resetting it via the L.geoJSON method
+                            layer.setStyle(labMap.poly);
                         }
                     }
 
@@ -236,17 +212,7 @@
 
                     // Does the polygon layer belong to either a dataset or boundary geography? If so we want to bring that layer to the front
                     // It's really important that we don't do this for isochrones otherwise the user couldn't select intervals
-                    if (labMap.datasetLayer != null && labMap.datasetLayer.hasLayer(layer)) {
-                        layer.bringToFront();
-                    }
-                    else {
-                        for (key in labMap.objGeographies) {
-                            if (labMap.objGeographies[key].hasLayer(layer)) {
-                                layer.bringToFront();
-                                break;
-                            }
-                        }
-                    }
+                    if (isIsochroneLayer(layer) == false) layer.bringToFront();
                 }
 
                 // build the content for the properties table to be displayed
@@ -368,6 +334,37 @@
                 labMap.datasetLayer.addTo(labMap.map);
             }
 
+            // Determines whether the layer provided is an isochrone
+            function isIsochroneLayer(layer) {
+                if (labMap.isoControl != null && labMap.isoControl.isochronesGroup != null) {
+                    /*
+                        The following iteration is seemingly required as the expected code: labMap.isoControl.isochronesGroup.hasLayer(layer) doesn't work.
+                        Each isochrone or set of isochrones (if intervals were created) are added to .isochronesGroup as a L.geoJSON object, thus they are effectively sub groups of .isochronesGroup.
+                        The loop iterates through each sub group and checks if the layer is present. If so we stop checking.
+                    */
+                    var arrGroups = labMap.isoControl.isochronesGroup.getLayers();
+                    for (var i = 0; i < arrGroups.length; i++) {
+                        if (arrGroups[i].hasLayer(layer)) return true;
+                    }
+                }
+
+                return false;
+            }
+
+            // Determines whether the layer provided is a geography boundary
+            function isGeographyLayer(layer) {
+                for (key in labMap.objGeographies) {
+                    if (labMap.objGeographies[key].hasLayer(layer)) return true;
+                }
+
+                return false;
+            }
+
+            // Determines whether the layer provided is a dataset layer
+            function isDatasetLayer(layer) {
+                return (labMap.datasetLayer != null && labMap.datasetLayer.hasLayer(layer));
+            }
+
 
             // ######### INITIALISATION #########
             // Set up the basic map environment
@@ -434,6 +431,19 @@
             labMap.map.on('isochrones:api_call_end', function (e) {
                 // example to listen for the end of the API call
                 stopLabSpinner();
+            });
+
+            labMap.map.on('isochrones:delete', function (e) {
+                // Check that the recently deleted isochrone wasn't currently selected
+                if (labMap.featureCache != null) {
+                    var layer = labMap.featureCache;
+
+                    if (isIsochroneLayer(layer) == false && isGeographyLayer(layer) == false && isDatasetLayer(layer) == false) {
+                        // The currently cached layer must've been an isochrone which has now been deleted so reset the info panel and cache
+                        labMap.updateInfo();
+                        labMap.featureCache = null;
+                    }
+                }
             });
 
 
