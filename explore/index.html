@@ -265,7 +265,7 @@
                             try {
                                 // set the options for the GeoJSON layer
                                 var layerOptions = { style: styleOverlayData, onEachFeature: featureEvents, pointToLayer: pointData, pane: 'pane_data_overlay' };
-                                if (labMap.objDatasets[datasetKey].attribution !== null) layerOptions['attribution'] = 'data source: ' + labMap.objDatasets[datasetKey].attribution;
+                                if (labMap.objDatasets[datasetKey].attribution !== null) layerOptions['attribution'] = 'Data source: ' + labMap.objDatasets[datasetKey].attribution;
 
                                 labMap.datasetGeoJson = L.geoJSON(data, layerOptions);     // create and store the GeoJSON object
 
@@ -274,7 +274,7 @@
                                     labMap.datasetCluster.addLayer(labMap.datasetGeoJson);  // add the GeoJSON to the cluster object - point data will be clustered but polygons/lines won't
 
                                     // the following is a patch for a seeming bug in Leaflet.MarkerCluster not handling the layer attribution automatically
-                                    if (labMap.objDatasets[datasetKey].attribution !== null) labMap.attribution.addAttribution('data source: ' + labMap.objDatasets[datasetKey].attribution);
+                                    if (labMap.objDatasets[datasetKey].attribution !== null) labMap.attribution.addAttribution('Data source: ' + labMap.objDatasets[datasetKey].attribution);
 
                                     // do we want clustering on or off?
                                     var clusterQS = labGetQryStrValByKey('cluster');
