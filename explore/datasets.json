@@ -258,5 +258,90 @@
         "attribution": "<a href='https://www.sportengland.org' target='_blank'>Contains Data &copy; Sport England</a>",
         "url": "https://www.trafforddatalab.io/open_data/sport_facilities/tennis_courts.geojson",
         "theme": "Amenities"
+    },
+    "swimming_pools": {
+        "title": "Swimming pools",
+        "about": "Locations of swimming pools in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/sport_facilities/swimming_pools.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/sport_facilities/swimming_pools.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/sport_facilities' target='_blank'>on GitHub</a>.",
+        "attribution": "<a href='https://www.sportengland.org' target='_blank'>Contains Data &copy; Sport England</a>",
+        "url": "https://www.trafforddatalab.io/open_data/sport_facilities/swimming_pools.geojson",
+        "theme": "Amenities"
+    },
+    "fitness_studios": {
+        "title": "Fitness studios",
+        "about": "Locations in Trafford of purpose built studios where classes are held for a range of activities such as yoga, aerobics, spinning, martial arts etc.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/sport_facilities/studio.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/sport_facilities/studio.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/sport_facilities' target='_blank'>on GitHub</a>.",
+        "attribution": "<a href='https://www.sportengland.org' target='_blank'>Contains Data &copy; Sport England</a>",
+        "url": "https://www.trafforddatalab.io/open_data/sport_facilities/studio.geojson",
+        "theme": "Amenities"
+    },
+    "squash_courts": {
+        "title": "Squash courts",
+        "about": "Locations of squash courts in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/sport_facilities/squash_courts.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/sport_facilities/squash_courts.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/sport_facilities' target='_blank'>on GitHub</a>.",
+        "attribution": "<a href='https://www.sportengland.org' target='_blank'>Contains Data &copy; Sport England</a>",
+        "url": "https://www.trafforddatalab.io/open_data/sport_facilities/squash_courts.geojson",
+        "theme": "Amenities"
+    },
+    "sports_halls": {
+        "title": "Sports halls",
+        "about": "Locations in Trafford of indoor multi-sports halls where a range of sport and recreational activities are carried out.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/sport_facilities/sports_hall.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/sport_facilities/sports_hall.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/sport_facilities' target='_blank'>on GitHub</a>.",
+        "attribution": "<a href='https://www.sportengland.org' target='_blank'>Contains Data &copy; Sport England</a>",
+        "url": "https://www.trafforddatalab.io/open_data/sport_facilities/sports_hall.geojson",
+        "theme": "Amenities"
+    },
+    "ski_slopes": {
+        "title": "Ski slopes",
+        "about": "Locations of ski slopes in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/sport_facilities/ski_slopes.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/sport_facilities/ski_slopes.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/sport_facilities' target='_blank'>on GitHub</a>.",
+        "attribution": "<a href='https://www.sportengland.org' target='_blank'>Contains Data &copy; Sport England</a>",
+        "url": "https://www.trafforddatalab.io/open_data/sport_facilities/ski_slopes.geojson",
+        "theme": "Amenities"
+    },
+    "indoor_tennis": {
+        "title": "Indoor tennis",
+        "about": "Locations of indoor tennis centres in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/sport_facilities/indoor_tennis_centre.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/sport_facilities/indoor_tennis_centre.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/sport_facilities' target='_blank'>on GitHub</a>.",
+        "attribution": "<a href='https://www.sportengland.org' target='_blank'>Contains Data &copy; Sport England</a>",
+        "url": "https://www.trafforddatalab.io/open_data/sport_facilities/indoor_tennis_centre.geojson",
+        "theme": "Amenities"
+    },
+    "ice_rinks": {
+        "title": "Ice rinks",
+        "about": "Locations of ice rinks in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/sport_facilities/ice_rinks.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/sport_facilities/ice_rinks.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/sport_facilities' target='_blank'>on GitHub</a>.",
+        "attribution": "<a href='https://www.sportengland.org' target='_blank'>Contains Data &copy; Sport England</a>",
+        "url": "https://www.trafforddatalab.io/open_data/sport_facilities/ice_rinks.geojson",
+        "theme": "Amenities"
+    },
+    "health_and_fitness_suites": {
+        "title": "Health and fitness suites",
+        "about": "Locations in Trafford of health and fitness suites with cardiovascular and/or resistance stations, and possibly also free weights and stretching areas.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/sport_facilities/health_and_fitness_suite.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/sport_facilities/health_and_fitness_suite.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/sport_facilities' target='_blank'>on GitHub</a>.",
+        "attribution": "<a href='https://www.sportengland.org' target='_blank'>Contains Data &copy; Sport England</a>",
+        "url": "https://www.trafforddatalab.io/open_data/sport_facilities/health_and_fitness_suite.geojson",
+        "theme": "Amenities"
+    },
+    "grass_pitches": {
+        "title": "Grass pitches",
+        "about": "Locations of grass pitches in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/sport_facilities/grass_pitches.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/sport_facilities/grass_pitches.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/sport_facilities' target='_blank'>on GitHub</a>.",
+        "attribution": "<a href='https://www.sportengland.org' target='_blank'>Contains Data &copy; Sport England</a>",
+        "url": "https://www.trafforddatalab.io/open_data/sport_facilities/grass_pitches.geojson",
+        "theme": "Amenities",
+        "cluster": true
+    },
+    "golf": {
+        "title": "Golf facilities",
+        "about": "Locations in Trafford of all golf courses with a minimum number of 9 holes, and driving ranges.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/sport_facilities/golf.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/sport_facilities/golf.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/sport_facilities' target='_blank'>on GitHub</a>.",
+        "attribution": "<a href='https://www.sportengland.org' target='_blank'>Contains Data &copy; Sport England</a>",
+        "url": "https://www.trafforddatalab.io/open_data/sport_facilities/golf.geojson",
+        "theme": "Amenities"
+    },
+    "athletics_tracks": {
+        "title": "Athletics tracks",
+        "about": "Locations in Trafford of permanently constructed all weather 400m outdoor running tracks with a minimum number of 4 lanes.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/sport_facilities/athletics_tracks.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/sport_facilities/athletics_tracks.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/sport_facilities' target='_blank'>on GitHub</a>.",
+        "attribution": "<a href='https://www.sportengland.org' target='_blank'>Contains Data &copy; Sport England</a>",
+        "url": "https://www.trafforddatalab.io/open_data/sport_facilities/athletics_tracks.geojson",
+        "theme": "Amenities"
+    },
+    "artificial_grass_pitches": {
+        "title": "Artificial grass pitches",
+        "about": "Locations of all-weather artificial grass pitches in Trafford. Pitches are a minimum of 75m x 45m and floodlit.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/sport_facilities/artificial_grass_pitch.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/sport_facilities/artificial_grass_pitch.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/sport_facilities' target='_blank'>on GitHub</a>.",
+        "attribution": "<a href='https://www.sportengland.org' target='_blank'>Contains Data &copy; Sport England</a>",
+        "url": "https://www.trafforddatalab.io/open_data/sport_facilities/artificial_grass_pitch.geojson",
+        "theme": "Amenities"
     }
 }
