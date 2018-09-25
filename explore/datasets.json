@@ -199,9 +199,9 @@
     },
     "gambling_premises": {
         "title": "Gambling premises",
-        "about": "Locations of gambling premises within Greater Manchester.<br /><br />Download: <a href='https://www.trafforddatalab.io/projects/opengovintelligence/apps/explore/data/betting_shops/bettingshops_gm.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/projects/tree/master/opengovintelligence/apps/explore/data/betting_shops' target='_blank'>on GitHub</a>.",
+        "about": "Locations of gambling premises within Greater Manchester.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/gambling_premises/trafford_gambling_premises.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/gambling_premises/trafford_gambling_premises.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/gambling_premises' target='_blank'>on GitHub</a>.",
         "attribution": "<a href='https://www.gamblingcommission.gov.uk/home.aspx' target='_blank'>Gambling Commission</a>",
-        "url": "https://www.trafforddatalab.io/projects/opengovintelligence/apps/explore/data/betting_shops/bettingshops_gm.geojson",
+        "url": "https://www.trafforddatalab.io/open_data/gambling_premises/trafford_gambling_premises.geojson",
         "theme": "Amenities",
         "cluster": true
     },
