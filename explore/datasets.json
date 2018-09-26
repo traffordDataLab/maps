@@ -3,7 +3,7 @@
         "title": "Agricultural land",
         "about": "Five grades of agricultural land (1 = best quality to 5 = poorest quality) with classifications for urban and non-agricultural land in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/agricultural_land_classification/trafford_agricultural_land_classification.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/agricultural_land_classification' target='_blank'>on GitHub</a>.",
         "attribution": "<a href='https://www.gov.uk/government/organisations/natural-england' target='_blank'>Natural England</a>",
-        "url": "https://www.trafforddatalab.io/open_data/agricultural_land_classification/trafford_agricultural_land_classification_styled.geojson",
+        "url": "https://www.trafforddatalab.io/open_data/agricultural_land_classification/trafford_agricultural_land_classification.geojson",
         "theme": "Environment",
         "legend": "<div class='legendKey legendKeyLine' style='border-bottom: 3px solid #a1d99b;'></div> Grade 2<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #74c476;'></div> Grade 3<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #31a354;'></div> Grade 4<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #ae8552;'></div> Non Agricultural<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #828282;'></div> Urban"
     },
@@ -11,7 +11,7 @@
         "title": "Air quality",
         "about": "Air Quality Management Areas (AQMAs) in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/AQMA/trafford_aqma.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/AQMA' target='_blank'>on GitHub</a>.",
         "attribution": "<a href='https://www.gov.uk/government/organisations/department-for-environment-food-rural-affairs' target='_blank'>Department for Environment Food & Rural Affairs (Defra)</a>",
-        "url": "https://www.trafforddatalab.io/open_data/AQMA/trafford_aqma_styled.geojson",
+        "url": "https://www.trafforddatalab.io/open_data/AQMA/trafford_aqma.geojson",
         "theme": "Environment"
     },
     "buildings": {
@@ -246,9 +246,9 @@
     },
     "public_transport_accessibility": {
         "title": "Public transport accessibility",
-        "about": "Greater Manchester Accessibility Levels (GMAL) is a measure which rates locations by their distance from frequent public transport services. The accessibility index score is categorised into eight levels, 1 to 8, where level 8 represents a high level of accessibility and level 1 a low level of accessibility.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/GM_Accessibility_Levels/GMAL_trafford.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/GM_Accessibility_Levels' target='_blank'>on GitHub</a>.",
+        "about": "Greater Manchester Accessibility Levels (GMAL) is a measure which rates locations by their distance from frequent public transport services. The accessibility index score is categorised into eight levels, 1 to 8, where level 8 represents a high level of accessibility and level 1 a low level of accessibility.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/GM_Accessibility_Levels/trafford_GMAL.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/GM_Accessibility_Levels' target='_blank'>on GitHub</a>.",
         "attribution": "Contains <a href='https://www.tfgm.com' target='_blank'>Transport for Greater Manchester</a> data",
-        "url": "https://www.trafforddatalab.io/open_data/GM_Accessibility_Levels/GMAL_trafford.geojson",
+        "url": "https://www.trafforddatalab.io/open_data/GM_Accessibility_Levels/trafford_GMAL.geojson",
         "theme": "Transport",
         "legend": "<div class='legendKey legendKeyLine' style='border-bottom: 3px solid #500001;'></div> Level 8. High accessibility<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #D63027;'></div> Level 7<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #FF8001;'></div> Level 6<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #FED861;'></div> Level 5<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #8FFF90;'></div> Level 4<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #50C4FF;'></div> Level 3<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #3175FF;'></div> Level 2<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #020060;'></div> Level 1. Low accessibility"
     },
