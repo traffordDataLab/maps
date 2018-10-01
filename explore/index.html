@@ -176,6 +176,7 @@
                     else if (isIsolineLayer(layer)) {
                         // The feature is an isoline drawn with the reachability plugin
                         labMap.reachabilityControl.isolinesGroup.resetStyle(layer);
+                    }
                     else {
                         // The feature is a polygon from a geography boundary. Easier to just set the style back to the default than resetting it via the L.geoJSON method
                         layer.setStyle(labMap.poly);
@@ -240,11 +241,16 @@
 
                     // ensure the cluster checkbox is hidden
                     if (L.DomUtil.hasClass(labMap.toggleClusterContainer, 'hideContent') == false) L.DomUtil.addClass(labMap.toggleClusterContainer, 'hideContent');
-                }
 
-                //reset the info panel and legend
-                labMap.updateInfo();
-                labMap.updateLegend();
+                    // reset the info panel if a feature from the previous dataset was selected
+                    if (labMap.featureCache != null && isGeographyLayer(labMap.featureCache) == false && isIsolineLayer(labMap.featureCache) == false) {
+                        labMap.updateInfo();
+                        labMap.featureCache = null;
+                    }
+
+                    // reset the legend panel
+                    labMap.updateLegend();
+                }
 
                 // Check to see if the dataset key we've been given matches any datset objects
                 if (labMap.objDatasets.hasOwnProperty(datasetKey)) {
