@@ -173,15 +173,12 @@
                         // The feature belongs to a dataset that has been loaded
                         labMap.datasetGeoJson.resetStyle(layer);
                     }
+                    else if (isIsolineLayer(layer)) {
+                        // The feature is an isoline drawn with the reachability plugin
+                        labMap.reachabilityControl.isolinesGroup.resetStyle(layer);
                     else {
-                        // The selected feature is either an isoline or else we assume it to be a polygon from a geography boundary. The reset style method depends on what type of layer it is.
-                        if (isIsolineLayer(layer)) {
-                            labMap.reachabilityControl.isolinesGroup.resetStyle(layer);
-                        }
-                        else {
-                            // Easier to just set the style back to the default than resetting it via the L.geoJSON method
-                            layer.setStyle(labMap.poly);
-                        }
+                        // The feature is a polygon from a geography boundary. Easier to just set the style back to the default than resetting it via the L.geoJSON method
+                        layer.setStyle(labMap.poly);
                     }
 
                     labMap.featureCache = null; // clear the cache to prevent a situation where no feature is currently selected but the cache still contains the previously selected layer
