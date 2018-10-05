@@ -106,9 +106,9 @@
     },
     "jobcentre_plus": {
         "title": "Jobcentre Plus",
-        "about": "Jobcentre Plus offices in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/job_centre_plus/jobcentreplus_trafford_trafford.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/job_centre_plus/jobcentreplus_trafford.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/job_centre_plus' target='_blank'>on GitHub</a>.",
+        "about": "Jobcentre Plus offices in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/jobcentre_plus/trafford_jobcentreplus.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/jobcentre_plus/trafford_jobcentreplus.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/jobcentre_plus' target='_blank'>on GitHub</a>.",
         "attribution": "<a href='https://www.gov.uk/government/organisations/department-for-work-pensions' target='_blank'>Department for Work and Pensions</a>",
-        "url": "https://www.trafforddatalab.io/open_data/job_centre_plus/jobcentreplus_trafford_styled.geojson",
+        "url": "https://www.trafforddatalab.io/open_data/jobcentre_plus/trafford_jobcentreplus.geojson",
         "theme": "Labour Market"
     },
     "listed_buildings": {
