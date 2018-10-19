@@ -185,9 +185,9 @@
     },
     "libraries": {
         "title": "Libraries",
-        "about": "Locations of libraries within Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/libraries/trafford_libraries.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/libraries/trafford_libraries_points.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/libraries' target='_blank'>on GitHub</a>.",
+        "about": "Locations of libraries within Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/libraries/trafford_libraries.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/libraries/trafford_libraries.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/libraries' target='_blank'>on GitHub</a>.",
         "attribution": "<a href='http://www.trafford.gov.uk' target='_blank'>Trafford Council</a>",
-        "url": "https://www.trafforddatalab.io/open_data/libraries/trafford_libraries_points.geojson",
+        "url": "https://www.trafforddatalab.io/open_data/libraries/trafford_libraries.geojson",
         "theme": "Amenities"
     },
     "train_stations": {
