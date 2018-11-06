@@ -1,0 +1,134 @@
+---
+output: html_document
+---
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+body 
+{
+    font-family: 'Roboto', sans-serif;
+    color: #757575;
+}
+
+h1, h2, h3, h4, h5, h6, strong
+{
+    color: #fc6721;
+}
+
+a
+{
+    color: #fc6721;
+    text-decoration: none;
+}
+
+a:hover
+{
+    text-decoration: underline;
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+library(crosstalk) ; library(shiny) ; library(tidyverse) ; library(sf) ; library(leaflet) ; library(DT) ; library(summarywidget) ; library(plotly)
+
+bdy <- st_read("https://www.traffordDataLab.io/spatial_data/local_authority/2016/gm_local_authority_super_generalised.geojson", quiet = TRUE) %>% 
+  filter(area_name == "Trafford")
+df <- read_csv("https://www.traffordDataLab.io/open_data/road_casualties/2017/STATS19_casualty_data_2017.csv") %>% 
+  filter(area_name == "Trafford") %>% 
+  mutate(month = factor(month, levels = month.abb),
+         ageband = factor(ageband, levels=c("0-5","6-10","11-15","16-20","21-25","26-35","36-45","46-55","56-65","66-75","Over 75"), ordered = TRUE)) %>% 
+    select(-easting, -northing)
+sd <- SharedData$new(df)
+```
+
+<a href='https://trafforddatalab.github.io' target='_blank'><img src='https://trafforddatalab.github.io/assets/logo/trafforddatalab_logo.svg' style='height: 33px; border: 0; float: left;' alt='Trafford Data Lab' border='0'></a>
+<h3 style="text-align: right;">Reported road casualties in Trafford</h3></br>
+
+
+```{r}
+bscols(widths = c(4,NA),
+  list(
+    tags$style(HTML('.js-irs-0 .irs-single, .js-irs-0 .irs-bar- edge, .js-irs-0 .irs-bar {
+background: #fc6721; border-top: 1px solid #fc6721; border-bottom: 1px solid #fc6721 ;}
+.irs-from, .irs-to, .irs-single { background: #757575 }')),
+    filter_slider(id = "date", label = "Date range", sharedData = sd, column = ~date,
+                  step = 1, round = TRUE, sep = "", ticks = FALSE),
+    filter_checkbox(id = "mode", label = "Mode of travel", sharedData = sd, group = ~mode, inline = FALSE, columns = 2),
+    filter_checkbox(id = "severity", label = "Casualty severity", sharedData = sd, group = ~severity, inline = FALSE, columns = 3)
+    ),
+  leaflet(sd, height = 300) %>% 
+    addProviderTiles(providers$CartoDB.Positron) %>% 
+    addPolylines(data = bdy, stroke = TRUE, weight = 3, color = "#757575", opacity = 1) %>% 
+    addCircleMarkers(stroke = TRUE, weight = 1, color = "#000000", 
+                     fillColor = ifelse(
+                       test = df$severity == "Slight",
+                       yes = "#ccebc5",
+                       no = ifelse(
+                         test = df$severity == "Serious",
+                         yes = "#b3cde3",
+                         no = "#fbb4ae")), 
+                     fillOpacity = 0.8,
+                     radius = 8, 
+                     popup = ~df$text) %>% 
+    addLegend(position = "bottomleft", colors = c("#fbb4ae", "#b3cde3", "#ccebc5"),
+              labels = c("Fatal", "Serious", "Slight"), opacity = 0.8, title = NULL)
+  )
+```
+<p style="font-size: large; text-align: center;">There were **`r summarywidget(sd, digits = 0)`** road casualties reported in Trafford. Of these, **`r summarywidget(sd, selection = ~sex == "Female", digits = 0)`** were female and **`r summarywidget(sd, selection = ~sex == "Male", digits = 0)`** were male.</p></br>
+
+```{r}
+bscols(widths = c(4, 4, 4),
+plot_ly(sd, x = ~factor(month), height = 300) %>%
+    add_histogram(color = I("#bdbdbd")) %>%
+     layout(title = "Month",
+            xaxis = list(title = "", fixedrange = TRUE),
+            yaxis = list(title = "", tickformat = ',d', fixedrange = TRUE),
+            hoverlabel = list(bgcolor = "#757575")) %>%
+  highlight(color = "#fc6721", on = "plotly_click") %>% 
+  config(displayModeBar = F),
+plot_ly(sd, x = ~factor(hour), height = 300) %>%
+    add_histogram(color = I("#bdbdbd")) %>%
+     layout(title = "Hour",
+            xaxis = list(title = "", range = c(0, 23), fixedrange = TRUE),
+            yaxis = list(title = "", tickformat = ',d', fixedrange = TRUE),
+            hoverlabel = list(bgcolor = "#757575")) %>%
+  highlight(color = "#fc6721", on = "plotly_click") %>% 
+  config(displayModeBar = F),
+plot_ly(sd, x = ~factor(ageband), height = 300) %>%
+    add_histogram(color = I("#bdbdbd")) %>%
+     layout(title = "Age group",
+            xaxis = list(title = "", fixedrange = TRUE),
+            yaxis = list(title = "", tickformat = ',d', fixedrange = TRUE),
+            hoverlabel = list(bgcolor = "#757575")) %>%
+  highlight(color = "#fc6721", on = "plotly_click") %>% 
+  config(displayModeBar = F)
+)
+```
+
+```{r}
+DT::datatable(sd, extensions = "Scroller", style = "bootstrap", class = "compact", width = "100%", rownames = FALSE,
+          options = list(dom = 't', deferRender = TRUE, scrollX = TRUE, scrollY = 220, scroller = TRUE,
+                         initComplete = JS(
+                           "function(settings, json) {",
+                           "$(this.api().table().header()).css({'background-color': '#F8F8F8', 'color': '#000'});",
+                           "}"),
+                         columnDefs = list(list(visible = FALSE, targets = c(2:3, 10:13)))),
+          colnames = c(
+            "Id" = "AREFNO",
+            "Date" = "date",
+            "Hour" = "hour",
+            "Mode" = "mode",
+            "Severity" = "severity",
+            "Light conditions" = "light",
+            "Sex" = "sex",
+            "Age band" = "ageband")
+          )
+```
+
+<a href="https://github.com/traffordDataLab/maps/tree/master/road_casualties" target="_blank">
+		<i class="fa fa-github" style="font-size:24px; float:right;"></i>
+</a>
+
