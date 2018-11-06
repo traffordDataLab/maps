@@ -3,7 +3,7 @@
 ## Reported road casualties in Trafford
 This application is designed to allow the user to interrogate road casualties reported in Trafford during 2017.
 
-<img src="https://github.com/traffordDataLab/maps/tree/master/road_casualties/screenshot.png" width="300">
+<img src="https://github.com/traffordDataLab/maps/raw/master/road_casualties/screenshot.png" width="300">
 
 The app is available at <a href="https://www.trafforddatalab.io/maps/road_casualties/index.html" target="_blank">https://www.trafforddatalab.io/maps/road_casualties/index.html</a>
 
