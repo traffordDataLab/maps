@@ -14,10 +14,11 @@ df <- read_csv("https://github.com/traffordDataLab/open_data/raw/master/imd_2015
   rename(score = Score, rank = Rank, decile = Decile)
 
 # Lower-layer Super Output Area boundaries (source: ONS Open Geography Portal)
-lsoa <- st_read("https://github.com/traffordDataLab/boundaries/raw/master/lsoa.geojson")
+lsoa <- st_read("https://www.traffordDataLab.io/spatial_data/lookups/lsoa_to_ward_best-fit_lookup.geojson")
 
 # Local Authority boundaries (source: ONS Open Geography Portal)
-la <- st_read("https://github.com/traffordDataLab/boundaries/raw/master/local_authorities.geojson")
+la <- st_read("https://www.traffordDataLab.io/spatial_data/local_authority/2016/gm_local_authority_generalised.geojson") %>% 
+  rename(lad16nm = area_name)
 
 ui <- bootstrapPage(
   tags$head(includeCSS("styles_base.css"), includeCSS("styles_shiny.css"), includeCSS("styles_map.css"),
@@ -30,8 +31,8 @@ ui <- bootstrapPage(
                     tabPanel("Controls",
                              radioButtons(inputId = "domain", label = NULL,
                                           choices = c("Index of Multiple Deprivation", "Income", "Employment", "Education, Skills and Training", 
-                                         "Health Deprivation and Disability", "Crime", "Barriers to Housing and Services", "Living Environment"),
-                                         selected = "Index of Multiple Deprivation"),
+                                                      "Health Deprivation and Disability", "Crime", "Barriers to Housing and Services", "Living Environment"),
+                                          selected = "Index of Multiple Deprivation"),
                              hr(),
                              uiOutput("info")),
                     tabPanel("About",
@@ -51,8 +52,8 @@ ui <- bootstrapPage(
                              tags$a(href="https://cran.r-project.org/web/packages/sf/index.html", "sf,", target="_blank"),
                              tags$a(href="https://cran.r-project.org/web/packages/leaflet/index.html", "leaflet,", target="_blank"),
                              tags$a(href="https://cran.r-project.org/web/packages/htmltools/index.html", "htmltools.", target="_blank")
-                )))))
-             
+                    )))))
+
 server <- function(input, output, session) {
   values <- reactiveValues(highlight = c())
   
@@ -63,7 +64,7 @@ server <- function(input, output, session) {
   observe({
     values$highlight <- input$map_shape_mouseover$id
   })
-
+  
   output$info <- renderUI({
     if (is.null(values$highlight)) {
       return(tags$h4("Hover over an LSOA for details"))
@@ -71,22 +72,22 @@ server <- function(input, output, session) {
       lsoaCode <- filteredData()$lsoa11cd[values$highlight == lsoa$lsoa11cd]
       return(tags$div(
         HTML(paste(tags$h4("LSOA: ", lsoaCode))),
-        HTML(paste("in ", tags$span(filteredData()[filteredData()$lsoa11cd == lsoaCode,]$wd16nm), " Ward, ",
-                   tags$span(filteredData()[filteredData()$lsoa11cd == lsoaCode,]$lad16nm), sep = "")),
+        HTML(paste("in ", tags$span(filteredData()[filteredData()$lsoa11cd == lsoaCode,]$wd17nm), " Ward, ",
+                   tags$span(filteredData()[filteredData()$lsoa11cd == lsoaCode,]$lad17nm), sep = "")),
         br(), br(),
         HTML("<table>
-               <tr>
-               <th>Rank</th>
-               <th>Decile</th>
-               </tr>
-               <tr>
-               <td style='width: 75px'>", formatC(filteredData()[filteredData()$lsoa11cd == lsoaCode,]$rank, format="f", big.mark = ", ", digits=0), "</td>
-               <td>", filteredData()[filteredData()$lsoa11cd == lsoaCode,]$decile, "</td>
-               </tr>
-               </table>")
-      ))
+             <tr>
+             <th>Rank</th>
+             <th>Decile</th>
+             </tr>
+             <tr>
+             <td style='width: 75px'>", formatC(filteredData()[filteredData()$lsoa11cd == lsoaCode,]$rank, format="f", big.mark = ", ", digits=0), "</td>
+             <td>", filteredData()[filteredData()$lsoa11cd == lsoaCode,]$decile, "</td>
+             </tr>
+             </table>")
+        ))
     }
-  })
+    })
   
   output$map <- renderLeaflet({
     leaflet() %>% 
@@ -120,7 +121,7 @@ server <- function(input, output, session) {
       addPolygons(data = filteredData(), fillColor = ~pal(decile), fillOpacity = 0.4, weight = 0.7, opacity = 1, color = "#757575", layerId = ~lsoa11cd,
                   highlight = highlightOptions(color = "#FFFF00", weight = 3, bringToFront = TRUE)) %>%
       addPolylines(data = la, stroke = TRUE, weight = 3, color = "#212121", opacity = 1) %>% 
-      addLabelOnlyMarkers(data = la, lng = ~centroid_lng, lat = ~centroid_lat, label = ~as.character(lad16nm), 
+      addLabelOnlyMarkers(data = la, lng = ~lon, lat = ~lat, label = ~as.character(lad16nm), 
                           labelOptions = labelOptions(noHide = T, textOnly = T, direction = "bottom",
                                                       style = list(
                                                         "color"="white",
@@ -131,6 +132,6 @@ server <- function(input, output, session) {
                 labels = c("10% most deprived", "2","3","4","5","6","7","8","9", "10% least deprived"), opacity = 0.4) %>%
       addControl(html = html_logo, position = "bottomright")
   })
-}
+    }
 
 shinyApp(ui, server)
