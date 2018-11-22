@@ -214,13 +214,59 @@
                 // build the content for the properties table to be displayed
                 if (layer.feature.hasOwnProperty('properties')) {
                     var props = layer.feature.properties;
+                    var propVal, prefix;
+                    var matchIndex = 0;
+                    var arrEmail = [];
+                    var arrWeb = [];
 
                     for (var key in props) {
                         // ensure that the key is a valid property of the GeoJson object and isn't one of the styling options
                         if (props.hasOwnProperty(key) && key != 'stroke' && key != 'stroke-width' && key != 'stroke-opacity' && key != 'fill' && key != 'fill-opacity' && key != 'marker-color' && key != 'marker-size') {
-                            propsTable += '<tr><td>' + key + '</td><td>';
-                            propsTable += (props[key] == null) ? '' : props[key];
-                            propsTable += '</td></tr>';
+                            if (props[key] == null) {
+                                propsVal = '';
+                            }
+                            else {
+                                if (isNaN(props[key])) {
+                                    /*
+                                        To enhance usability turn any email or web addresses found within the property value into hyperlinks.
+
+                                        NOTE:
+                                            - This is done here each time the user selects a feature, rather than on the whole dataset when it is loaded for efficiency. It is likely only a few features will be selected by the user.
+                                            - Not claiming to match every occurrence, but a high proportion.  There will always be ones that slip through, but this is an enhancement feature rather than a validation so isn't an issue.
+                                            - The method of pushing the matches to an array, substituting an indexed string then replacing with the HTML link is done to prevent the second regex matching the domain parts of email addresses or parts of the href property etc.
+                                    */
+
+                                    // Find email addresses
+                                    propsVal = props[key].replace(/[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*/gi, function (x) {
+                                        arrEmail.push('<a href="mailto:' + x + '">' + x + '</a>');
+                                        return '@@@EMAIL' + matchIndex++ + '@@@';
+                                    });
+
+                                    matchIndex = 0; // reset the index variable ready to match the web addresses
+
+                                    // Find URLs - NOTE: we need to replace the value of propsVal NOT props[key] as we might have properties with a mix of email and web addresses
+                                    propsVal = propsVal.replace(/\b(<a href=")?(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?\b/gi, function (x) {
+                                        var prefix = (x.indexOf('http://') > -1 || x.indexOf('https://') > -1) ? '' : 'http://';     // if the URL doesn't contain the protocol we'll assume http://
+                                        arrWeb.push('<a href="' + prefix + x + '" target="_blank">' + x + '</a>');
+                                        return '@@@WEB' + matchIndex++ + '@@@';
+                                    });
+
+                                    // Finally replace all email and web addresses found
+                                    for (var i = 0; i < arrEmail.length; i++) {
+                                        propsVal = propsVal.replace('@@@EMAIL' + i + '@@@', arrEmail[i]);
+                                    }
+
+                                    for (var i = 0; i < arrWeb.length; i++) {
+                                        propsVal = propsVal.replace('@@@WEB' + i + '@@@', arrWeb[i]);
+                                    }
+                                }
+                                else {
+                                    // Value is a number so just display it
+                                    propsVal = props[key];
+                                }
+                            }
+
+                            propsTable += '<tr><td>' + key + '</td><td>' + propsVal + '</td></tr>';
                         }
                     }
 
