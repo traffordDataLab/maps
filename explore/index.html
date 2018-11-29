@@ -219,14 +219,14 @@
                     var arrEmail = [];
 
                     for (var key in props) {
-                        // ensure that the key is a valid property of the GeoJson object and isn't one of the styling options
+                        // Ensure that the key is a valid property of the GeoJson object and isn't one of the styling options
                         if (props.hasOwnProperty(key) && key != 'stroke' && key != 'stroke-width' && key != 'stroke-opacity' && key != 'fill' && key != 'fill-opacity' && key != 'marker-color' && key != 'marker-size') {
                             if (props[key] === null || props[key] === undefined || props[key] !== props[key]) {     // The strange test of the property value not equalling itself is for NaN as NaN, uniquely, is never equal to itself
                                 propsVal = '';
                             }
-                            else if (isNaN(props[key])) {// Given that we have screened out the possibility of props[key] being NaN, the test below is to check if props[key] is numeric or not
+                            else if (isNaN(props[key])) {   // Given that we have screened out the possibility of props[key] being NaN, this test is to check if props[key] is numeric or not. If it is numeric we don't want to perfom regex on it
                                 /*
-                                    To enhance usability turn email or web addresses found within the property value into hyperlinks.
+                                    To enhance usability turn email or web addresses found within the property value into hyperlinks. Works for single or multiple occurrences
 
                                     NOTE:
                                         - For efficiency this is done here each time the user selects a feature, rather than on the whole dataset when it is loaded. It is likely only a few features will be selected by the user.
@@ -372,7 +372,7 @@
                 labMap.datasetLayer.addTo(labMap.map);
             }
 
-            // Determines whether the layer provided is an isoline
+            // Determines whether the layer provided is an isoline - created by the reachability plugin
             function isIsolineLayer(layer) {
                 if (labMap.reachabilityControl != null && labMap.reachabilityControl.isolinesGroup != null) {
                     /*
