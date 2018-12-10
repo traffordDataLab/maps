@@ -26,19 +26,19 @@ best_fit <- lsoa %>%
 
 # plot map
 p <- map(best_fit$area_name,
-                function(x) {
-                  ggplot() +
-                    geom_sf(data = filter(wards, area_name == x), fill = "#DDDDCC", alpha = 1, colour = "#FFFFFF", size = 1.2) +
-                    geom_sf(data = filter(best_fit, area_name == x), fill = NA, colour = "#212121",  size = 0.5, linetype = "dotted") +
-                    labs(title = x, subtitle = NULL, caption = NULL, x = NULL, y = NULL) +
-                    coord_sf(crs = st_crs(4326), datum = NA) +
-                    theme_void(base_family = "Roboto") +
-                    theme(plot.margin = unit(c(0.5,0.5,0.5,0.5), "cm"),
-                          strip.text = element_text(family = "Open Sans", size = 10, colour = "#757575", face = "plain"))
-                })
+         function(x) {
+           ggplot() +
+             geom_sf(data = filter(wards, area_name == x), fill = "#DDDDCC", alpha = 1, colour = "#FFFFFF", size = 1.2) +
+             geom_sf(data = filter(best_fit, area_name == x), fill = NA, colour = "#212121",  size = 0.5, linetype = "dotted") +
+             labs(title = x, subtitle = NULL, caption = NULL, x = NULL, y = NULL) +
+             coord_sf(crs = st_crs(4326), datum = NA) +
+             theme_void(base_family = "Roboto") +
+             theme(plot.margin = unit(c(0.2,0.2,0.2,0.2), "cm"),
+                   strip.text = element_text(family = "Open Sans", size = 10, colour = "#757575", face = "plain"))
+         })
 
 title <- ggdraw() + draw_label("Best-fit wards", fontface = 'bold')
-plot <- plot_grid(title, plotlist = p, nrow = 3)
+plot <- plot_grid(title, plotlist = p, nrow = 4)
 
 # write results
 ggsave("output/trafford_best-fit_wards.png", dpi = 300, scale = 1.2)
