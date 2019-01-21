@@ -12,7 +12,7 @@ ggplot() +
   geom_sf(data = wards, fill = "#DDDDCC", alpha = 1, colour = "#FFFFFF",  size = 0.5) +
   geom_sf(data = localities, fill = NA, colour = "#212121",  size = 1) +
   geom_shadowtext(data = wards, aes(x = lon, y = lat, label = area_name), colour = "#FFFFFF", family = "Open Sans", fontface = "bold", size = 2.5, bg.colour = "#212121", nudge_y = 0.002) +
-  geom_shadowtext(data = localities, aes(x = lon, y = lat, label = area_code), colour = "#FFFFFF", family = "Open Sans", fontface = "bold", size = 4, bg.colour = "#212121", nudge_y = -0.002) +
+  geom_shadowtext(data = localities, aes(x = lon, y = lat, label = locality), colour = "#FFFFFF", family = "Open Sans", fontface = "bold", size = 4, bg.colour = "#212121", nudge_y = -0.002) +
   annotation_scale(location = "bl", style = "ticks", line_col = "#212121", text_col = "#212121") +
   annotation_north_arrow(height = unit(0.8, "cm"), width = unit(0.8, "cm"), location = "tr", which_north = "true") +
   labs(title = "Trafford's localities and wards",
