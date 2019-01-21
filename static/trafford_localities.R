@@ -1,21 +1,15 @@
-## Trafford's localities and wards ##
+# Trafford localities #
 
-# load libraries
-library(sf) ; library(tidyverse) ; library(ggplot2) ; library(ggspatial) ; library(shadowtext)
+library(tidyverse) ; library(sf) ; library(ggplot2) ; library(ggspatial)
 
-# load geospatial data
-localities <- st_read("https://www.traffordDataLab.io/spatial_data/council_defined/trafford_localities.geojson")
-wards <- st_read("https://www.traffordDataLab.io/spatial_data/ward/2017/trafford_ward_generalised.geojson")
+sf <- st_read("https://www.trafforddatalab/spatial_data/council_defined/trafford_localities.geojson")
 
-# plot map
 ggplot() +
-  geom_sf(data = wards, fill = "#DDDDCC", alpha = 1, colour = "#FFFFFF",  size = 0.5) +
-  geom_sf(data = localities, fill = NA, colour = "#212121",  size = 1) +
-  geom_shadowtext(data = wards, aes(x = lon, y = lat, label = area_name), colour = "#FFFFFF", family = "Open Sans", fontface = "bold", size = 2.5, bg.colour = "#212121", nudge_y = 0.002) +
-  geom_shadowtext(data = localities, aes(x = lon, y = lat, label = locality), colour = "#FFFFFF", family = "Open Sans", fontface = "bold", size = 4, bg.colour = "#212121", nudge_y = -0.002) +
+  geom_sf(data = sf, fill = "#CCE3AA", alpha = 1, colour = "#FFFFFF",  size = 2) +
+  geom_text(data = sf, aes(x = lon, y = lat, label = locality), colour = "#FFFFFF", size = 4, fontface = "bold") +
   annotation_scale(location = "bl", style = "ticks", line_col = "#212121", text_col = "#212121") +
   annotation_north_arrow(height = unit(0.8, "cm"), width = unit(0.8, "cm"), location = "tr", which_north = "true") +
-  labs(title = "Trafford's localities and wards",
+  labs(title = "Trafford's localities",
        subtitle = NULL,
        caption = "Contains OS data © Crown copyright and database right (2018) | @traffordDataLab",
        x = NULL, y = NULL) +
@@ -26,5 +20,4 @@ ggplot() +
         plot.title = element_text(size = 18, face = "bold", colour = "#757575", margin = margin(t = 15), vjust = 4),
         plot.caption = element_text(size = 10, colour = "#212121", margin = margin(b = 15), vjust = -4))
 
-# write results
-ggsave("output/trafford_localities.png", dpi = 300, scale = 1)
+ggsave("trafford_localities.png", dpi = 300, scale = 1)
