@@ -17,6 +17,7 @@
         <link rel="stylesheet" href="https://www.trafforddatalab.io/assets/leaflet/extended_markers/extended_markers_mixed.css"/>
         <link rel="stylesheet" href="https://www.trafforddatalab.io/assets/leaflet/leaflet.reachability/leaflet.reachability.css"/>
         <link rel="stylesheet" href="https://www.trafforddatalab.io/assets/leaflet/leaflet.reachability/leaflet.reachability_lab.css"/>
+        <link rel="stylesheet" href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.52.0/mapbox-gl.css" />
 
         <style>
             .aboutContainer
@@ -84,6 +85,8 @@
         <script src="https://www.trafforddatalab.io/assets/leaflet/labLeafletMap.js"></script>
         <script src="https://www.trafforddatalab.io/assets/leaflet/leaflet.reachability/leaflet.reachability_lab_setup.js"></script>
         <script src="https://www.trafforddatalab.io/assets/leaflet/leaflet.reachability/leaflet.reachability.js"></script>
+        <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.52.0/mapbox-gl.js"></script>
+        <script src="https://unpkg.com/mapbox-gl-leaflet@0.0.3/leaflet-mapbox-gl.js"></script>
 
         <script>
             // ######### FUNCTIONS #########
@@ -403,12 +406,19 @@
                 return (labMap.datasetLayer != null && labMap.datasetLayer.hasLayer(layer));
             }
 
-
             // ######### INITIALISATION #########
             // Set up the basic map environment
             var labMap = new LabLeafletMap({
                 title: 'Explore',
-                about: 'Discover the different geographies within Trafford by choosing a layer and then selecting an area.'
+                about: 'Discover the different geographies within Trafford by choosing a layer and then selecting an area.',
+                baseLayers: {
+                    "Light": L.mapboxGL({style: 'https://s3-eu-west-1.amazonaws.com/tiles.os.uk/styles/open-zoomstack-light/style.json', accessToken: 'no-token', attribution: 'Tiles: <a href="https://www.ordnancesurvey.co.uk/business-and-government/products/os-open-zoomstack.html" target="_blank">OS Open Zoomstack</a> Light'}),
+                    "Night": L.mapboxGL({style: 'https://s3-eu-west-1.amazonaws.com/tiles.os.uk/styles/open-zoomstack-night/style.json', accessToken: 'no-token', attribution: 'Tiles: <a href="https://www.ordnancesurvey.co.uk/business-and-government/products/os-open-zoomstack.html" target="_blank">OS Open Zoomstack</a> Night'}),
+                    "Outdoor": L.mapboxGL({style: 'https://s3-eu-west-1.amazonaws.com/tiles.os.uk/styles/open-zoomstack-outdoor/style.json', accessToken: 'no-token', attribution: 'Tiles: <a href="https://www.ordnancesurvey.co.uk/business-and-government/products/os-open-zoomstack.html" target="_blank">OS Open Zoomstack</a> Outdoor'}),
+                    "Road": L.mapboxGL({style: 'https://s3-eu-west-1.amazonaws.com/tiles.os.uk/styles/open-zoomstack-road/style.json', accessToken: 'no-token', attribution: 'Tiles: <a href="https://www.ordnancesurvey.co.uk/business-and-government/products/os-open-zoomstack.html" target="_blank">OS Open Zoomstack</a> Road'}),
+                    "Satellite": labCreateTileLayer("Esri.WorldImagery"),
+                    "White": labCreateTileLayer(null)
+                }
             });
 
             // Add the isochrones plugin
@@ -420,7 +430,7 @@
             });
             labMap.reachabilityControl.addTo(labMap.map);
 
-            labMap.baseLayers['Low detail'].addTo(labMap.map);   // Choose the base/tile layer for the map
+            labMap.baseLayers['Light'].addTo(labMap.map);   // Choose the base/tile layer for the map
 
             labMap.datasetGeoJson = null;       // object to store GeoJSON created from datasets loaded from the select list. ***NOTE*** this object is important for the resetting of styles for clusered marker datasets
             labMap.datasetCluster = null;       // object to store a leaflet.markercluster object - created if the dataset contains point data
