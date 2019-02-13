@@ -82,11 +82,12 @@
         <script src="https://www.trafforddatalab.io/assets/javascript/labGetQryStrValByKey.js"></script>
         <script src="https://www.trafforddatalab.io/assets/javascript/labSpinner.js"></script>
         <script src="https://www.trafforddatalab.io/assets/leaflet/labCreateTileLayer.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/leaflet/labCreateVectorTileLayer.js"></script>
         <script src="https://www.trafforddatalab.io/assets/leaflet/labLeafletMap.js"></script>
         <script src="https://www.trafforddatalab.io/assets/leaflet/leaflet.reachability/leaflet.reachability_lab_setup.js"></script>
         <script src="https://www.trafforddatalab.io/assets/leaflet/leaflet.reachability/leaflet.reachability.js"></script>
         <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.52.0/mapbox-gl.js"></script>
-        <script src="https://unpkg.com/mapbox-gl-leaflet@0.0.3/leaflet-mapbox-gl.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/trafforddatalab/mapbox-gl-leaflet@error_handler/leaflet-mapbox-gl.min.js"></script>
 
         <script>
             // ######### FUNCTIONS #########
@@ -406,20 +407,64 @@
                 return (labMap.datasetLayer != null && labMap.datasetLayer.hasLayer(layer));
             }
 
+            // Error functions for vector tile layers
+            /*
+                The error event is fired by mapbox-gl.js and listened for in leaflet-mapbox-gl.js.
+                From there the error function specified in the options parameter of the L.mapboxGL object is called.
+                At this point the layer has already been created and added to the map, hence why in the functions below the layer is first removed from the map and destroyed before the alternative is created.
+                This is due to the difference in the way vector tiles and raster tiles are instantiated.
+            */
+            function vectorTileErrorZoomstackLight(e) {
+                labMap.baseLayers.Light.removeFrom(labMap.map);
+                labMap.baseLayers.Light = null;
+                labMap.baseLayers.Light = labCreateTileLayer('CartoDB.Positron');
+                labMap.baseLayers.Light.addTo(labMap.map);
+            }
+
+            function vectorTileErrorZoomstackNight(e) {
+                labMap.baseLayers.Night.removeFrom(labMap.map);
+                labMap.baseLayers.Night = null;
+                labMap.baseLayers.Night = labCreateTileLayer('CartoDB.DarkMatter');
+                labMap.baseLayers.Night.addTo(labMap.map);
+            }
+
+            function vectorTileErrorZoomstackOutdoor(e) {
+                labMap.baseLayers.Outdoor.removeFrom(labMap.map);
+                labMap.baseLayers.Outdoor = null;
+                labMap.baseLayers.Outdoor = labCreateTileLayer('Esri.WorldStreetMap');
+                labMap.baseLayers.Outdoor.addTo(labMap.map);
+            }
+
+            function vectorTileErrorZoomstackRoad(e) {
+                labMap.baseLayers.Road.removeFrom(labMap.map);
+                labMap.baseLayers.Road = null;
+                labMap.baseLayers.Road = labCreateTileLayer('OpenStreetMap.Mapnik');
+                labMap.baseLayers.Road.addTo(labMap.map);
+            }
+
             // ######### INITIALISATION #########
             // Set up the basic map environment
             var labMap = new LabLeafletMap({
                 title: 'Explore',
                 about: 'Discover the different geographies within Trafford by choosing a layer and then selecting an area.',
-                baseLayers: {
-                    "Light": L.mapboxGL({style: 'https://s3-eu-west-1.amazonaws.com/tiles.os.uk/styles/open-zoomstack-light/style.json', accessToken: 'no-token', attribution: 'Tiles: <a href="https://www.ordnancesurvey.co.uk/business-and-government/products/os-open-zoomstack.html" target="_blank">OS Open Zoomstack</a> Light'}),
-                    "Night": L.mapboxGL({style: 'https://s3-eu-west-1.amazonaws.com/tiles.os.uk/styles/open-zoomstack-night/style.json', accessToken: 'no-token', attribution: 'Tiles: <a href="https://www.ordnancesurvey.co.uk/business-and-government/products/os-open-zoomstack.html" target="_blank">OS Open Zoomstack</a> Night'}),
-                    "Outdoor": L.mapboxGL({style: 'https://s3-eu-west-1.amazonaws.com/tiles.os.uk/styles/open-zoomstack-outdoor/style.json', accessToken: 'no-token', attribution: 'Tiles: <a href="https://www.ordnancesurvey.co.uk/business-and-government/products/os-open-zoomstack.html" target="_blank">OS Open Zoomstack</a> Outdoor'}),
-                    "Road": L.mapboxGL({style: 'https://s3-eu-west-1.amazonaws.com/tiles.os.uk/styles/open-zoomstack-road/style.json', accessToken: 'no-token', attribution: 'Tiles: <a href="https://www.ordnancesurvey.co.uk/business-and-government/products/os-open-zoomstack.html" target="_blank">OS Open Zoomstack</a> Road'}),
-                    "Satellite": labCreateTileLayer("Esri.WorldImagery"),
-                    "White": labCreateTileLayer(null)
+                baseLayers: {   // Override the default baselayers in LabMap so that we can specify OS Zoomstack vector tile layers
+                    'Light': labCreateVectorTileLayer('OSZoomstack.Light'),
+                    'Outdoor': labCreateVectorTileLayer('OSZoomstack.Outdoor'),
+                    'Road': labCreateVectorTileLayer('OSZoomstack.Road'),
+                    'Satellite': labCreateTileLayer("Esri.WorldImagery"),
+                    'White': labCreateTileLayer(null)
+                },
+                attributes: {   // Override the default attributes in LabMap so that we can specify the maxBounds - the OS Zoomstack vector layers only cover Great Britain
+                    center: [53.4189, -2.33],
+                    zoom: 12,
+                    minZoom: 10,
+                    zoomDelta: 0.25,
+                    zoomSnap: 0,
+                    maxBounds: [[ 49.84 , -8.74 ], [ 60.9, 1.96 ]] // fix map view to the extent of Great Britain
                 }
             });
+
+            labMap.baseLayers.Light.addTo(labMap.map);   // Choose the initial base/tile layer for the map
 
             // Add the isochrones plugin
             labMap.reachabilityControl = labSetupReachabilityPlugin({
@@ -429,8 +474,6 @@
                 pane: 'pane_geography_overlay'
             });
             labMap.reachabilityControl.addTo(labMap.map);
-
-            labMap.baseLayers['Light'].addTo(labMap.map);   // Choose the base/tile layer for the map
 
             labMap.datasetGeoJson = null;       // object to store GeoJSON created from datasets loaded from the select list. ***NOTE*** this object is important for the resetting of styles for clusered marker datasets
             labMap.datasetCluster = null;       // object to store a leaflet.markercluster object - created if the dataset contains point data
