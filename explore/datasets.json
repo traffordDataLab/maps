@@ -358,5 +358,13 @@
         "attribution": "<a href='https://www.trafford.gov.uk/residents/leisure-and-lifestyle/parks-and-open-spaces/allotments/allotments-in-trafford.aspx' target='_blank'>Trafford Council</a>",
         "url": "https://www.trafforddatalab.io/open_data/allotments/trafford_allotments.geojson",
         "theme": "Environment"
+    },
+    "highways_trees": {
+        "title": "Highways Trees",
+        "about": "Locations and species of highways trees in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/highways_trees/trafford_highways_trees.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/highways_trees/trafford_highways_trees.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/highways_trees' target='_blank'>on GitHub</a>.",
+        "attribution": "<a href='https://www.trafford.gov.uk/' target='_blank'>Trafford Council</a>",
+        "url": "https://www.trafforddatalab.io/open_data/highways_trees/trafford_highways_trees_styled.geojson",
+        "theme": "Environment",
+        "cluster": true
     }
 }
