@@ -421,17 +421,10 @@
                 labMap.baseLayers.Light.addTo(labMap.map);
             }
 
-            function vectorTileErrorZoomstackNight(e) {
-                labMap.baseLayers.Night.removeFrom(labMap.map);
-                labMap.baseLayers.Night = null;
-                labMap.baseLayers.Night = labCreateTileLayer('CartoDB.DarkMatter');
-                labMap.baseLayers.Night.addTo(labMap.map);
-            }
-
             function vectorTileErrorZoomstackOutdoor(e) {
                 labMap.baseLayers.Outdoor.removeFrom(labMap.map);
                 labMap.baseLayers.Outdoor = null;
-                labMap.baseLayers.Outdoor = labCreateTileLayer('Esri.WorldStreetMap');
+                labMap.baseLayers.Outdoor = labCreateTileLayer('OpenStreetMap.Hot');
                 labMap.baseLayers.Outdoor.addTo(labMap.map);
             }
 
