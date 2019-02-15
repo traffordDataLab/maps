@@ -416,23 +416,23 @@
             */
             function vectorTileErrorZoomstackLight(e) {
                 labMap.baseLayers.Light.removeFrom(labMap.map);
-                labMap.baseLayers.Light = null;
                 labMap.baseLayers.Light = labCreateTileLayer('CartoDB.Positron');
                 labMap.baseLayers.Light.addTo(labMap.map);
+                labMap.updateLayerControl();
             }
 
             function vectorTileErrorZoomstackOutdoor(e) {
                 labMap.baseLayers.Outdoor.removeFrom(labMap.map);
-                labMap.baseLayers.Outdoor = null;
                 labMap.baseLayers.Outdoor = labCreateTileLayer('OpenStreetMap.Hot');
                 labMap.baseLayers.Outdoor.addTo(labMap.map);
+                labMap.updateLayerControl();
             }
 
             function vectorTileErrorZoomstackRoad(e) {
                 labMap.baseLayers.Road.removeFrom(labMap.map);
-                labMap.baseLayers.Road = null;
                 labMap.baseLayers.Road = labCreateTileLayer('OpenStreetMap.Mapnik');
                 labMap.baseLayers.Road.addTo(labMap.map);
+                labMap.updateLayerControl();
             }
 
             // ######### INITIALISATION #########
