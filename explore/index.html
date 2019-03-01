@@ -453,7 +453,7 @@
                 }
             });
 
-            if (supportWebGL) {
+            if (supportWebGL()) {
                 /*
                     Attempt to create vector tile base layers.
                     If an error occurs we fallback to using raster tile layers (and they have built in fallback in case the tile URL can't be loaded).
