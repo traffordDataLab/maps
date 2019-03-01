@@ -440,7 +440,12 @@
             var labMap = new LabLeafletMap({
                 title: 'Explore',
                 about: 'Discover the different geographies within Trafford by choosing a layer and then selecting an area.',
-                baseLayers: {}, // Pass an empty object to override the defaults - we will specify the baselayers once the map object has been initialised
+                baseLayers: {   // Override the default baselayers in LabMap so that we can specify OS Zoomstack vector tile layers
+                    'Light': labCreateVectorTileLayer('OSZoomstack.Light'),
+                    'Outdoor': labCreateVectorTileLayer('OSZoomstack.Outdoor'),
+                    'Road': labCreateVectorTileLayer('OSZoomstack.Road'),
+                    'White': labCreateTileLayer(null)
+                },
                 attributes: {   // Override the default attributes in LabMap so that we can specify the maxBounds - the OS Zoomstack vector layers only cover Great Britain
                     center: [53.4189, -2.33],
                     zoom: 12,
@@ -452,28 +457,26 @@
                 }
             });
 
-            // Specify the base layers object, so that we can specify OS Zoomstack vector tile layers.
             try {
-                // Attempt to use OS Zoomstack vector tile layers
-                labMap.baseLayers = {
-                    'Light': labCreateVectorTileLayer('OSZoomstack.Light'),
-                    'Outdoor': labCreateVectorTileLayer('OSZoomstack.Outdoor'),
-                    'Road': labCreateVectorTileLayer('OSZoomstack.Road'),
-                    'White': labCreateTileLayer(null)
-                }
+                /*
+                    Attempt to add the vector tile layer as the map base layer.
+                    An error here could incicate that the vector layer cannot be found, or that it is not possible to create the WebGL object.
+                    If an error occurs, simply fallback to using raster tile layers (they have built in fallback in case the tile URL can't be loaded).
+                */
+                labMap.baseLayers.Light.addTo(labMap.map);  // choose the initial base/tile layer for the map
             }
             catch(e) {
-                // Likely an error occurred initialising WebGL, therefore use raster tile layers instead.
+                // Fallback to use raster tile layers instead of vector.
                 labMap.baseLayers = {
                     'Light': labCreateTileLayer('CartoDB.Positron'),
                     'Outdoor': labCreateTileLayer('OpenStreetMap.Hot'),
                     'Road': labCreateTileLayer('OpenStreetMap.Mapnik'),
                     'White': labCreateTileLayer(null)
                 }
-            }
 
-            labMap.updateLayerControl();                // update the layer control with the base layers
-            labMap.baseLayers.Light.addTo(labMap.map);  // choose the initial base/tile layer for the map
+                labMap.updateLayerControl();                // update the layer control with the raster tile layers
+                labMap.baseLayers.Light.addTo(labMap.map);  // choose the initial base/tile layer for the map
+            }
 
             // Add the isochrones plugin
             labMap.reachabilityControl = labSetupReachabilityPlugin({
