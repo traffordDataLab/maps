@@ -13,8 +13,6 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
         <link rel="stylesheet" href="https://www.trafforddatalab.io/css/labBase.css"/>
         <link rel="stylesheet" href="https://www.trafforddatalab.io/assets/leaflet/labLeafletMap.css"/>
-        <link rel="stylesheet" href="https://www.trafforddatalab.io/assets/leaflet/extended_markers/extended_markers_base.css"/>
-        <link rel="stylesheet" href="https://www.trafforddatalab.io/assets/leaflet/extended_markers/extended_markers_mixed.css"/>
         <link rel="stylesheet" href="https://www.trafforddatalab.io/assets/leaflet/leaflet.reachability/leaflet.reachability.css"/>
         <link rel="stylesheet" href="https://www.trafforddatalab.io/assets/leaflet/leaflet.reachability/leaflet.reachability_lab.css"/>
         <link rel="stylesheet" href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.52.0/mapbox-gl.css" />
@@ -74,18 +72,19 @@
         <div id="map" class="mapFullScreen"></div>
 
         <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js" integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw==" crossorigin=""></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.62.0/dist/L.Control.Locate.min.js"></script>
         <script src="https://unpkg.com/leaflet.markercluster@1.3.0/dist/leaflet.markercluster.js"></script>
         <script src="https://www.trafforddatalab.io/assets/javascript/labError.js"></script>
         <script src="https://www.trafforddatalab.io/assets/javascript/labAjax.js"></script>
         <script src="https://www.trafforddatalab.io/assets/javascript/labGetQryStrValByKey.js"></script>
         <script src="https://www.trafforddatalab.io/assets/javascript/labSpinner.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/javascript/changeLuminosity.js"></script>
         <script src="https://www.trafforddatalab.io/assets/leaflet/labCreateTileLayer.js"></script>
         <script src="https://www.trafforddatalab.io/assets/leaflet/labCreateVectorTileLayer.js"></script>
         <script src="https://www.trafforddatalab.io/assets/leaflet/labLeafletMap.js"></script>
         <script src="https://www.trafforddatalab.io/assets/leaflet/leaflet.reachability/leaflet.reachability_lab_setup.js"></script>
         <script src="https://www.trafforddatalab.io/assets/leaflet/leaflet.reachability/leaflet.reachability.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/leaflet/svg_markers/labMarkerSVG.js"></script>
         <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.52.0/mapbox-gl.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/trafforddatalab/mapbox-gl-leaflet@error_handler/leaflet-mapbox-gl.min.js"></script>
 
@@ -434,110 +433,6 @@
                 labMap.baseLayers.Road.addTo(labMap.map);
                 labMap.updateLayerControl();
             }
-
-
-
-
-
-
-            // ############################### NEW FUNCTIONS TO BE CREATED EXTERNALLY ###################################
-            // Credit to Craig Buckler (https://www.sitepoint.com/javascript-generate-lighter-darker-color/)
-            function changeLuminosity(hexColour, luminosityFactor) {
-                // Ensure luminence value is a number between -1 (representing a 100% reduction) and 1 (representing a 100% increase). 0 returns the same colour supplied in hexColour
-                var lum = parseFloat(luminosityFactor);
-                lum = (Math.abs(luminosityFactor) <= 1) ? luminosityFactor : 0;
-
-                // Process the hexColour string to ensure we have been given a valid colour value in hex format
-                var hex = String(hexColour).replace(/[^0-9a-f]/gi, '');
-
-                // Throw error if the processed colour value is not 3 or 6 characters long. E.g. both f00 or ff0000 are acceptable values for red
-                if (!(hex.length != 3 || hex.length != 6)) {
-                    throw ('changeLuminosity: ' + hexColour + ' not valid hexedecimal value.');
-                }
-
-                // Convert to 6 character hex value if in shortened 3 character version
-                if (hex.length < 6) {
-                    hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
-                }
-
-                var newHex = "#", dec;
-
-                // Process the red, green and blue components separately
-                for (var i = 0; i < 3; i++) {
-                    // convert to decimal and change luminosity
-                    dec = parseInt(hex.substr(i*2, 2), 16);
-                    dec = Math.round(Math.min(Math.max(0, dec + (dec * lum)), 255)).toString(16);
-
-                    // convert back to hex and add to output string
-                    newHex += ("00" + dec).substr(dec.length);
-                }
-
-                return newHex;
-            }
-
-            // SVG marker creation
-            function labMarkerSVG(objOptions) {
-                var markerColour = (objOptions['color'] == null) ? '#fc6721' : objOptions['color'];         // NOTE: deliberate HTML spelling of "colour" as "color" as it is an input key of the objOptions object to comply with standards
-                var markerGradientLight, markerGradientDark;
-
-                try {
-                    markerGradientLight = changeLuminosity(markerColour, 0.8);
-                    markerGradientDark = changeLuminosity(markerColour, -0.61);
-                }
-                catch (e) {
-                    // The colour value provided is not valid so default to Lab orange
-                    markerColour = '#fc6721';
-                    markerGradientLight = '#ffb93b';
-                    markerGradientDark = '#62280d';
-                }
-
-                // NOTE: intention to add other parameters for size of marker (small, medium and large) and possibly shape
-
-
-                // Create the SVG image using the calculated colours for the gradient of the marker
-                var svg  = '<?xml version="1.0" encoding="UTF-8"?>';
-                    svg += '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">';
-                    svg += '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="15" height="25" viewBox="0, 0, 15, 25">';
-                    svg += '    <defs>';
-                    svg += '        <linearGradient id="Gradient_1" gradientUnits="userSpaceOnUse" x1="3.15" y1="21.575" x2="6.301" y2="21.575" gradientTransform="matrix(0.942, -0.336, 0.336, 0.942, 0, 0)">';
-                    svg += '            <stop offset="0" stop-color="#C2BBBB"/>';
-                    svg += '            <stop offset="0.311" stop-color="#FFFFFF"/>';
-                    svg += '            <stop offset="0.52" stop-color="#9E9E9E"/>';
-                    svg += '            <stop offset="1" stop-color="#040404"/>';
-                    svg += '        </linearGradient>';
-                    svg += '        <linearGradient id="Gradient_2" gradientUnits="userSpaceOnUse" x1="5.877" y1="19.799" x2="3.697" y2="21.33" gradientTransform="matrix(0.944, -0.33, 0.33, 0.944, 0, 0)">';
-                    svg += '            <stop offset="0" stop-color="#000000"/>';
-                    svg += '            <stop offset="0.426" stop-color="#000000" stop-opacity="0.665"/>';
-                    svg += '            <stop offset="1" stop-color="#1B1B1B" stop-opacity="0"/>';
-                    svg += '        </linearGradient>';
-                    svg += '        <radialGradient id="Gradient_3" gradientUnits="userSpaceOnUse" cx="-3.894" cy="-4.09" r="9.985" gradientTransform="matrix(-1, -0, 0, -1, 0, 0)">';
-                    svg += '            <stop offset="0" stop-color="' + markerGradientLight + '"/>';
-                    svg += '            <stop offset="0.411" stop-color="' + markerColour + '"/>';
-                    svg += '            <stop offset="1" stop-color="' + markerGradientDark + '"/>';
-                    svg += '        </radialGradient>';
-                    svg += '    </defs>';
-                    svg += '    <g id="pin">';
-                    svg += '        <path d="M9.496,12.558 L9.496,12.558 C10.316,12.266 11.217,12.693 11.509,13.513 L14.856,22.895 C15.148,23.714 14.721,24.616 13.901,24.908 L13.901,24.908 C13.082,25.2 12.18,24.773 11.888,23.953 L8.542,14.571 C8.249,13.752 8.677,12.85 9.496,12.558 z" fill="url(#Gradient_1)" id="pin_stalk"/>';
-                    svg += '        <path d="M11.578,13.689 C11.58,13.692 11.576,13.687 11.578,13.689 C11.634,13.82 11.677,13.966 11.734,14.097 C12.119,15.2 14.7,21.748 13.137,21.905 C11.484,22.07 10.455,19.795 8.775,15.13 L8.642,14.775 C9.181,14.725 9.492,14.618 9.878,14.492 C10.056,14.434 10.46,14.273 10.77,14.134 C10.973,14.043 11.383,13.826 11.551,13.714 C11.558,13.71 11.572,13.694 11.578,13.689 z" fill="url(#Gradient_2)" id="pin_stalk_shadow"/>';
-                    svg += '        <path d="M7.503,0 C11.617,0.002 14.95,3.338 14.948,7.451 C14.946,11.565 11.61,14.898 7.497,14.896 C3.383,14.894 0.05,11.558 0.052,7.444 C0.054,3.331 3.39,-0.002 7.503,0 z" fill="url(#Gradient_3)" id="pin_head"/>';
-                    svg += '    </g>';
-                    svg += '</svg>';
-
-                // create icon
-                return L.icon({
-                   iconUrl: 'data:image/svg+xml;base64,' + btoa(svg),
-                   iconSize: [15, 25],
-                   iconAnchor: [15, 25],
-                   popupAnchor: [-7, -20],
-                   tooltipAnchor: [-7, -20],
-                   shadowAnchor: [11, 11],
-                   shadowUrl: 'https://www.trafforddatalab.io/assets/leaflet/extended_markers/markers-shadow.png'
-                });
-            }
-            // ####################################################################################################################
-
-
-
 
 
             // ######### INITIALISATION #########
