@@ -108,6 +108,11 @@
                 }
                 else if (featureType == 'point' || featureType == 'multipoint') {
                     layer.type = 'marker';
+
+                    // For this type of layer we also want to store the colour and the size of the marker
+                    // If the information is not present use defaults of medium and Lab orange
+                    layer.markerColour = (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('marker-color')) ? feature.properties['marker-color'] : '#fc6721';
+                    layer.markerSize = (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('marker-size')) ? feature.properties['marker-size'] : 'medium';
                 }
                 else if (featureType == 'polygon' || featureType == 'multipolygon') {
                     layer.type = 'polygon';
@@ -157,10 +162,19 @@
                 }
 
                 if (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('featureRadius') && feature.properties.featureRadius !== '') {
+                    // create a circle marker as we have a radius property value
                     return L.circle(latlng, { radius: feature.properties.featureRadius });
                 }
                 else {
-                    return L.marker(latlng, { icon: labMap.marker });
+                    // get the colour and size information if available from the properties object, otherwise use defaults
+                    var markerColour = (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('marker-color')) ? feature.properties['marker-color'] : '#fc6721';
+                    var markerSize = (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('marker-size')) ? feature.properties['marker-size'] : 'medium';
+
+                    return L.marker(latlng, { icon: labMarkerSVG({
+                            color: markerColour,
+                            size: markerSize
+                        })
+                    });
                 }
             }
 
@@ -171,7 +185,11 @@
 
                     if (layer.type == 'marker') {
                         // Specific reset implementation for markers
-                        layer.setIcon(labMap.marker);
+                        layer.setIcon(labMarkerSVG({
+                                color: layer.markerColour,
+                                size: layer.markerSize
+                            })
+                        );
                     }
                     else if (isDatasetLayer(layer)) {
                         // The feature belongs to a dataset that has been loaded
@@ -205,7 +223,11 @@
 
                 // set the highlight style of the selected feature
                 if (layer.type == 'marker') {
-                    layer.setIcon(labMap.markerSelected);
+                    layer.setIcon(labMarkerSVG({
+                            color: '#ffea00',
+                            size: layer.markerSize
+                        })
+                    );
                 }
                 else {
                     layer.setStyle(labMap.polySelected);
@@ -505,16 +527,6 @@
                 weight: 5,
                 opacity: '1'
             };
-
-            // Point data feature styling
-            labMap.marker = labMarkerSVG({
-                color: '#fc6721'
-            });
-
-            // User-selected point data styling
-            labMap.markerSelected = labMarkerSVG({
-                color: '#ffea00'
-            });
 
 
             // ######### EVENTS #########
