@@ -283,7 +283,7 @@
                                 propsVal = props[key];
                             }
 
-                            propsTable += '<tr><td>' + key + '</td><td>' + propsVal + '</td></tr>';
+                            propsTable += '<tr><td>' + formatPropertyKey(key) + '</td><td>' + propsVal + '</td></tr>';
                         }
                     }
 
@@ -427,6 +427,13 @@
             // Determines whether the layer provided is a dataset layer
             function isDatasetLayer(layer) {
                 return (labMap.datasetLayer != null && labMap.datasetLayer.hasLayer(layer));
+            }
+
+            // Function to format the property keys of a given dataset, e.g. makes "area_name" into "Area name" so that it looks nice in the info panel
+            function formatPropertyKey(key) {
+                key = key.replace(/_/g, " ");   // remove and underscore characters and replace with spaces
+
+                return key.substring(0, 1).toUpperCase() + key.substring(1);    // capitalise the first character and then return the result
             }
 
             // Error functions for vector tile layers
