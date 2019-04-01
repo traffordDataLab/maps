@@ -366,5 +366,13 @@
         "url": "https://www.trafforddatalab.io/open_data/highways_trees/trafford_highways_trees_styled.geojson",
         "theme": "Environment",
         "cluster": true
+    },
+    "polling_stations": {
+        "title": "Polling Stations",
+        "about": "Locations of polling stations for the local elections on the 2<sup>nd</sup> of May 2019 in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/elections/polling_stations/trafford_polling_stations.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/elections/polling_stations/trafford_polling_stations.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/elections/polling_stations' target='_blank'>on GitHub</a>.",
+        "attribution": "<a href='https://democracyclub.org.uk/' target='_blank'>Democracy Club</a>",
+        "url": "https://www.trafforddatalab.io/open_data/elections/polling_stations/trafford_polling_stations.geojson",
+        "theme": "Democracy",
+        "cluster": true
     }
 }
