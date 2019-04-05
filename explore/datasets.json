@@ -11,7 +11,7 @@
         "title": "Air quality",
         "about": "Air Quality Management Areas (AQMAs) in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/AQMA/trafford_aqma.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/AQMA' target='_blank'>on GitHub</a>.",
         "attribution": "<a href='https://www.gov.uk/government/organisations/department-for-environment-food-rural-affairs' target='_blank'>Department for Environment Food & Rural Affairs (Defra)</a>",
-        "url": "https://www.trafforddatalab.io/open_data/AQMA/trafford_aqma.geojson",
+        "url": "https://www.trafforddatalab.io/open_data/AQMA/trafford_aqma_styled.geojson",
         "theme": "Environment"
     },
     "buildings": {
