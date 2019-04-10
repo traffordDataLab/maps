@@ -3,7 +3,7 @@
         "title": "Agricultural land",
         "about": "Five grades of agricultural land (1 = best quality to 5 = poorest quality) with classifications for urban and non-agricultural land in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/agricultural_land_classification/trafford_agricultural_land_classification.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/agricultural_land_classification' target='_blank'>on GitHub</a>.",
         "attribution": "<a href='https://www.gov.uk/government/organisations/natural-england' target='_blank'>Natural England</a>",
-        "url": "https://www.trafforddatalab.io/open_data/agricultural_land_classification/trafford_agricultural_land_classification.geojson",
+        "url": "https://www.trafforddatalab.io/open_data/agricultural_land_classification/trafford_agricultural_land_classification_styled.geojson",
         "theme": "Environment",
         "legend": "<div class='legendKey legendKeyLine' style='border-bottom: 3px solid #a1d99b;'></div> Grade 2<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #74c476;'></div> Grade 3<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #31a354;'></div> Grade 4<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #ae8552;'></div> Non Agricultural<br /><div class='legendKey legendKeyLine' style='border-bottom: 3px solid #828282;'></div> Urban"
     },
