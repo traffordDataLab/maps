@@ -23,7 +23,7 @@
     },
     "care_homes": {
         "title": "Care homes",
-        "about": "Nursing and residential care homes in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/care_homes/trafford_care_homes.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/care_homes/trafford_care_homes.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/care_homes' target='_blank'>on GitHub</a>.",
+        "about": "Nursing and residential care homes in Trafford where care is regulated by the Care Quality Commission.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/care_homes/trafford_care_homes.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/care_homes/trafford_care_homes.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/care_homes' target='_blank'>on GitHub</a>.",
         "attribution": "<a href='https://www.cqc.org.uk' target='_blank'>Care Quality Commission</a>",
         "url": "https://www.trafforddatalab.io/open_data/care_homes/trafford_care_homes.geojson",
         "theme": "Health",
