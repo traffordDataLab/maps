@@ -31,9 +31,9 @@
     },
     "cctv": {
         "title": "CCTV",
-        "about": "Locations of Local Authority controlled CCTV cameras in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/cctv/CCTV_cameras_trafford.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/cctv/CCTV_cameras_trafford.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/cctv' target='_blank'>on GitHub</a>.",
+        "about": "Locations of Local Authority controlled CCTV cameras in Trafford.<br /><br />Download: <a href='https://www.trafforddatalab.io/open_data/cctv/trafford_cctv_cameras.csv' target='_blank'>CSV</a> | <a href='https://www.trafforddatalab.io/open_data/cctv/trafford_cctv_cameras.geojson' target='_blank'>GeoJSON</a>.<br />Further resources available <a href='https://github.com/traffordDataLab/open_data/tree/master/cctv' target='_blank'>on GitHub</a>.",
         "attribution": "<a href='http://www.trafford.gov.uk' target='_blank'>Trafford Council</a>",
-        "url": "https://www.trafforddatalab.io/open_data/cctv/CCTV_cameras_trafford_styled.geojson",
+        "url": "https://www.trafforddatalab.io/open_data/cctv/trafford_cctv_cameras.geojson",
         "theme": "Community Safety",
         "cluster": true
     },
