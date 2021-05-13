@@ -1,0 +1,260 @@
+---
+pagetitle: "Digital Skills Services in Trafford"
+lang: "en-GB"
+output: 
+  html_document:
+    css: styles.css
+    highlight: null
+    mathjax: null
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+
+library(crosstalk) ; library(tidyverse) ; library(sf) ; library(leaflet) ; library(leaflet.extras) ; library(reactable) ; library(shiny) ; library(htmlwidgets) ; library(htmltools)
+
+# local authority boundary
+sf <- st_read("data/local_authority.geojson", quiet = TRUE)
+
+# places
+df <- read_csv("data/digital_skills_services.csv") %>%
+  mutate(Category = fct_relevel(as_factor(Category),
+                             level = c("Community hub", "Library", "Charity/community group", "Education establishment", "Business", "Other")),
+         `Targeted?` = fct_relevel(as_factor(`Targeted?`),
+                             level = c("Inclusive", "Elderley", "Families", "Unemployed", "Women", "Students", "Young people", "Customers", "Adults and young people with disabilities", "Area’s residents, Inclusive")),
+         popup = str_c("<strong>", `Organisation name`, "</strong><br/>",
+                        ifelse(is.na(Phone),"",str_c("Tel: ", Phone, "<br/>")), 
+                        ifelse(is.na(Email),"",str_c("Email: ", Email, "<br/>")), 
+                        ifelse(is.na(Website),"",str_c("<a href='", Website, "'target='_blank'>Website</a><br/><br/>")),
+                        ifelse(is.na(Address),"",str_c("Address: ", Address, ", ", Postcode))
+                        #ifelse(is.na(Postcode),"",str_c("Postcode: ", Postcode))
+                       ) %>% map(HTML))
+
+# shared dataframe
+sd <- SharedData$new(df, group = "Organisation name")
+# subset of shared dataframe
+sd_table <- select(df, `Organisation name`, `Additional information`) %>%
+  SharedData$new(group = "Organisation name")
+```
+
+```{r, map}
+map <- leaflet(sd, width = "100%", height = 350) %>%
+  addTiles(urlTemplate = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a> | <a href="https://www.ons.gov.uk/methodology/geography/licences">Contains OS data © Crown copyright and database right (2021)</a>', options = tileOptions(minZoom = 11, maxZoom = 18)) %>%
+  addPolygons(data = sf, fillColor = "#CCCCCC", weight = 0.8, opacity = 1, color = "#212121") %>%  
+  addAwesomeMarkers(popup = df$popup, icon = ~makeAwesomeIcon(icon = "fas fa-hand-pointer", library = "fa", iconColor = "#FFFFFF", markerColor = "blue")) %>%
+  addFullscreenControl()
+```
+
+```{r, table}
+# improve accessibility
+options(reactable.language = reactableLang(
+  noData = "No organisations found",
+  pagePreviousLabel = "Previous page",
+  pageNextLabel = "Next page"))
+
+table <- reactable(
+  sd_table,
+  resizable = TRUE,
+  borderless = FALSE,
+  compact = FALSE,
+  wrap = TRUE,
+  searchable = TRUE,
+  highlight = TRUE,
+  selection = "multiple",
+  onClick = "select",
+  rowStyle = list(cursor = "pointer"),
+  columns = list(
+     `Organisation name` = colDef(maxWidth = 300,
+                                  style = list(position = "sticky", left = 0),
+                                  headerStyle = list(position = "sticky", left = 0))
+    )
+)
+```
+<main>
+```{r, ui}
+div(class = "container-fluid",
+    h1("Digital Skills Services in Trafford", style = "padding-top: 25px; margin-bottom: 20px;"),
+    div(class = "row",
+        div(class = "col-xs-12 col-sm-6 col-md-6 col-lg-6", map),
+        div(class = "col-xs-6 col-sm-3 col-md-3 col-lg-3", 
+            list(
+              # Category
+              filter_checkbox(id = "category", label = "Category", sharedData = sd, group = ~Category),
+              br(),
+              # WiFi
+            filter_checkbox(id = "WiFi", label = "WiFi", sharedData = sd, group = ~ifelse(WiFi == "x", "Avalilable", NA), inline = TRUE),
+            br(),
+              # Device lending scheme
+            filter_checkbox(id = "Device lending scheme", label = "Device lending scheme", sharedData = sd, group = ~ifelse(`Device lending scheme` == "x", "Avalilable", NA), inline = TRUE),
+            br(),
+              # Training and/or support
+            filter_checkbox(id = "Training and/or support", label = "Training and/or support", sharedData = sd, group = ~ifelse(`Training and/or support` == "x", "Avalilable", NA), inline = TRUE)
+            )),
+        div(class = "col-xs-6 col-sm-3 col-md-3 col-lg-3", 
+            list(
+              # Targeted?
+              filter_checkbox(id = "Targeted?", label = "Targeted?", sharedData = sd, group = ~`Targeted?`),
+              br(),
+              # Access
+            filter_checkbox(id = "Access", label = "Access", sharedData = sd, group = ~ifelse(Access == "x", "Avalilable", NA), inline = TRUE)
+              ))),
+    br(),
+    h2("Additional information"),
+    div(class = "row",
+        div(class = "col-sm-12", table)),
+    div(class = "row",
+      div(class = "col-sm-12", 
+          p("O2 offers free WiFi at ", a("multiple locations across Trafford", href = "https://www.o2wifi.co.uk/hotspot/", target = "_blank")),
+      br()
+      )
+   ))
+```
+</main>
+<script>
+  // Remove the crosstalk selection button from the Leaflet map. Map may not have initialised at this point so set up an interval to keep calling until it has
+  var removeSelectionButtonFn = setInterval(removeSelectionButton, 100);
+  
+  function removeSelectionButton() {
+    try {
+      // We don't have an id or name so have to do it by classname and then check we have the correct button by testing the 'title' attribute
+      var arrEasyButtonContainer = document.getElementsByClassName('easy-button-container');
+  
+      for (var i = 0; i < arrEasyButtonContainer.length; i++) {
+        if (arrEasyButtonContainer[i].childNodes[0].title == "Make a selection") {
+          var parent = arrEasyButtonContainer[i].parentNode;
+          parent.removeChild(arrEasyButtonContainer[i]);    // remove the whole container plus button
+          clearInterval(removeSelectionButtonFn);  // cancel any further calls to this function as we have completed all actions
+        }
+      }
+    }
+    catch(e) {
+      clearInterval(removeSelectionButtonFn);   // something went wrong so cancel fn call
+    }
+  }
+  
+  
+  // Add aria-label attribute to the fullscreen Leaflet map button to identify its purpose as the link is empty (assessibility issue)
+  // Map may not have initialised at this point so set up an interval to keep calling until it has
+  var updateFullscreenButtonFn = setInterval(updateFullscreenButton, 100);
+  
+  function updateFullscreenButton() {
+    try {
+      // We don't have an id or name so have to do it by classname
+      var arrFullscreenButtonLink = document.getElementsByClassName('leaflet-control-fullscreen-button');
+      
+      if (arrFullscreenButtonLink.length > 0) {
+        // set aria-label to describe the function of the link/button
+        arrFullscreenButtonLink[0].setAttribute('aria-label', 'Maximise/minimise map.');
+        
+        clearInterval(updateFullscreenButtonFn);    // cancel any further calls to this function as we have completed all actions
+      }
+    }
+    catch(e) {
+      clearInterval(updateFullscreenButtonFn);    // something went wrong so cancel fn call
+    }
+  }
+  
+  
+  // Add type="hidden" attribute to all form elements with classname "irs-hidden-input" to remove errors in
+  // WAVE due to the inputs not having labels.
+  // The controls may not have initialised at this point so set up an interval to keep calling until they have
+  var addInputHiddenFn = setInterval(addInputHidden, 500);
+  
+  function addInputHidden() {
+    try {
+      var arrHiddenInputs = document.getElementsByClassName('irs-hidden-input');
+    
+      if (arrHiddenInputs.length > 0) {
+        for (var i = 0; i < arrHiddenInputs.length; i++) {
+          arrHiddenInputs[i].setAttribute('type', 'hidden');
+        }
+        
+        clearInterval(addInputHiddenFn);   // cancel any further calls to this function as we have completed all actions
+      }
+    }
+    catch(e) {
+      clearInterval(addInputHiddenFn);   // something went wrong so cancel fn call
+    }
+  }
+  
+  
+  // Remove label tags created by crosstalk for the checkboxes and sliders as they cause validation errors,
+  // and replace them with fieldsets and legends containing the text of the label
+  // Reason for the error is that the 'for' attribute isn't referencing an id of a form control
+  // NOTE: the do while loop always references array index 0 because as the elements are removed from the DOM they are also removed from the array
+  var arrFormLabels = document.getElementsByClassName('control-label');
+  var parent;
+  var labelText;
+  var newNode;
+  var fieldset;
+  var legend;
+  
+  do {
+    parent = arrFormLabels[0].parentNode;                   // container of the label
+    labelText = arrFormLabels[0].firstChild.textContent;    // get the label text we want to preserve
+    
+    // create the new fieldset and legend nodes first
+    legend = document.createElement('legend');
+    legend.appendChild(document.createTextNode(labelText));
+    legend.setAttribute('class', 'formGroupHeading');
+    fieldset = document.createElement('fieldset');
+    fieldset.appendChild(legend);
+    
+    parent.removeChild(arrFormLabels[0]);   // remove the old label
+    
+    // Now add all the children of parent to the newly created fieldset
+    while (parent.childNodes.length > 0) {
+      fieldset.appendChild(parent.childNodes[0]);
+    }
+    
+    parent.appendChild(fieldset);    // add the fieldset to the parent
+    
+    // For the slider widgets we also need to add an aria-label to describe the purpose of the group
+    if (parent.classList.contains('crosstalk-input-slider')) {
+      parent.setAttribute('aria-label', 'Slider range control for ' + labelText);
+      parent.setAttribute('tabindex', '0');    // allow the slider group to be accessed via tab
+    }
+  }
+  while (arrFormLabels.length > 0);
+  
+  
+  // Add aria-labels to the slider components
+  // The inner controls may not have initialised at this point so set up an interval to keep calling until they have
+  var slidersFn = setInterval(sliders, 500);
+  
+  function sliders() {
+    try {
+      var arrSliders = document.getElementsByClassName('crosstalk-input-slider');   // The div surrounding the control group
+    
+      var arrMinValues = document.getElementsByClassName('irs-min');          // range min label
+      var arrMaxValues = document.getElementsByClassName('irs-max');          // range max label
+      var arrFromValues = document.getElementsByClassName('irs-from');        // range from label
+      var arrToValues = document.getElementsByClassName('irs-to');            // range to label
+      var arrSingleValues = document.getElementsByClassName('irs-single');    // range from - to label
+      var arrSliderHandles = document.getElementsByClassName('irs-slider');   // the handles on the sliders
+      
+      if (arrFromValues.length == arrSliders.length) {
+        // We know how many sliders there are on the page as their containers are written into the HTML.
+        // The actual slider widgets are dynamically created within them at runtime.
+        // If the array lengths match we know that the widgets have all been created
+        for (var i = 0; i < arrSliders.length; i++) {
+          arrMinValues[i].setAttribute('aria-label', 'Minimum range value');
+          arrMaxValues[i].setAttribute('aria-label', 'Maximum range value');
+          arrFromValues[i].setAttribute('aria-label', 'Lower range value');
+          arrToValues[i].setAttribute('aria-label', 'Upper range value');
+          arrSingleValues[i].setAttribute('aria-label', 'Range values');
+        }
+        
+        // these are the slider handles
+        for (var i = 0; i < arrSliderHandles.length; i++) {
+          arrSliderHandles[i].setAttribute('aria-label', 'slider handle');    // not using role="slider" as unfortunately this control doesn't seem to conform to the WAI-ARIA specification for the slider role
+        }
+        
+        clearInterval(slidersFn);   // cancel any further calls to this function as we have completed all actions
+      }
+    }
+    catch(e) {
+      clearInterval(slidersFn);   // something went wrong so cancel fn call
+    }
+  }
+</script>

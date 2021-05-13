@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans%7CRoboto');
+@import url('https://use.fontawesome.com/releases/v5.10.1/css/all.css');
+
+html, body
+{
+    font-family: 'Open Sans', sans-serif;
+}
+
+h1, h2
+{
+    font-family: 'Roboto', sans-serif;
+    color: #707070;
+}
+
+h2
+{
+    font-size: 1.6em;
+    margin-bottom: 0;
+}
+
+header, main
+{
+    display: block;
+}
+
+a, a:hover, a:focus, a:visited, .leaflet-container a
+{
+    color: #046dc3;
+}
+
+/* the facilities checkboxes */
+.form-group
+{
+    margin-bottom: 0;
+}
+
+/* for the content of the zoom control */
+.leaflet-bar a
+{
+    color: #000;
+}
+
+.leaflet-bar a.leaflet-disabled
+{
+    color: #757575;
+}
+
+/* Slider control 'tooltip' values to increase contrast from the default */
+.irs-from, .irs-to, .irs-single
+{
+    background-color: #5d77a3;
+    color: #fff;
+}
+
+/* Slider highlighted range to match the 'tooltip' values */
+.irs-bar
+{
+    background-color: #5d77a3;
+}
+
+/* Slider min and max values need font-size setting otherwise WAVE alerts that the text is very tiny  */
+.irs-min, .irs-max
+{
+    font-size: 0.8em;
+}
+
+/* make the space between the fieldset legend and the checkboxes match with the inline ones */
+.checkbox:first-of-type
+{
+    margin-top: 0;
+}
+
+/* Replacement heading for the labels causing validation errors - now a legend in a fieldset */
+.formGroupHeading
+{
+    font-size: 1em;
+    font-weight: bold;
+    margin-bottom: 3px;
+}
