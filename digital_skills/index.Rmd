@@ -82,13 +82,13 @@ div(class = "container-fluid",
               filter_checkbox(id = "category", label = "Category", sharedData = sd, group = ~Category),
               br(),
               # WiFi
-            filter_checkbox(id = "WiFi", label = "WiFi", sharedData = sd, group = ~ifelse(WiFi == "x", "Avalilable", NA), inline = TRUE),
+            filter_checkbox(id = "WiFi", label = "WiFi", sharedData = sd, group = ~ifelse(WiFi == "x", "Available", NA), inline = TRUE),
             br(),
               # Device lending scheme
-            filter_checkbox(id = "Device lending scheme", label = "Device lending scheme", sharedData = sd, group = ~ifelse(`Device lending scheme` == "x", "Avalilable", NA), inline = TRUE),
+            filter_checkbox(id = "Device lending scheme", label = "Device lending scheme", sharedData = sd, group = ~ifelse(`Device lending scheme` == "x", "Available", NA), inline = TRUE),
             br(),
               # Training and/or support
-            filter_checkbox(id = "Training and/or support", label = "Training and/or support", sharedData = sd, group = ~ifelse(`Training and/or support` == "x", "Avalilable", NA), inline = TRUE)
+            filter_checkbox(id = "Training and/or support", label = "Training and/or support", sharedData = sd, group = ~ifelse(`Training and/or support` == "x", "Available", NA), inline = TRUE)
             )),
         div(class = "col-xs-6 col-sm-3 col-md-3 col-lg-3", 
             list(
@@ -96,7 +96,7 @@ div(class = "container-fluid",
               filter_checkbox(id = "Targeted?", label = "Targeted?", sharedData = sd, group = ~`Targeted?`),
               br(),
               # Access
-            filter_checkbox(id = "Access", label = "Access", sharedData = sd, group = ~ifelse(Access == "x", "Avalilable", NA), inline = TRUE)
+            filter_checkbox(id = "Access", label = "Access", sharedData = sd, group = ~ifelse(Access == "x", "Available", NA), inline = TRUE)
               ))),
     br(),
     h2("Additional information"),
