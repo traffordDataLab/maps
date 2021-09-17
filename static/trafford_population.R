@@ -3,7 +3,7 @@
 # load libraries ---------------------------------------------------------------
 library(sf) ; library(tidyverse) ; library(ggplot2) ; library(ggspatial) ; library(shadowtext) ; library(viridis)
 
-# load mid-2019 population estimates
+# load mid-2020 population estimates
 
 # Source: Nomis
 # URL: https://www.nomisweb.co.uk/datasets/pestsyoaoa
@@ -45,19 +45,19 @@ ggplot() +
                        label.hjust = 0.5)) +
   annotation_scale(location = "bl", style = "ticks", line_col = "#212121", text_col = "#212121") +
   annotation_north_arrow(height = unit(0.8, "cm"), width = unit(0.8, "cm"), location = "tr", which_north = "true") +
-  labs(title = "Trafford's resident population (2019)",
+  labs(title = "Trafford's resident population (2020)",
        subtitle = NULL,
-       caption = "Source: Mid-2019 population estimates, ONS | @traffordDataLab\n Contains Ordnance Survey data © Crown copyright and database right 2020",
+       caption = "Source: Mid-2020 population estimates, ONS | @traffordDataLab\n Contains Ordnance Survey data © Crown copyright and database right 2021",
        x = NULL, y = NULL) +
   coord_sf(crs = st_crs(4326), datum = NA) +
   theme_void(base_family = "Roboto") +
   theme(plot.margin = unit(c(0.5,0.5,0.5,0.5), "cm"),
         text = element_text(colour = "#212121"),
-        plot.title = element_text(size = 18, face = "bold", colour = "#757575", margin = margin(t = 15), vjust = 4),
+        plot.title = element_text(size = 18, face = "bold", colour = "#707070", margin = margin(t = 15), vjust = 4),
         plot.caption = element_text(size = 10, colour = "#212121", margin = margin(b = 15), vjust = -4),
-        legend.title = element_text(colour = "#757575"),
-        legend.text = element_text(colour = "#757575"),
+        legend.title = element_text(colour = "#707070"),
+        legend.text = element_text(colour = "#707070"),
         legend.position = c(0.18, 0.95))
 
 # write results ----------------------------------------------------------------
-ggsave("output/trafford_population_2019.png", dpi = 300, scale = 1)
+ggsave("output/trafford_population_2020.png", dpi = 300, scale = 1)
