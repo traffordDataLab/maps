@@ -2,11 +2,11 @@
 
 library(tidyverse) ; library(sf) ; library(ggplot2) ; library(ggspatial)
 
-sf <- st_read("https://www.trafforddatalab/spatial_data/council_defined/trafford_localities.geojson")
+sf <- st_read("https://www.trafforddatalab.io/spatial_data/council_defined/trafford_localities.geojson")
 
 ggplot() +
   geom_sf(data = sf, fill = "#CCE3AA", alpha = 1, colour = "#FFFFFF",  size = 2) +
-  geom_text(data = sf, aes(x = lon, y = lat, label = locality), colour = "#FFFFFF", size = 4, fontface = "bold") +
+  geom_text(data = sf, aes(x = lon, y = lat, label = area_name), colour = "#FFFFFF", size = 4, fontface = "bold") +
   annotation_scale(location = "bl", style = "ticks", line_col = "#212121", text_col = "#212121") +
   annotation_north_arrow(height = unit(0.8, "cm"), width = unit(0.8, "cm"), location = "tr", which_north = "true") +
   labs(title = "Trafford's localities",
