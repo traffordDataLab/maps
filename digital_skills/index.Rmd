@@ -19,9 +19,9 @@ sf <- st_read("data/local_authority.geojson", quiet = TRUE)
 # places
 df <- read_csv("data/digital_skills_services.csv") %>%
   mutate(Category = fct_relevel(as_factor(Category),
-                             level = c("Community hub", "Library", "Charity/community group", "Education establishment", "Retailer", "Job Centre")),
+                             level = c("Community hub", "Library", "Charity/community group", "Education establishment", "Training provider", "Retailer", "Job Centre")),
          `Target audience` = fct_relevel(as_factor(`Target audience`),
-                             level = c("Everyone", "Adults and young people with disabilities", "Customers", "Families", "Individuals with hearing impairment", "Older people", "Students", "Unemployed", "Women", "Young people")),
+                             level = c("Everyone", "Adults and young people with disabilities", "Customers", "Families", "Individuals with hearing impairment", "Jobseekers", "Older people", "Students", "Women", "Young people")),
          popup = str_c("<strong>", `Organisation name`, "</strong><br/>",
                         ifelse(is.na(Phone),"",str_c("Tel: ", Phone, "<br/>")), 
                         ifelse(is.na(Email),"",str_c("Email: ", Email, "<br/>")), 
@@ -38,7 +38,8 @@ sd_table <- select(df, `Organisation name`, `Additional information`) %>%
 
 ```{r, map}
 map <- leaflet(sd, width = "100%", height = 400) %>%
-  addTiles(urlTemplate = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a> | <a href="https://www.ons.gov.uk/methodology/geography/licences">Contains OS data © Crown copyright and database right (2021)</a>', options = tileOptions(minZoom = 11, maxZoom = 18)) %>%
+  addTiles(urlTemplate = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a> | <a href="https://www.ons.gov.uk/methodology/geography/licences">Contains OS data © Crown copyright and database right (2021)</a>', options = tileOptions(minZoom = 6, maxZoom = 18)) %>%
+  setView(lng = -2.330256, lat= 53.421829, zoom =11) %>%
   addPolygons(data = sf, fillColor = "#CCCCCC", weight = 0.8, opacity = 1, color = "#212121") %>%  
   addAwesomeMarkers(popup = df$popup, icon = ~makeAwesomeIcon(icon = "fas fa-hand-pointer", library = "fa", iconColor = "#FFFFFF", markerColor = "blue")) %>%
   addFullscreenControl()
@@ -93,37 +94,40 @@ div(class = "container-fluid",
               # Category
               filter_checkbox(id = "category", label = "Category", sharedData = sd, group = ~Category),
               br(),
-              # WiFi
-            filter_checkbox(id = "WiFi", label = "WiFi", sharedData = sd, group = ~ifelse(WiFi == "x", "Available", NA), inline = TRUE),
-            br(),
-            # Computers
-            filter_checkbox(id = "Computers", label = "Computers", sharedData = sd, group = ~ifelse(Computers == "x", "Available", NA), inline = TRUE),
-            br(),
-              # Device lending
-            filter_checkbox(id = "Device lending", label = "Device lending", sharedData = sd, group = ~ifelse(`Device lending` == "x", "Available", NA), inline = TRUE),
-            br(),
-              # Training and/or support
-            filter_checkbox(id = "Training and/or support", label = "Training and/or support", sharedData = sd, group = ~ifelse(`Training and/or support` == "x", "Available", NA), inline = TRUE)
-            )),
-        div(class = "col-xs-6 col-sm-3 col-md-3 col-lg-3", 
-            list(
               # `Target audience`
               filter_checkbox(id = "Target audience", label = "Target audience", sharedData = sd, group = ~`Target audience`),
               br()
-              ))),
+            )),
+        div(class = "col-xs-6 col-sm-3 col-md-3 col-lg-3", 
+            list(
+              # WiFi
+              filter_checkbox(id = "WiFi", label = "WiFi", sharedData = sd, group = ~ifelse(WiFi == "x", "Available", NA), inline = TRUE),
+              br(),
+              # Computers
+              filter_checkbox(id = "Computers", label = "Computers", sharedData = sd, group = ~ifelse(Computers == "x", "Available", NA), inline = TRUE),
+              br(),
+              # Device lending
+              filter_checkbox(id = "Device lending", label = "Device lending", sharedData = sd, group = ~ifelse(`Device lending` == "x", "Available", NA), inline = TRUE),
+              br(),
+              # Training and/or support
+              filter_checkbox(id = "Training and/or support", label = "Training and/or support", sharedData = sd, group = ~ifelse(`Training and/or support` == "x", "Available", NA), inline = TRUE),
+              br(),
+              # Essential Digital Skills (up to Level 2)
+              filter_checkbox(id = "Essential Digital Skills (up to Level 2)", label = "Essential Digital Skills (up to Level 2)", sharedData = sd, group = ~ifelse(`Essential Digital Skills (up to Level 2)` == "x", "Available", NA), inline = TRUE)
+            ))),
     br(),
     h2("Additional information"),
     div(class = "row",
         div(class = "col-sm-12", table)),
     div(class = "row",
-      div(class = "col-sm-12", 
-          p("There are a lot of other locations across the borough that you are able to access free WiFi. A range of retailers offer these services to paying customers. If you have WiFi at home your provider might also offer free WiFi hotspots while you’re out and about."),
-          p("Some examples of organisations that offer WiFi to customers while on their premises are Aldi, McDonalds and Costa Coffee but there are many more. All you need to do is look out for the Free WiFi symbol once you are inside which might look something like this:"),
-          img(src = "images/wifi_logo.jpg"),
-          img(src = "images/wifi_logo2.png"),
-      br(), br(), br()
-      )
-   ))
+        div(class = "col-sm-12", 
+            p("There are a lot of other locations across the borough that you are able to access free WiFi. A range of retailers offer these services to paying customers. If you have WiFi at home your provider might also offer free WiFi hotspots while you’re out and about."),
+            p("Some examples of organisations that offer WiFi to customers while on their premises are Aldi, McDonalds and Costa Coffee but there are many more. All you need to do is look out for the Free WiFi symbol once you are inside which might look something like this:"),
+            img(src = "images/wifi_logo.jpg"),
+            img(src = "images/wifi_logo2.png"),
+            br(), br(), br()
+        )
+    ))
 ```
 </main>
 <script>
