@@ -28,6 +28,11 @@ a, a:hover, a:focus, a:visited, .leaflet-container a
     color: #046dc3;
 }
 
+.main-container
+{
+    max-width: 1200px !important;
+}
+
 /* the facilities checkboxes */
 .form-group
 {
