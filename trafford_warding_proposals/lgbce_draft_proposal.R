@@ -25,37 +25,50 @@ lgbce_final_proposals <- st_read("data/Trafford_final_proposals.geojson")
 
 polling_districts <- st_read("https://www.trafforddatalab.io/spatial_data/polling_districts/trafford_polling_districts.geojson")
 
-polling_stations <- st_read("https://www.trafforddatalab.io/spatial_data/polling_districts/trafford_polling_districts.geojson")
+polling_stations_raw <- st_read("https://www.trafforddatalab.io/open_data/elections/polling_stations/trafford_polling_stations.geojson") 
+
+polling_stations <- polling_stations_raw %>%
+  mutate(long = unlist(map(polling_stations_raw$geometry,1)),
+         lat = unlist(map(polling_stations_raw$geometry,2))) %>%
+  mutate(popup = str_c("<strong>", name, "</strong><br/>",
+                       address, "<br/>",
+                       postcode) %>% 
+           map(HTML))
 
 # build map
+
+icon <- makeAwesomeIcon(icon = "fa-check-square-o", library = "fa", markerColor = "blue", iconColor = "#fff") #38A9DC
+
 
 map <- leaflet(height = "100%", width = "100%") %>% 
   setView(-2.35533522781156, 53.419025498197, zoom = 12) %>% 
   addTiles(urlTemplate = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", 
            attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a> | <a href="https://www.ons.gov.uk/methodology/geography/licences">Contains OS data © Crown copyright and database right (2021)</a> | Source: <a href="https://democratic.trafford.gov.uk/mgMemberIndex.aspx?FN=WARD&VW=TABLE&PIC=1" target="_blank">Trafford Council</a> , <a href="https://www.lgbce.org.uk/all-reviews/north-west/greater-manchester/trafford" target="_blank">LGBCE</a>',
            options = tileOptions(minZoom = 12, maxZoom = 17), group = "Low Detail") %>%
-  addPolygons(data = Trafford_wards, fillColor = "#fc6721", weight = 3, fillOpacity = 0.05, opacity = 1, color = "#fc6721", label = ~area_name, group = "Trafford wards", highlightOptions = highlightOptions(color = "yellow", weight = 2, bringToFront = TRUE)) %>% 
+  addPolygons(data = Trafford_wards, fillColor = "#fc6721", weight = 3, fillOpacity = 0.05, opacity = 1, color = "#fc6721", label = ~area_name, group = "Trafford wards") %>% 
   #addPolygons(data = Trafford_option_A, fillColor = "green", weight = 3, fillOpacity = 0.02, opacity = 1, color = "green", label = ~Ward, group = "Trafford option A") %>% 
   #addPolygons(data = Trafford_option_B, fillColor = "#2A81CB", weight = 3, fillOpacity = 0.05, opacity = 1, color = "#2A81CB", label = ~Ward, group = "Trafford option B") %>% 
   #addPolygons(data = lgbce_draft, fillColor = "#925544", weight = 3, fillOpacity = 0.05, opacity = 1, color = "#925544", label = ~WardName, group = "LGBCE draft") %>% 
-  addPolygons(data = lgbce_final_proposals, fillColor = "#CCCCCC", weight = 3, fillOpacity = 0.05, opacity = 1, color = "#212121", label = ~Name, group = "LGBCE final", highlightOptions = highlightOptions(color = "yellow", weight = 2, bringToFront = TRUE)) %>%
-  addPolygons(data = polling_districts, fillColor = "#925544", weight = 3, fillOpacity = 0.05, opacity = 1, color = "#925544", label = ~area_name, group = "Polling Districts", highlightOptions = highlightOptions(color = "yellow", weight = 2, bringToFront = TRUE)) %>% 
+  addPolygons(data = lgbce_final_proposals, fillColor = "#CCCCCC", weight = 7, fillOpacity = 0.05, opacity = 1, color = "#212121", label = ~Name, group = "LGBCE final") %>%
+  addPolygons(data = polling_districts, fillColor = "#2A81CB", weight = 3, fillOpacity = 0.05, opacity = 1, color = "#2A81CB", label = ~area_name, group = "Polling Districts", highlightOptions = highlightOptions(color = "yellow", weight = 3, bringToFront = TRUE)) %>% 
   
-  
+  addAwesomeMarkers(data = polling_stations, ~long, ~lat, icon=icon, group = "Polling Stations", popup = ~popup) %>%  
 
   addControl(paste0("<h1>Trafford warding proposals</h1>"), position = 'topright',  className = "map-title") %>% 
   addLayersControl(
     baseGroups = c("Low Detail"),
     #overlayGroups = c("Trafford wards", "Trafford option A","Trafford option B","LGBCE draft","LGBCE final"),
-    overlayGroups = c("Trafford wards", "LGBCE final", "Polling Districts"),
+    overlayGroups = c("Trafford wards", "LGBCE final", "Polling Districts", "Polling Stations"),
     options = layersControlOptions(collapsed = FALSE)
    ) %>%
   
+  hideGroup("Trafford wards") %>%
   #hideGroup("Trafford option A") %>%
   #hideGroup("Trafford option B") %>%
   #hideGroup("LGBCE draft") %>%
-  hideGroup("LGBCE final") %>%
+  #hideGroup("LGBCE final") %>%
   hideGroup("Polling Districts") %>%
+  
     onRender(paste0("function(el, x) {$('head').append(","\'<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, viewport-fit=cover\">\'",");}")) %>%
     onRender(paste0("function(el, x) {$('head').append(","\'<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css?family=Open+Sans%7CRoboto\"/>\'",");}"))
 
@@ -123,7 +136,7 @@ browsable(
         }
         
         .leaflet-popup-content {
-        margin: 0 1.5em 1.5em 1.5em;
+        margin: 0.5em 1.5em 0.5em 1.5em;
         min-width: 100px !important;
         max-height: 300px;
         overflow: auto;
