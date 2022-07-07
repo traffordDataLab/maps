@@ -91,13 +91,6 @@ browsable(
         font-family: 'Open Sans', sans-serif;
         }
         
-        main {
-        display: block;
-        box-sizing: border-box;
-        width: 100%;
-        height: 100%;
-        }
-        
         h1, h2, h3 {
         font-family: 'Roboto', sans-serif;
         color: #707070;
@@ -165,6 +158,6 @@ browsable(
       )
       )
       ),
-    tags$main(map)
+        map
       )
     )
