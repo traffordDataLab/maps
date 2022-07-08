@@ -72,7 +72,7 @@ map <- leaflet(height = "100%", width = "100%") %>%
   groupOptions("Polling Stations Labels", zoomLevels = 15:17) %>%
   
 
-  addControl(paste0("<h1>Trafford new wards and polling stations</h1>"), position = 'topright',  className = "map-title") %>% 
+  addControl(paste0("<h1>Trafford new wards and polling districts</h1>"), position = 'topright',  className = "map-title") %>% 
   
   addLayersControl(
     overlayGroups = c("Polling Districts", "Polling Stations"),
