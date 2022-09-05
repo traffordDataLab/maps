@@ -11,12 +11,12 @@
 { "type": "Feature", "properties": { "Setting_Name": "Little Chaterpillars Pre-School", "Vacancy": "No", "marker-color": "#620179" }, "geometry": { "type": "Point", "coordinates": [ -2.298956, 53.457408 ] } },
 { "type": "Feature", "properties": { "Setting_Name": "Amaryllis Pre-School", "Vacancy": "No", "marker-color": "#620179" }, "geometry": { "type": "Point", "coordinates": [ -2.280367, 53.454168 ] } },
 { "type": "Feature", "properties": { "Setting_Name": "Kenwood Day Nursery", "Vacancy": "No", "marker-color": "#620179" }, "geometry": { "type": "Point", "coordinates": [ -2.296403, 53.446608 ] } },
-{ "type": "Feature", "properties": { "Setting_Name": "The Park Playgroup", "Vacancy": "No", "marker-color": "#620179" }, "geometry": { "type": "Point", "coordinates": [ -2.268081, 53.463082 ] } },
+{ "type": "Feature", "properties": { "Setting_Name": "The Park Playgroup", "Vacancy": "Yes", "marker-color": "#fc6721" }, "geometry": { "type": "Point", "coordinates": [ -2.268081, 53.463082 ] } },
 { "type": "Feature", "properties": { "Setting_Name": "Chester Road Private Day Nursery", "Vacancy": "Yes", "marker-color": "#fc6721" }, "geometry": { "type": "Point", "coordinates": [ -2.304549, 53.448507 ] } },
 { "type": "Feature", "properties": { "Setting_Name": "Little Petals Day Nursery Limited", "Vacancy": "No", "marker-color": "#620179" }, "geometry": { "type": "Point", "coordinates": [ -2.316522, 53.450759 ] } },
 { "type": "Feature", "properties": { "Setting_Name": "Victoria Road Day Nursery Ltd", "Vacancy": "No", "marker-color": "#620179" }, "geometry": { "type": "Point", "coordinates": [ -2.309538, 53.450011 ] } },
 { "type": "Feature", "properties": { "Setting_Name": "Yaqadoodle Childcare Academy", "Vacancy": "Yes", "marker-color": "#fc6721" }, "geometry": { "type": "Point", "coordinates": [ -2.31222, 53.446277 ] } },
 { "type": "Feature", "properties": { "Setting_Name": "The Village Nursery", "Vacancy": "Yes", "marker-color": "#fc6721" }, "geometry": { "type": "Point", "coordinates": [ -2.310278, 53.466045 ] } },
-{ "type": "Feature", "properties": { "Setting_Name": "Little Sunshines", "Vacancy": "No", "marker-color": "#620179" }, "geometry": { "type": "Point", "coordinates": [ -2.310493, 53.443551 ] } }
+{ "type": "Feature", "properties": { "Setting_Name": "Little Sunshines", "Vacancy": "Yes", "marker-color": "#fc6721" }, "geometry": { "type": "Point", "coordinates": [ -2.310493, 53.443551 ] } }
 ]
 }
