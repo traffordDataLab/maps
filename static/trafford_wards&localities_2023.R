@@ -38,7 +38,6 @@ ggplot() +
   theme(plot.title = element_text(size = 18),
         axis.text = element_blank(),
         legend.position = "none",
-        plot.margin = unit(c(0,0,0,0), "cm"),
-        plot.background = element_rect(fill = 'white', colour = 'white'))
+        plot.margin = unit(c(0,0,0,0), "cm"))
 
 ggsave(file = "output/trafford_wards&localities_2023.png", dpi = 300, scale = 1)
