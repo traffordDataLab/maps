@@ -1,7 +1,7 @@
-# Trafford localities
+# Trafford wards localities
 # 2023-04-20
 
-# New locality boundaries based on the new wards which come into effect from 2023-05-04
+# New ward and locality boundaries which come into effect from 2023-05-04
 
 # Source: Trafford Council Planning Department.
 # URL: https://www.trafford.gov.uk
@@ -40,18 +40,17 @@ map_plot <- ggplot() +
                 geom_text_repel(data = localities, 
                                 mapping = aes(x = lon, y = lat, label = area_name),
                                 colour = "#ffffff", bg.color = "#636363", bg.r = 0.08, size = 5, fontface = "bold", point.size = NA, nudge_y = -0.0023) +
-                labs(x = NULL, y = NULL, title = "Trafford's localities", subtitle = "Based on wards from 04 May 2023",
+                labs(x = NULL, y = NULL, title = "Trafford wards and localities",
                      caption = "Contains OS data © Crown copyright and database right (2023)\nTrafford Council | @traffordDataLab") +
                 coord_sf(datum = NA) +
                 theme_void(base_family = "Roboto") +
                 theme(plot.title = element_text(size = 20, face = "bold"),
-                      plot.subtitle = element_text(size = 14),
                       axis.text = element_blank(),
                       legend.position = "none",
                       plot.margin = unit(c(0.25,0,0.25,0), "cm"))
 
 
 # write image files ---------------------------
-ggsave("output/trafford_localities.svg", plot = map_plot, dpi = 300, scale = 1, units = "px")
-ggsave("output/trafford_localities.png", plot = map_plot, dpi = 300, scale = 1, units = "px")
-ggsave("output/trafford_localities.jpg", plot = map_plot, dpi = 300, scale = 1, units = "px")
+ggsave("output/trafford_wards_localities.svg", plot = map_plot, dpi = 300, scale = 1, units = "px")
+ggsave("output/trafford_wards_localities.png", plot = map_plot, dpi = 300, scale = 1, units = "px")
+ggsave("output/trafford_wards_localities.jpg", plot = map_plot, dpi = 300, scale = 1, units = "px")
