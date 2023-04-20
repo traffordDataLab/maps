@@ -19,9 +19,9 @@ sf <- st_read("data/local_authority.geojson", quiet = TRUE)
 # places
 df <- read_csv("data/digital_skills_services.csv") %>%
   mutate(Category = fct_relevel(as_factor(Category),
-                             level = c("Community hub", "Library", "Charity/community group", "Education establishment", "Training provider", "Retailer", "Job Centre")),
+                             level = c("Community hub", "Library", "Charity/community group", "Education establishment", "Training provider", "Retailer", "Job Centre", "Digital Bootcamp provider")),
          `Target audience` = fct_relevel(as_factor(`Target audience`),
-                             level = c("Everyone", "Adults and young people with disabilities", "Customers", "Families", "Individuals with hearing impairment", "Jobseekers", "Older people", "Residents", "Students", "Women", "Young people")),
+                             level = c("Everyone", "Adults aged 19 +", "Adults and young people with disabilities", "Customers", "Families", "Individuals with hearing impairment", "Jobseekers", "Older people", "Residents", "Students", "Women", "Young people")),
          popup = str_c("<strong>", `Organisation name`, "</strong><br/>",
                         ifelse(is.na(Phone),"",str_c("Tel: ", Phone, "<br/>")), 
                         ifelse(is.na(Email),"",str_c("Email: ", Email, "<br/>")), 
