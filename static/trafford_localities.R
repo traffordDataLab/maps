@@ -40,7 +40,7 @@ map_plot <- ggplot() +
                 geom_text_repel(data = localities, 
                                 mapping = aes(x = lon, y = lat, label = area_name),
                                 colour = "#ffffff", bg.color = "#636363", bg.r = 0.08, size = 5, fontface = "bold", point.size = NA, nudge_y = -0.0023) +
-                labs(x = NULL, y = NULL, title = "Trafford localities", subtitle = "Based on wards from 04 May 2023",
+                labs(x = NULL, y = NULL, title = "Trafford's localities", subtitle = "Based on wards from 04 May 2023",
                      caption = "Contains OS data © Crown copyright and database right (2023)\nTrafford Council | @traffordDataLab") +
                 coord_sf(datum = NA) +
                 theme_void(base_family = "Roboto") +
