@@ -41,7 +41,7 @@
             /* Toggled items in their off state */
             .legendItemDisabled div:nth-child(1)
             {
-                border-bottom: 3px solid #a5a5a5;
+                border-bottom: 4px solid #a5a5a5;
             }
 
             .legendItemDisabled
@@ -59,42 +59,57 @@
             /* The legend keys for the different coloured boundary lines */
             .legendItemTrafford
             {
-                border-bottom: 2px dashed #212121;
+                border-bottom: 3px dashed #212121;
             }
 
             .legendItemAllotment
             {
-                border-bottom: 3px solid #66c2a5;
+                border-bottom: 4px solid #44AA99;
+            }
+            
+            .legendItemBowling
+            {
+                border-bottom: 4px solid #3DD707;
+            }
+            
+            .legendItemCemetery
+            {
+                border-bottom: 4px solid #332288;
             }
 
             .legendItemGolf
             {
-                border-bottom: 3px solid #fc8d62;
+                border-bottom: 4px solid #CA825F;
             }
-
+            
+            .legendItemOtherSports
+            {
+                border-bottom: 4px solid #DDCC77;
+            }
+            
             .legendItemPlaySpace
             {
-                border-bottom: 3px solid #8da0cb;
+                border-bottom: 4px solid #88CCEE;
             }
 
             .legendItemPlayingField
             {
-                border-bottom: 3px solid #e78ac3;
+                border-bottom: 4px solid #AA4499;
             }
 
             .legendItemPublicPark
             {
-                border-bottom: 3px solid #a6d854;
+                border-bottom: 4px solid #117733;
             }
 
             .legendItemReligiousGround
             {
-                border-bottom: 3px solid #ffd92f;
+                border-bottom: 4px solid #882255;
             }
 
-            .legendItemSport
+            .legendItemTennisCourt
             {
-                border-bottom: 3px solid #e5c494;
+                border-bottom: 4px solid #CC6677;
             }
 
             .legendItemAccessPoint
@@ -164,16 +179,19 @@
             // object to hold toggle state for the greenspace categories
             labMap.greenspaceCategories = {
                 'AllotmentsOrCommunityGrowingSpaces': 1,
+                'BowlingGreen': 1,
+                'Cemetery': 1,
                 'GolfCourse': 1,
+                'OtherSportsFacility': 1,
                 'PlaySpace': 1,
                 'PlayingField': 1,
                 'PublicParkOrGarden': 1,
-                'ReligiousGroundandCemeteries': 1,
-                'Sports': 1
+                'ReligiousGrounds': 1,
+                'TennisCourt': 1
             }
 
             // build the content for the legend - keeping the access points separate as these are added/removed depending on the map zoom
-            labMap.legendGreenspaces = '<div id="AllotmentsOrCommunityGrowingSpaces" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'AllotmentsOrCommunityGrowingSpaces\')"><div class="legendKey legendKeyLine legendItemAllotment"></div> Allotments or Community Growing Space</div><div id="GolfCourse" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'GolfCourse\')"><div class="legendKey legendKeyLine legendItemGolf"></div> Golf Course</div><div id="PlaySpace" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'PlaySpace\')"><div class="legendKey legendKeyLine legendItemPlaySpace"></div> Play Space</div><div id="PlayingField" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'PlayingField\')"><div class="legendKey legendKeyLine legendItemPlayingField"></div> Playing Field</div><div id="PublicParkOrGarden" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'PublicParkOrGarden\')"><div class="legendKey legendKeyLine legendItemPublicPark"></div> Public Park or Garden</div><div id="ReligiousGroundandCemeteries" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'ReligiousGroundandCemeteries\')"><div class="legendKey legendKeyLine legendItemReligiousGround"></div> Religious Ground and Cemeteries</div><div id="Sports" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'Sports\')"><div class="legendKey legendKeyLine legendItemSport"></div> Sports</div><div class="legendToggleDivider"></div><div class="legendItem"><div class="legendKey legendKeyLine legendItemTrafford"></div> Trafford boundary</div><div id="legendAccessItemsContainer" class="hideContent"><div class="legendItem"><div class="legendKey legendItemAccessPoint legendItemPedestrianAccess"></div> Pedestrian Access</div><div class="legendItem"><div class="legendKey legendItemAccessPoint legendItemPedestrianAndVehicleAccess"></div> Vehicle and Pedestrian Access</div></div>';
+            labMap.legendGreenspaces = '<div id="AllotmentsOrCommunityGrowingSpaces" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'AllotmentsOrCommunityGrowingSpaces\')"><div class="legendKey legendKeyLine legendItemAllotment"></div> Allotments or Community Growing Space</div><div id="BowlingGreen" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'BowlingGreen\')"><div class="legendKey legendKeyLine legendItemBowling"></div> Bowling Green</div><div id="Cemetery" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'Cemetery\')"><div class="legendKey legendKeyLine legendItemCemetery"></div> Cemetery</div><div id="GolfCourse" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'GolfCourse\')"><div class="legendKey legendKeyLine legendItemGolf"></div> Golf Course</div><div id="OtherSportsFacility" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'OtherSportsFacility\')"><div class="legendKey legendKeyLine legendItemOtherSports"></div> Other Sports Facility</div><div id="PlaySpace" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'PlaySpace\')"><div class="legendKey legendKeyLine legendItemPlaySpace"></div> Play Space</div><div id="PlayingField" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'PlayingField\')"><div class="legendKey legendKeyLine legendItemPlayingField"></div> Playing Field</div><div id="PublicParkOrGarden" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'PublicParkOrGarden\')"><div class="legendKey legendKeyLine legendItemPublicPark"></div> Public Park or Garden</div><div id="ReligiousGrounds" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'ReligiousGrounds\')"><div class="legendKey legendKeyLine legendItemReligiousGround"></div> Religious Grounds</div><div id="TennisCourt" class="legendItem legendItemToggle" onclick="toggleGreenspace(\'TennisCourt\')"><div class="legendKey legendKeyLine legendItemTennisCourt"></div> Tennis Court</div><div class="legendToggleDivider"></div><div class="legendItem"><div class="legendKey legendKeyLine legendItemTrafford"></div> Trafford boundary</div><div id="legendAccessItemsContainer" class="hideContent"><div class="legendItem"><div class="legendKey legendItemAccessPoint legendItemPedestrianAccess"></div> Pedestrian Access</div><div class="legendItem"><div class="legendKey legendItemAccessPoint legendItemPedestrianAndVehicleAccess"></div> Vehicle and Pedestrian Access</div></div>';
 
             // Display the legend in the default state - no access points showing and all categories toggled on
             labMap.updateLegend(labMap.legendGreenspaces);
@@ -190,25 +208,34 @@
 
                 switch (featureType) {
                     case 'Allotments Or Community Growing Spaces':
-                        featureColour = '#66c2a5';
+                        featureColour = '#44AA99';
+                        break;
+                    case 'Bowling Green':
+                        featureColour = '#3DD707';
+                        break;
+                    case 'Cemetery':
+                        featureColour = '#332288';
                         break;
                     case 'Golf Course':
                         featureColour = '#fc8d62';
                         break;
+                    case 'Other Sports Facility':
+                        featureColour = '#DDCC77';
+                        break;
                     case 'Play Space':
-                        featureColour = '#8da0cb';
+                        featureColour = '#88CCEE';
                         break;
                     case 'Playing Field':
-                        featureColour = '#e78ac3';
+                        featureColour = '#AA4499';
                         break;
                     case 'Public Park Or Garden':
-                        featureColour = '#a6d854';
+                        featureColour = '#117733';
                         break;
-                    case 'Religious Ground and Cemeteries':
-                        featureColour = '#ffd92f';
+                    case 'Religious Grounds':
+                        featureColour = '#882255';
                         break;
-                    case 'Sports':
-                        featureColour = '#e5c494';
+                    case 'Tennis Court':
+                        featureColour = '#CC6677';
                         break;
                     default:
                         featureColour = '#f0f0f0';
@@ -342,7 +369,7 @@
             */
 
             // Trafford boundary line
-            labAjax('https://www.trafforddatalab.io/spatial_data/local_authority/2016/trafford_local_authority_full_resolution.geojson', function (data) {
+            labAjax('https://www.trafforddatalab.io/spatial_data/local_authority/2021/trafford_local_authority_full_resolution.geojson', function (data) {
                 var stylePoly = {
                     'color': '#212121',
                     'fillOpacity': 0,
