@@ -1,7 +1,7 @@
 ## Trafford's population map 2022##
 
 # load libraries ---------------------------------------------------------------
-library(httr) ; library(readxl) ; library(tidyverse) ; library(sf) ; library(tidyverse) ; library(ggplot2) ; library(ggspatial) ; library(shadowtext) ; library(viridis)
+library(httr) ; library(readxl) ; library(tidyverse) ; library(sf) ; library(ggplot2) ; library(ggspatial) ; library(shadowtext) ; library(viridis) ; library(jsonlite)
 
 # load mid-2022 population estimates
 
@@ -18,6 +18,8 @@ GET(url = "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populat
 df <- read_xlsx(tmp, sheet = 8, skip = 3) %>%
   filter(`LAD 2023 Code` == "E08000009") %>%
   select(area_code = `Ward 2023 Code`, n = Total)
+
+unlink(tmp) # remove temporary file
 
 # load geospatial data ---------------------------------------------------------
 
@@ -59,7 +61,7 @@ ggplot() +
   annotation_north_arrow(height = unit(0.8, "cm"), width = unit(0.8, "cm"), location = "tr", which_north = "true") +
   labs(title = "Trafford's resident population (2022)",
        subtitle = NULL,
-       caption = "Source: Mid-2020 population estimates, ONS | @traffordDataLab\n Contains Ordnance Survey data © Crown copyright and database right 2024",
+       caption = "Source: Mid-2022 population estimates, ONS | @traffordDataLab\n Contains Ordnance Survey data © Crown copyright and database right 2024",
        x = NULL, y = NULL) +
   coord_sf(crs = st_crs(4326), datum = NA) +
   theme_void(base_family = "Roboto") +
