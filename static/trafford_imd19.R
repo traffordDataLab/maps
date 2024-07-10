@@ -1,6 +1,6 @@
 ## 2019 Index of Multiple Deprivation ##
 
-library(sf) ; library(tidyverse) ; library(jsonlite) ; library(ggspatial) ; library(shadowtext)
+library(sf) ; library(tidyverse) ; library(jsonlite) ; library(ggspatial) ; library(shadowtext) ; library(janitor)
 
 id <- "Trafford"
 
@@ -39,27 +39,28 @@ imd <- read_csv("https://assets.publishing.service.gov.uk/government/uploads/sys
 # Source: ONS Open Geography Portal 
 # Publisher URL: http://geoportal.statistics.gov.uk/
 # Licence: Open Government Licence 3.0
-lsoa <- st_read(paste0("https://ons-inspire.esriuk.com/arcgis/rest/services/Census_Boundaries/Lower_Super_Output_Areas_December_2011_Boundaries/MapServer/2/query?where=UPPER(lsoa11nm)%20like%20'%25", URLencode(toupper(id), reserved = TRUE), "%25'&outFields=lsoa11cd,lsoa11nm&outSR=4326&f=geojson")) 
 
-codes <- fromJSON(paste0("https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/WD18_LAD18_UK_LU/FeatureServer/0/query?where=LAD18NM%20like%20'%25", URLencode(toupper(id), reserved = TRUE), "%25'&outFields=WD18CD,LAD18NM&outSR=4326&f=json"), flatten = TRUE) %>% 
+lsoa <- st_read(paste0("https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/LSOA_Dec_2011_Boundaries_Generalised_Clipped_BGC_EW_V3/FeatureServer/0/query?where=UPPER(lsoa11nm)%20like%20'%25", URLencode(toupper(id), reserved = TRUE), "%25'&outFields=lsoa11cd,lsoa11nm&outSR=4326&f=geojson"))
+
+codes <- fromJSON(paste0("https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/WD24_PCON24_LAD24_UTLA24_UK_LU/FeatureServer/0/query?where=LAD24NM%20like%20'%25", URLencode(toupper(id), reserved = TRUE), "%25'&outFields=WD24CD&outSR=4326&f=json"), flatten = TRUE) %>% 
   pluck("features") %>% 
   as_tibble() %>% 
-  distinct(attributes.WD18CD) %>% 
-  pull(attributes.WD18CD)
+  distinct(attributes.WD24CD) %>% 
+  pull(attributes.WD24CD)
 
-wards <- st_read(paste0("https://ons-inspire.esriuk.com/arcgis/rest/services/Administrative_Boundaries/Wards_December_2018_Boundaries_V3/MapServer/2/query?where=", 
-                        URLencode(paste0("wd18cd IN (", paste(shQuote(codes), collapse = ", "), ")")), 
-                        "&outFields=wd18cd,wd18nm,long,lat&outSR=4326&f=geojson"))
+wards <- st_read(paste0("https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Wards_May_2024_Boundaries_UK_BGC/FeatureServer/0/query?where=", 
+                        URLencode(paste0("wd24cd IN (", paste(shQuote(codes), collapse = ", "), ")")), 
+                        "&outFields=wd24cd,wd24nm,long,lat&outSR=4326&f=geojson")) 
 
 # Join IMD 2019 to LSOA boundaries
-sf <- left_join(lsoa, filter(imd, 
+sf <- left_join(lsoa %>% clean_names(), filter(imd, 
                              index_domain == "Index of Multiple Deprivation"), by = "lsoa11cd")
 
 # Plot map
 ggplot() +
-  geom_sf(data = sf, aes(fill = factor(decile)), alpha = 0.8, colour = "#FFFFFF", size = 0.2) +
-  geom_sf(data = wards, fill = NA, alpha = 1, colour = "#212121",  size = 0.8) +
-  geom_shadowtext(data = wards, aes(x = long, y = lat, label = wd18nm), colour = "#FFFFFF", family = "Open Sans", fontface = "bold", size = 3, bg.colour = "#212121", nudge_y = 0.002) +
+  geom_sf(data = sf, aes(fill = factor(decile)), alpha = 0.8, colour = "#FFFFFF", linewidth = 0.2) +
+  geom_sf(data = wards , fill = NA, alpha = 1, colour = "#212121",  linewidth = 0.8) +
+  geom_shadowtext(data = wards %>% clean_names(), aes(x = long, y = lat, label = wd24nm), colour = "#FFFFFF", family = "Open Sans", fontface = "bold", size = 3, bg.colour = "#212121", nudge_y = 0.002) +
   scale_fill_manual(breaks = 1:10,
                     values = c("#453B52", "#454F69", "#3F657E", "#317B8D", "#239296", "#26A898", "#43BD93", "#6AD189", "#98E37D", "#CAF270"),
                     labels = c("Most\ndeprived", 2:9, "Least\ndeprived")) +
@@ -67,7 +68,7 @@ ggplot() +
   annotation_north_arrow(height = unit(0.8, "cm"), width = unit(0.8, "cm"), location = "tr", which_north = "true") +
   labs(title = "Index of Multiple Deprivation (2019)",
        subtitle = "Trafford Lower-layer Super Output Areas by decile",
-       caption = "Source: 2019 Indices of Deprivation, MHCLG | @traffordDataLab\n Contains Ordnance Survey data © Crown copyright and database right 2019",
+       caption = "Source: 2019 Indices of Deprivation, MHCLG | @traffordDataLab\n Contains Ordnance Survey data © Crown copyright and database right 2024",
        x = NULL, y = NULL,
        fill = "") +
   coord_sf(crs = st_crs(4326), datum = NA) +
@@ -77,6 +78,7 @@ ggplot() +
         plot.title = element_text(size = 18, face = "bold", colour = "#757575", margin = margin(t = 15), vjust = 4),
         plot.subtitle = element_text(size = 12, face = "plain", colour = "#757575", margin = margin(b = 5)),
         plot.caption = element_text(size = 10, colour = "#212121", margin = margin(b = 15), vjust = -4),
+        plot.background = element_rect(fill = 'white', colour = 'white'),
         legend.title = element_text(colour = "#757575"),
         legend.text = element_text(colour = "#757575"),
         legend.position = c(0.16, 0.95)) +
