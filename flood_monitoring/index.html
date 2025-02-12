@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+        <meta charset="UTF-8"/>
+        <meta name="keywords" content="flooding, floods, flood, risk, monitoring, water, lakes, rivers, streams, brooks"/>
+        <meta name="description" content="Flood monitoring stations covering the Trafford area and environs."/>
+        <title>Trafford Data Lab: Flood monitoring and risk</title>
+
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans%7CRoboto"/>
+        <link rel="stylesheet" href="https://www.trafforddatalab.io/css/labBase.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/trafforddatalab/lab_leaflet@v1.1.1/labLeafletMap.min.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/trafforddatalab/leaflet.reachability@v2.0.1/leaflet.reachability.min.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/trafforddatalab/lab_leaflet@v1.1.1/leaflet.reachability_lab.min.css"/>
+
+        <style>
+            @media (min-width:621px)
+            {
+                .mainPanelControl
+                {
+                    width: 280px;
+                }
+            }
+
+            .infoDockContainer
+            {
+               max-height: 300px;
+            }
+
+            .propertiesTable
+            {
+                width: 100%;
+                font-size: 12px;
+                background-color: rgba(240,240,240,0.5);
+            }
+
+            .propertiesTable td
+            {
+                vertical-align: top;
+                border-bottom: 1px dotted #ccc;
+            }
+
+            .propertiesTable td:nth-child(1)
+            {
+                font-weight: bold;
+                width: 1%;
+                white-space: nowrap;
+            }
+
+        </style>
+    </head>
+
+    <body>
+        <div id="map" class="mapFullScreen"></div>
+ 
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+        <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.82.0/dist/L.Control.Locate.min.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/javascript/labError.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/javascript/labAjax.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/leaflet/labCreateTileLayer.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/leaflet/labLeafletMap.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/trafforddatalab/lab_leaflet@v1.1.1/leaflet.reachability_lab_setup.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/trafforddatalab/leaflet.reachability@v2.0.1/leaflet.reachability.min.js"></script>
+
+        <script>
+            // ######### FUNCTIONS #########
+            // To setup each feature within GeoJSON
+            function featureEvents (feature, layer) {
+                // we need to discover the feature type - remember it is valid for this to be null!
+                if (feature.hasOwnProperty('type')) {
+                    featureType = feature.type.toLowerCase();
+
+                    if (featureType == 'feature' || featureType == 'featurecollection') {
+                        if (feature.hasOwnProperty('geometry') && feature.geometry.hasOwnProperty('type')) featureType = (feature.geometry.type !== null) ? feature.geometry.type.toLowerCase() : null;
+                    }
+                }
+
+                // based on the feature type we now need to set the correct layer type
+                if (featureType == 'point' && feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('featureRadius') && feature.properties.featureRadius !== '') {
+                    layer.type = 'circle';  // special case as there is no circle in GeoJSON - therefore we can only distinguish between a circle and a point if we have a radius value
+                }
+                else if (featureType == 'point' || featureType == 'multipoint') {
+                    layer.type = 'marker';
+
+                    // For this type of layer we also want to store the colour and the size of the marker
+                    // If the information is not present use defaults of medium and Lab orange
+                    layer.markerColour = (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('marker-color')) ? feature.properties['marker-color'] : '#fc6721';
+                    layer.markerSize = (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('marker-size')) ? feature.properties['marker-size'] : 'medium';
+                }
+                else if (featureType == 'polygon' || featureType == 'multipolygon') {
+                    layer.type = 'polygon';
+                }
+                else if (featureType == 'linestring' || featureType == 'multilinestring') {
+                    layer.type = 'polyline';
+                }
+                else {
+                    layer.type = featureType;   // probably null
+                }
+
+                // Add handler to layer to show properties onclick
+                layer.on({
+                    click: showLayerProps
+                });
+            }
+
+            // This function is for styling non-point data. If it has internal styling properties use them, otherwise use a default
+            function styleOverlayData(feature) {
+                var styles = {
+                    color: '#fc6721',
+                    fillColor: '#fc6721',
+                    opacity: 0.5,
+                    fillOpacity: 0.2
+                };
+
+                var props = feature.properties;
+                if (props != null) {
+                    if (props['stroke'] != null) styles['color'] = props['stroke'];
+                    if (props['stroke-width'] != null) styles['weight'] = props['stroke-width'];
+                    if (props['stroke-opacity'] != null) styles['opacity'] = props['stroke-opacity'];
+                    if (props['fill'] != null) styles['fillColor'] = props['fill'];
+                    if (props['fill-opacity'] != null) styles['fillOpacity'] = props['fill-opacity'];
+                }
+
+                return styles;
+            }
+
+            // To setup any point data features within GeoJSON
+            function pointData (feature, latlng) {
+                if (labMap.datasetCluster == null) {
+                    // create the marker cluster object in case we require this feature - also indicates to the application that we have point data in the dataset
+                    labMap.datasetCluster = L.markerClusterGroup({
+                        spiderLegPolylineOptions: { weight: 2, color: '#fc6721', opacity: 0.5 },
+                        polygonOptions: { weight: 2, color: '#fc6721', opacity: 0.5, dashArray: '5' }
+                    });
+                }
+
+                if (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('featureRadius') && feature.properties.featureRadius !== '') {
+                    // create a circle marker as we have a radius property value
+                    return L.circle(latlng, { radius: feature.properties.featureRadius });
+                }
+                else {
+                    // get the colour and size information if available from the properties object, otherwise use defaults
+                    var markerColour = (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('marker-color')) ? feature.properties['marker-color'] : '#fc6721';
+                    var markerSize = (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('marker-size')) ? feature.properties['marker-size'] : 'medium';
+
+                    return L.marker(latlng, { icon: labMarkerSVG({
+                            color: markerColour,
+                            size: markerSize
+                        })
+                    });
+                }
+            }
+
+            // Reset the styling of a previously selected feature
+            function resetFeatureStyle() {
+                if (labMap.featureCache != null) {
+                    var layer = labMap.featureCache;
+
+                    if (layer.type == 'marker') {
+                        // Specific reset implementation for markers
+                        layer.setIcon(labMarkerSVG({
+                                color: layer.markerColour,
+                                size: layer.markerSize
+                            })
+                        );
+                    }
+                    else if (isDatasetLayer(layer)) {
+                        // The feature belongs to a dataset
+                        for (key in labMap.objDatasets) {
+                            if (labMap.objDatasets[key].hasLayer(layer)) {
+                                labMap.objDatasets[key].resetStyle(layer);
+                                break;
+                            }
+                        }
+                    }
+                    else if (isIsolineLayer(layer)) {
+                        // The feature is an isoline drawn with the reachability plugin
+                        labMap.reachabilityControl.isolinesGroup.resetStyle(layer);
+                    }
+                    else {
+                        // The feature is a polygon from a geography boundary. Find the parent geography and then reset it
+                        for (key in labMap.objGeographies) {
+                            if (labMap.objGeographies[key].hasLayer(layer)) {
+                                labMap.objGeographies[key].resetStyle(layer);
+                                break;
+                            }
+                        }
+                    }
+
+                    labMap.featureCache = null; // clear the cache to prevent a situation where no feature is currently selected but the cache still contains the previously selected layer
+                }
+            }
+
+            // Show the properties of a selected layer
+            function showLayerProps(e) {
+                L.DomEvent.stopPropagation(e);  // stop the event bubbling to the map which would cause the information to be removed from the info panel etc.
+
+                var layer = e.target;
+                var propsTable = '';
+                
+                // Find out what type of layer this is
+                var isReachability = isIsolineLayer(layer);
+                var isGeography = isGeographyLayer(layer);
+                var isDataset = isDatasetLayer(layer);
+
+                // reset the style of a previously selected feature
+                resetFeatureStyle();
+
+                // add new selected feature to the cache
+                labMap.featureCache = layer;
+
+                // set the highlight style of the selected feature
+                if (layer.type == 'marker') {
+                    layer.setIcon(labMarkerSVG({
+                            color: '#ffea00',
+                            size: layer.markerSize
+                        })
+                    );
+                }
+                else {
+                    layer.setStyle(labMap.polySelected);
+
+                    /*
+                        Do we want to bring this layer to the front?  If it's a boundary geography definitely yes as they often have overlapping lines.  When we select one, we want the whole outline to be on top as it is highlighted in yellow, not have parts hidden under the black lines of neighbouring boundaries.  The same is true for certain datasets like the Agricultural land.  However, with reachability isolines, the user wouldn't be able to select the smaller intervals once they'd selected a larger one if the layers reordered, as the larger one would be covering the smaller layer(s).  The same is also true for certain other layered datasets like OS Greenspaces which have smaller polygons layered on top of larger ones and the ordering needs to be preserved.
+                        So, how to handle this?  Only bring the layer to the front if belongs to a geography layer, or if it belongs to a dataset and there isn't a flag in the datasets.json telling us not to.
+                    */
+                    if (isGeography || (isDataset && labMap.preventLayerToFront == false)) layer.bringToFront();
+                }
+
+                // build the content for the properties table to be displayed
+                if (layer.feature.hasOwnProperty('properties')) {
+                    var props = layer.feature.properties;
+                    var propsVal, prefix;
+                    var matchIndex = 0;
+                    var arrEmail = [];
+
+                    for (var key in props) {
+                        // Ensure that the key is a valid property of the GeoJson object and isn't one of the styling options or a reachability range/area units or measure attribute (because we deal with these later)
+                        if (props.hasOwnProperty(key) && key != 'stroke' && key != 'stroke-width' && key != 'stroke-opacity' && key != 'fill' && key != 'fill-opacity' && key != 'marker-color' && key != 'marker-size' && !(isReachability && (key.indexOf('units') > -1 || key == 'Measure'))) {
+                            if (props[key] === null || props[key] === undefined || props[key] !== props[key]) {     // The strange test of the property value not equalling itself is for NaN as NaN, uniquely, is never equal to itself
+                                propsVal = '';
+                            }
+                            else if (isNaN(props[key])) {   // Given that we have screened out the possibility of props[key] being NaN, this test is to check if props[key] is numeric or not. If it's not just numeric we might want to perform some processing on it to enhance the presentation.
+                                /*
+                                    To enhance usability turn email or web addresses found within the property value into hyperlinks. Works for single or multiple occurrences
+
+                                    NOTE:
+                                        - For efficiency this is done here each time the user selects a feature, rather than on the whole dataset when it is loaded. It is likely only a few features will be selected by the user.
+                                        - Not claiming to match every occurrence, but a high proportion.  There will always be ones that slip through, but this is an enhancement feature rather than a validation so isn't an issue.
+                                        - The method of pushing the matching email addresses to an array, substituting an indexed string then replacing with the HTML link is done to prevent the second regex matching the domain parts of email addresses or parts of the href property etc.
+                                        - Regex obtained from: https://emailregex.com and http://urlregex.com
+                                */
+
+                                // Find email addresses
+                                propsVal = props[key].replace(/[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*/gi, function (x) {
+                                    arrEmail.push('<a href="mailto:' + x + '">' + x + '</a>');
+                                    return '@@@EMAIL' + matchIndex++ + '@@@';   // replace with a temporary placeholder to prevent the web address regex matching part of the email addresses as well
+                                });
+
+                                // Find URLs - NOTE: we need to replace the value of propsVal NOT props[key] as we might have properties with a mix of email and web addresses
+                                propsVal = propsVal.replace(/\b(<a href=")?(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?\b/gi, function (x) {
+                                    var prefix = (x.indexOf('http://') > -1 || x.indexOf('https://') > -1) ? '' : 'http://';     // if the URL doesn't contain the protocol we'll assume http://
+                                    return '<a href="' + prefix + x + '" target="_blank">' + x + '</a>';
+                                });
+
+                                // Finally replace all email addresses found
+                                for (var i = 0; i < arrEmail.length; i++) {
+                                    propsVal = propsVal.replace('@@@EMAIL' + i + '@@@', arrEmail[i]);
+                                }
+                            }
+                            else {
+                                // Value seems to be a number
+                                propsVal = props[key];  // set to the raw value initially
+
+                                // The following are only applicable if the selected object is a reachability polygon
+                                if (isReachability) {
+                                    switch (key) {
+                                        case 'Range':
+                                            propsVal = '0 - ' + props['Range'] + ' ' + props['Range units'];                        // Improves the presentation of the range information
+                                            break;
+
+                                        case 'Area':
+                                            propsVal = props['Area'] + ' ' + props['Area units'].replace('^2', '<sup>2</sup>');     // Improves the presentation of the area information
+                                            break;
+
+                                        case 'Latitude':
+                                        case 'Longitude':
+                                            propsVal = props[key].toFixed(4);                                                       // Reduce the precision of the lat/lng values to a sensible number
+                                            break
+
+                                        case 'Population':
+                                            propsVal = props[key].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");                 // Format the population number with commas separating thousands
+                                    }
+                                }
+                            }
+
+                            propsTable += '<tr><td>' + formatPropertyKey(key) + '</td><td>' + propsVal + '</td></tr>';          // Create a row for the property table to display the key and value
+                        }
+                    }
+
+                    if (propsTable != '') labMap.updateInfo('<table class="propertiesTable">' + propsTable + '</table>');       // So long as we have something to display, show the completed property table
+                }
+            }
+            
+            // Determines whether the layer provided is an isoline - created by the reachability plugin
+            function isIsolineLayer(layer) {
+                if (labMap.reachabilityControl != null && labMap.reachabilityControl.isolinesGroup != null) {
+                    /*
+                        The following iteration is seemingly required as the expected code: labMap.reachabilityControl.isolinesGroup.hasLayer(layer) doesn't work.
+                        Each isoline or set of isolines (if intervals were created) are added to .isolinesGroup as a L.geoJSON object, thus they are effectively sub groups of .isolinesGroup.
+                        The loop iterates through each sub group and checks if the layer is present. If so we stop checking.
+                    */
+                    var arrGroups = labMap.reachabilityControl.isolinesGroup.getLayers();
+                    for (var i = 0; i < arrGroups.length; i++) {
+                        if (arrGroups[i].hasLayer(layer)) return true;
+                    }
+                }
+
+                return false;
+            }
+
+            // Determines whether the layer provided is a geography boundary
+            function isGeographyLayer(layer) {
+                for (key in labMap.objGeographies) {
+                    if (labMap.objGeographies[key].hasLayer(layer)) return true;
+                }
+
+                return false;
+            }
+
+            // Determines whether the layer provided is a dataset layer
+            function isDatasetLayer(layer) {
+                for (key in labMap.objDatasets) {
+                    if (labMap.objDatasets[key].hasLayer(layer)) return true;
+                }
+
+                return false;
+            }
+
+            // Function to format the property keys of a given dataset, e.g. makes "area_name" into "Area name" so that it looks nice in the info panel
+            function formatPropertyKey(key) {
+                key = key.replace(/_/g, " ");   // remove and underscore characters and replace with spaces
+
+                return key.substring(0, 1).toUpperCase() + key.substring(1);    // capitalise the first character and then return the result
+            }
+            
+            
+            // ######### INITIALISATION #########
+            // Set up the basic map environment
+            var labMap = new LabLeafletMap({
+                title: 'Flood Risk and Monitoring',
+                about: '<p>INSERT EXPLANATION HERE</p>'
+            });
+            
+            labMap.baseLayers['Low detail'].addTo(labMap.map);  // Choose the basic map tile layer to begin with
+            
+            labMap.floodRiskLegend = null;  // this will hold the legend for the flood risk dataset - the content is added when the layer is loaded
+            
+            // Add the isochrones plugin
+            labMap.reachabilityControl = labSetupReachabilityPlugin({
+                // Common options are taken care of in the function, however the options below are extra
+                styleFn: labStyleIsolines,
+                clickFn: showLayerProps,
+                pane: 'pane_geography_overlay',
+                attributes: '"area","total_pop"'
+            });
+            labMap.reachabilityControl.addTo(labMap.map);
+            
+            labMap.datasetGeoJson = null;       // object to store GeoJSON created from datasets loaded from the select list. ***NOTE*** this object is important for the resetting of styles for clusered marker datasets
+            labMap.datasetLayer = null;         // either a copy of labMap.datasetGeoJson or labMap.datasetCluster containing labMap.datasetGeoJson layers - depends on whether we are clustering point data or not
+            labMap.featureCache = null;         // for caching the currently selected feature
+            
+            // Selected polygon styling
+            labMap.polySelected = {
+                color: '#ffea00',
+                weight: 5,
+                opacity: '1'
+            };
+            
+            
+            // ######### EVENTS #########
+            // Reset the map state if any features have been selected
+            labMap.map.on('click', (function (e) {
+                resetFeatureStyle();    // reset the style of a previously selected feature
+                labMap.updateInfo();    // clear and hide the info panel
+            }));
+
+            labMap.map.on('reachability:api_call_start', function (e) {
+                // indicate to the user that something is happening at the start of the API call
+                startLabSpinner();
+            });
+
+            labMap.map.on('reachability:api_call_end', function (e) {
+                // stop the spinner at the end of the API call
+                stopLabSpinner();
+            });
+
+            labMap.map.on('reachability:delete', function (e) {
+                // Check that the recently deleted isoline wasn't currently selected
+                if (labMap.featureCache != null) {
+                    var layer = labMap.featureCache;
+
+                    if (isIsolineLayer(layer) == false && isGeographyLayer(layer) == false && isDatasetLayer(layer) == false) {
+                        // The currently cached layer must've been an isoline which has now been deleted so reset the info panel and cache
+                        labMap.updateInfo();
+                        labMap.featureCache = null;
+                    }
+                }
+            });
+            
+            // Handles the content of the legend panel - currently only the flood risk layer has a legend, so we need to add or remove it in sync with the data layer
+            labMap.map.on('overlayadd', handleLegend);
+            labMap.map.on('overlayremove', handleLegend);
+            
+            function handleLegend() {
+                if (labMap.map.hasLayer(labMap.overlayLayers['6. Flood risk'])) {
+                    labMap.updateLegend(labMap.floodRiskLegend);   
+                }
+                else {
+                    labMap.updateLegend();
+                }
+            }
+            
+            
+            // ######### SPATIAL GEOGRAPHY LAYERS/LABELS #########
+            labMap.objGeographies = {}; // object to hold all the boundary L.geoJSON objects so that we can test in a loop for which layer belongs to which geography
+            
+            // Add the Trafford boundary
+            labAjax('https://www.trafforddatalab.io/spatial_data/local_authority/2021/trafford_local_authority_full_resolution.geojson', function (data) {
+                var stylePoly = {
+                    'color': '#fc6721',
+                    'fillOpacity': 0,
+                    'dashArray': '5',
+                    'weight': '3'
+                }
+
+                labMap.objGeographies['LA'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: stylePoly, onEachFeature: featureEvents }).addTo(labMap.map);
+                labMap.map.fitBounds(labMap.objGeographies['LA'].getBounds());
+                
+                labMap.overlayLayers['1. Local authority'] = labMap.objGeographies['LA'];
+                labMap.updateLayerControl();
+            });
+            
+            // Add Trafford localities (which came into effect from 2023-05-04)
+            labAjax('https://www.trafforddatalab.io/spatial_data/council_defined/2023/trafford_localities_full_resolution.geojson', function (data) {
+                var stylePoly = {
+                    'color': '#fc6721',
+                    'fillOpacity': 0,
+                    'weight': '3'
+                }
+                
+                labMap.objGeographies['Localities'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: stylePoly, onEachFeature: featureEvents });
+
+                labMap.overlayLayers['2. Localities'] = labMap.objGeographies['Localities'];
+                labMap.updateLayerControl();
+            });
+            
+            // Add Trafford wards (which came into effect from 2023-05-04)
+            labAjax('https://www.trafforddatalab.io/spatial_data/ward/2023/trafford_ward_full_resolution.geojson', function (data) {
+                var stylePoly = {
+                    'color': '#fc6721',
+                    'fillOpacity': 0,
+                    'weight': '1'
+                }
+                
+                labMap.objGeographies['Ward'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: stylePoly, onEachFeature: featureEvents });
+
+                labMap.overlayLayers['3. Wards'] = labMap.objGeographies['Ward'];
+                labMap.updateLayerControl();
+            });
+
+            // Add labels for the town centres - this is not a boundary layer so it is not added to objGeographies
+            labAjax('https://www.trafforddatalab.io/spatial_data/town_centres/trafford_town_centres.geojson', function (data) {
+
+                labMap.overlayLayers['4. Town centres'] = L.geoJSON(data, {
+                    pointToLayer: function (feature, latlng) {
+                        return L.marker(latlng, { icon: L.divIcon({ iconSize: null }) }).bindTooltip(feature.properties.name, { direction: 'center', className: 'labLabels', opacity: 1, permanent: true });
+                    }
+                });
+
+                labMap.updateLayerControl();
+            });
+            
+            
+            // ######### DATASET METADATA & SELECTION UI  #########
+            labMap.objDatasets = {};    // object to hold all the dataset L.geoJSON objects so that we can test in a loop for which layer belongs to which dataset
+            
+            // Watercourses dataset
+            labAjax('https://www.trafforddatalab.io/open_data/watercourses/trafford_watercourses_styled.geojson', function (data) {
+
+                labMap.objDatasets['Watercourses'] = L.geoJSON(data, { attribution: "<a href='https://www.ordnancesurvey.co.uk' target='_blank'>Ordnance Survey</a>", style: styleOverlayData, onEachFeature: featureEvents, pane: 'pane_data_overlay' });
+
+                labMap.overlayLayers['5. Watercourses'] = labMap.objDatasets['Watercourses'];
+                labMap.updateLayerControl();
+            });
+            
+            // Flood risk dataset
+            labAjax('https://www.trafforddatalab.io/open_data/flood_risk/trafford_flood_risk_styled.geojson', function (data) {
+
+                labMap.objDatasets['FloodRisk'] = L.geoJSON(data, { attribution: "&copy; Environment Agency copyright and/or database right 2025. All rights reserved.", style: styleOverlayData, onEachFeature: featureEvents, pane: 'pane_data_overlay' });
+                labMap.floodRiskLegend = "<div class='legendKey legendKeyLine' style='border-bottom: 5px solid #3D4489;'></div> High: yearly risk greater than 1 in 30 (3.3%)<br /><div class='legendKey legendKeyLine' style='border-bottom: 5px solid #6699CD;'></div> Medium: yearly risk between 1 in 30 (3.3%) and 1 in 100 (1%)<br /><div class='legendKey legendKeyLine' style='border-bottom: 5px solid #A2CFFF;'></div> Low: yearly risk between 1 in 100 (1%) and 1 in 1000 (0.1%)<br /><div class='legendKey legendKeyLine' style='border-bottom: 5px solid #C4E1FF;'></div> Very Low: yearly risk less than 1 in 1000 (0.1%)";
+
+                labMap.overlayLayers['6. Flood risk'] = labMap.objDatasets['FloodRisk'];
+                labMap.updateLayerControl();
+            });
+            
+            // Water level monitoring stations dataset
+            
+        </script>
+    </body>
+</html>
