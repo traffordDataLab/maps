@@ -61,6 +61,8 @@
         <script src="https://www.trafforddatalab.io/assets/javascript/labAjax.js"></script>
         <script src="https://www.trafforddatalab.io/assets/leaflet/labCreateTileLayer.js"></script>
         <script src="https://www.trafforddatalab.io/assets/leaflet/labLeafletMap.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/javascript/changeLuminosity.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/trafforddatalab/lab_leaflet@v1.1.1/labMarkerSVG.min.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/trafforddatalab/lab_leaflet@v1.1.1/leaflet.reachability_lab_setup.min.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/trafforddatalab/leaflet.reachability@v2.0.1/leaflet.reachability.min.js"></script>
 
@@ -128,13 +130,7 @@
 
             // To setup any point data features within GeoJSON
             function pointData (feature, latlng) {
-                if (labMap.datasetCluster == null) {
-                    // create the marker cluster object in case we require this feature - also indicates to the application that we have point data in the dataset
-                    labMap.datasetCluster = L.markerClusterGroup({
-                        spiderLegPolylineOptions: { weight: 2, color: '#fc6721', opacity: 0.5 },
-                        polygonOptions: { weight: 2, color: '#fc6721', opacity: 0.5, dashArray: '5' }
-                    });
-                }
+                // NOTE: clustering aspect removed from here as it isn't initially needed. Replace with code from Explore if required in future
 
                 if (feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('featureRadius') && feature.properties.featureRadius !== '') {
                     // create a circle marker as we have a radius property value
@@ -354,9 +350,9 @@
                 about: '<p>INSERT EXPLANATION HERE</p>'
             });
             
-            labMap.baseLayers['Low detail'].addTo(labMap.map);  // Choose the basic map tile layer to begin with
-            
-            labMap.floodRiskLegend = null;  // this will hold the legend for the flood risk dataset - the content is added when the layer is loaded
+            labMap.baseLayers['Low detail'].addTo(labMap.map);  // choose the basic map tile layer to begin with
+            labMap.floodRiskLegend = null;                      // this will hold the legend for the flood risk dataset - the content is added when the layer is loaded
+            labMap.featureCache = null;                         // for caching the currently selected feature
             
             // Add the isochrones plugin
             labMap.reachabilityControl = labSetupReachabilityPlugin({
@@ -367,10 +363,6 @@
                 attributes: '"area","total_pop"'
             });
             labMap.reachabilityControl.addTo(labMap.map);
-            
-            labMap.datasetGeoJson = null;       // object to store GeoJSON created from datasets loaded from the select list. ***NOTE*** this object is important for the resetting of styles for clusered marker datasets
-            labMap.datasetLayer = null;         // either a copy of labMap.datasetGeoJson or labMap.datasetCluster containing labMap.datasetGeoJson layers - depends on whether we are clustering point data or not
-            labMap.featureCache = null;         // for caching the currently selected feature
             
             // Selected polygon styling
             labMap.polySelected = {
@@ -484,7 +476,7 @@
             });
             
             
-            // ######### DATASET METADATA & SELECTION UI  #########
+            // ######### DATASET LAYERS #########
             labMap.objDatasets = {};    // object to hold all the dataset L.geoJSON objects so that we can test in a loop for which layer belongs to which dataset
             
             // Watercourses dataset
@@ -507,6 +499,13 @@
             });
             
             // Water level monitoring stations dataset
+            labAjax('https://www.trafforddatalab.io/open_data/water_level_monitoring/water_level_monitoring_stations_trafford_and_environs.geojson', function (data) {
+
+                labMap.objDatasets['MonitoringStations'] = L.geoJSON(data, { attribution: "&copy; Environment Agency copyright and/or database right 2025. All rights reserved.", onEachFeature: featureEvents, pointToLayer: pointData, pane: 'pane_data_overlay' });
+        
+                labMap.overlayLayers['7. Monitoring stations'] = labMap.objDatasets['MonitoringStations'];
+                labMap.updateLayerControl();
+            });
             
         </script>
     </body>
