@@ -505,6 +505,23 @@
         
                 labMap.overlayLayers['7. Monitoring stations'] = labMap.objDatasets['MonitoringStations'];
                 labMap.updateLayerControl();
+                
+                // Call to Environment Agency API to get the latest level readings for the monitoring stations and then bind them to the dataset
+                labMap.objDatasets['MonitoringStations'].eachLayer(function (layer) {
+                    var props = layer.feature.properties;
+                    labAjax('https://environment.data.gov.uk/flood-monitoring/id/measures/' + props.station_reference + '-level-stage-i-15_min-m/readings?latest', function (data) {
+                        var currentLevel;
+                        
+                        try {
+                            currentLevel = data.items[0].value + 'm (' + data.items[0].dateTime + ')';
+                        }
+                        catch(e) {
+                            currentLevel = "Not available";
+                        }
+                        
+                        props.current_level = currentLevel;
+                    });
+                });
             });
             
         </script>
