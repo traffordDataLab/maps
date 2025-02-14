@@ -518,11 +518,11 @@
                         var todayDate;
                         
                         try {
-                            latestLevel = data.items[0].value + 'm (';          // this is the current level reading (plus the 'm' for metres and the left bracket where the date and time of the reading will go)
-                            arrDateTime = data.items[0].dateTime.split('T');    // split the dateTime into 2 separate parts (YYYY-MM-DDTHH:MM:SSZ)
-                            readingDate = arrDateTime[0];                       // store just the YYYY-MM-DD part of the dateTime
-                            readingTime = arrDateTime[1].replace(':00Z', '');   // store just the HH:MM part of the time (removing the minutes and UTC signifier 'Z')
-                            todayDate = new Date().toISOString().split('T')[0]; // get just the date part of the dateTime of today to compare with the reading date
+                            latestLevel = data.items[0].value.toFixed(2) + 'm (';   // this is the current level reading - fixed to 2 decimal places (plus the 'm' for metres and the left bracket where the date and time of the reading will go)
+                            arrDateTime = data.items[0].dateTime.split('T');        // split the dateTime into 2 separate parts (YYYY-MM-DDTHH:MM:SSZ)
+                            readingDate = arrDateTime[0];                           // store just the YYYY-MM-DD part of the dateTime
+                            readingTime = arrDateTime[1].replace(':00Z', '');       // store just the HH:MM part of the time (removing the minutes and UTC signifier 'Z')
+                            todayDate = new Date().toISOString().split('T')[0];     // get just the date part of the dateTime of today to compare with the reading date
                             
                             // Format the date: if the reading is from today say so, otherwise show in the format YYYY-MM-DD
                             latestLevel += (readingDate == todayDate) ? 'Today at ' : readingDate + ' at ';
