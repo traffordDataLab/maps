@@ -5,7 +5,7 @@
         <meta charset="UTF-8"/>
         <meta name="keywords" content="flooding, floods, flood, risk, monitoring, water, lakes, rivers, streams, brooks"/>
         <meta name="description" content="Flood monitoring stations covering the Trafford area and environs."/>
-        <title>Trafford Data Lab: Flood monitoring and risk</title>
+        <title>Trafford Data Lab: Flood risk monitor</title>
 
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
@@ -346,8 +346,9 @@
             // ######### INITIALISATION #########
             // Set up the basic map environment
             var labMap = new LabLeafletMap({
-                title: 'Flood Risk and Monitoring',
-                about: '<p>INSERT EXPLANATION HERE</p>'
+                title: 'Flood Risk Monitor',
+                about: '<p>Combining datasets from the <a href="https://www.gov.uk/government/organisations/environment-agency" target="_blank">Environment Agency</a> and <a href="https://www.ordnancesurvey.co.uk/" target="_blank">Ordnance Survey</a> showing <a href="https://environment.data.gov.uk/dataset/96ab4342-82c1-4095-87f1-0082e8d84ef1" target="_blank">flood risk</a> from <a href="https://www.ordnancesurvey.co.uk/products/os-open-rivers" target="_blank">watercourses</a> in and around Trafford and the latest available <a href="https://environment.data.gov.uk/dataset/ae80cf81-f3aa-4703-88e7-41fbe80c67b2" target="_blank">water level readings</a>.</p>',
+                aboutToggle: 1
             });
             
             labMap.baseLayers['Low detail'].addTo(labMap.map);  // choose the basic map tile layer to begin with
@@ -428,7 +429,7 @@
                     'weight': '3'
                 }
 
-                labMap.objGeographies['LA'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: stylePoly, onEachFeature: featureEvents }).addTo(labMap.map);
+                labMap.objGeographies['LA'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: stylePoly, onEachFeature: featureEvents });
                 labMap.map.fitBounds(labMap.objGeographies['LA'].getBounds());
                 
                 labMap.overlayLayers['1. Local authority'] = labMap.objGeographies['LA'];
@@ -457,7 +458,7 @@
                     'weight': '1'
                 }
                 
-                labMap.objGeographies['Ward'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: stylePoly, onEachFeature: featureEvents });
+                labMap.objGeographies['Ward'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: stylePoly, onEachFeature: featureEvents }).addTo(labMap.map);
 
                 labMap.overlayLayers['3. Wards'] = labMap.objGeographies['Ward'];
                 labMap.updateLayerControl();
@@ -491,7 +492,7 @@
             // Flood risk dataset
             labAjax('https://www.trafforddatalab.io/open_data/flood_risk/trafford_flood_risk_styled.geojson', function (data) {
 
-                labMap.objDatasets['FloodRisk'] = L.geoJSON(data, { attribution: "&copy; Environment Agency copyright and/or database right 2025. All rights reserved.", style: styleOverlayData, onEachFeature: featureEvents, pane: 'pane_data_overlay' });
+                labMap.objDatasets['FloodRisk'] = L.geoJSON(data, { attribution: "&copy; Environment Agency copyright and/or database right 2025. All rights reserved.", style: styleOverlayData, onEachFeature: featureEvents, pane: 'pane_data_overlay' }).addTo(labMap.map);
                 labMap.floodRiskLegend = "<div class='legendKey legendKeyLine' style='border-bottom: 5px solid #3D4489;'></div> High: yearly risk greater than 1 in 30 (3.3%)<br /><div class='legendKey legendKeyLine' style='border-bottom: 5px solid #6699CD;'></div> Medium: yearly risk between 1 in 30 (3.3%) and 1 in 100 (1%)<br /><div class='legendKey legendKeyLine' style='border-bottom: 5px solid #A2CFFF;'></div> Low: yearly risk between 1 in 100 (1%) and 1 in 1000 (0.1%)<br /><div class='legendKey legendKeyLine' style='border-bottom: 5px solid #C4E1FF;'></div> Very Low: yearly risk less than 1 in 1000 (0.1%)";
 
                 labMap.overlayLayers['6. Flood risk'] = labMap.objDatasets['FloodRisk'];
@@ -501,7 +502,7 @@
             // Water level monitoring stations dataset
             labAjax('https://www.trafforddatalab.io/open_data/water_level_monitoring/water_level_monitoring_stations_trafford_and_environs.geojson', function (data) {
 
-                labMap.objDatasets['MonitoringStations'] = L.geoJSON(data, { attribution: "&copy; Environment Agency copyright and/or database right 2025. All rights reserved.", onEachFeature: featureEvents, pointToLayer: pointData, pane: 'pane_data_overlay' });
+                labMap.objDatasets['MonitoringStations'] = L.geoJSON(data, { attribution: "&copy; Environment Agency copyright and/or database right 2025. All rights reserved.", onEachFeature: featureEvents, pointToLayer: pointData, pane: 'pane_data_overlay' }).addTo(labMap.map);
         
                 labMap.overlayLayers['7. Monitoring stations'] = labMap.objDatasets['MonitoringStations'];
                 labMap.updateLayerControl();
