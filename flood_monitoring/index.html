@@ -347,12 +347,12 @@
             // Set up the basic map environment
             var labMap = new LabLeafletMap({
                 title: 'Flood Risk Monitor',
-                about: '<p>Combining datasets from the <a href="https://www.gov.uk/government/organisations/environment-agency" target="_blank">Environment Agency</a> and <a href="https://www.ordnancesurvey.co.uk/" target="_blank">Ordnance Survey</a> showing <a href="https://environment.data.gov.uk/dataset/96ab4342-82c1-4095-87f1-0082e8d84ef1" target="_blank">flood risk</a> from <a href="https://www.ordnancesurvey.co.uk/products/os-open-rivers" target="_blank">watercourses</a> in and around Trafford and the latest available <a href="https://environment.data.gov.uk/dataset/ae80cf81-f3aa-4703-88e7-41fbe80c67b2" target="_blank">water level readings</a>.</p>',
+                about: '<p>Combining datasets from the <a href="https://www.gov.uk/government/organisations/environment-agency" target="_blank">Environment Agency</a> and <a href="https://www.ordnancesurvey.co.uk/" target="_blank">Ordnance Survey</a> showing <a href="https://environment.data.gov.uk/dataset/96ab4342-82c1-4095-87f1-0082e8d84ef1" target="_blank">flood risk</a> from <a href="https://www.ordnancesurvey.co.uk/products/os-open-rivers" target="_blank">watercourses</a> in and around Trafford and the latest available <a href="https://environment.data.gov.uk/dataset/ae80cf81-f3aa-4703-88e7-41fbe80c67b2" target="_blank">water level readings</a>.<br /><br />More datasets are available from the layers menu: <img src="https://unpkg.com/leaflet@1.9.4/dist/images/layers-2x.png" alt="Layers menu icon" style="width: 20px;"/></p>',
                 aboutToggle: 1
             });
             
             labMap.baseLayers['Low detail'].addTo(labMap.map);  // choose the basic map tile layer to begin with
-            labMap.floodRiskLegend = null;                      // this will hold the legend for the flood risk dataset - the content is added when the layer is loaded
+            labMap.floodRiskLegend = "<div class='legendKey legendKeyLine' style='border-bottom: 5px solid #3D4489;'></div> High: yearly risk greater than 1 in 30 (3.3%)<br /><div class='legendKey legendKeyLine' style='border-bottom: 5px solid #6699CD;'></div> Medium: yearly risk between 1 in 30 (3.3%) and 1 in 100 (1%)<br /><div class='legendKey legendKeyLine' style='border-bottom: 5px solid #A2CFFF;'></div> Low: yearly risk between 1 in 100 (1%) and 1 in 1000 (0.1%)<br /><div class='legendKey legendKeyLine' style='border-bottom: 5px solid #C4E1FF;'></div> Very Low: yearly risk less than 1 in 1000 (0.1%)<br /><div class='legendKey legendKeyLine' style='border-bottom: 5px solid #B1B3B4;'></div> Unavailable";
             labMap.featureCache = null;                         // for caching the currently selected feature
             
             // Add the isochrones plugin
@@ -408,8 +408,8 @@
             labMap.map.on('overlayremove', handleLegend);
             
             function handleLegend() {
-                if (labMap.map.hasLayer(labMap.overlayLayers['6. Flood risk'])) {
-                    labMap.updateLegend(labMap.floodRiskLegend);   
+                if (labMap.map.hasLayer(labMap.overlayLayers['4. Flood risk overall']) || labMap.map.hasLayer(labMap.overlayLayers['5. Flood risk to depth 0.3m']) || labMap.map.hasLayer(labMap.overlayLayers['6. Flood risk to depth 0.6m']) || labMap.map.hasLayer(labMap.overlayLayers['7. Flood risk to depth 0.9m']) || labMap.map.hasLayer(labMap.overlayLayers['8. Flood risk to depth 1.2m'])) {
+                    labMap.updateLegend(labMap.floodRiskLegend);
                 }
                 else {
                     labMap.updateLegend();
@@ -420,22 +420,6 @@
             // ######### SPATIAL GEOGRAPHY LAYERS/LABELS #########
             labMap.objGeographies = {}; // object to hold all the boundary L.geoJSON objects so that we can test in a loop for which layer belongs to which geography
             
-            // Add the Trafford boundary
-            labAjax('https://www.trafforddatalab.io/spatial_data/local_authority/2021/trafford_local_authority_full_resolution.geojson', function (data) {
-                var stylePoly = {
-                    'color': '#fc6721',
-                    'fillOpacity': 0,
-                    'dashArray': '5',
-                    'weight': '3'
-                }
-
-                labMap.objGeographies['LA'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: stylePoly, onEachFeature: featureEvents });
-                labMap.map.fitBounds(labMap.objGeographies['LA'].getBounds());
-                
-                labMap.overlayLayers['1. Local authority'] = labMap.objGeographies['LA'];
-                labMap.updateLayerControl();
-            });
-            
             // Add Trafford localities (which came into effect from 2023-05-04)
             labAjax('https://www.trafforddatalab.io/spatial_data/council_defined/2023/trafford_localities_full_resolution.geojson', function (data) {
                 var stylePoly = {
@@ -445,8 +429,9 @@
                 }
                 
                 labMap.objGeographies['Localities'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: stylePoly, onEachFeature: featureEvents });
+                labMap.map.fitBounds(labMap.objGeographies['Localities'].getBounds());
 
-                labMap.overlayLayers['2. Localities'] = labMap.objGeographies['Localities'];
+                labMap.overlayLayers['1. Trafford Localities'] = labMap.objGeographies['Localities'];
                 labMap.updateLayerControl();
             });
             
@@ -460,19 +445,7 @@
                 
                 labMap.objGeographies['Ward'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: stylePoly, onEachFeature: featureEvents }).addTo(labMap.map);
 
-                labMap.overlayLayers['3. Wards'] = labMap.objGeographies['Ward'];
-                labMap.updateLayerControl();
-            });
-
-            // Add labels for the town centres - this is not a boundary layer so it is not added to objGeographies
-            labAjax('https://www.trafforddatalab.io/spatial_data/town_centres/trafford_town_centres.geojson', function (data) {
-
-                labMap.overlayLayers['4. Town centres'] = L.geoJSON(data, {
-                    pointToLayer: function (feature, latlng) {
-                        return L.marker(latlng, { icon: L.divIcon({ iconSize: null }) }).bindTooltip(feature.properties.name, { direction: 'center', className: 'labLabels', opacity: 1, permanent: true });
-                    }
-                });
-
+                labMap.overlayLayers['2. Trafford Wards'] = labMap.objGeographies['Ward'];
                 labMap.updateLayerControl();
             });
             
@@ -485,17 +458,53 @@
 
                 labMap.objDatasets['Watercourses'] = L.geoJSON(data, { attribution: "<a href='https://www.ordnancesurvey.co.uk' target='_blank'>Ordnance Survey</a>", style: styleOverlayData, onEachFeature: featureEvents, pane: 'pane_data_overlay' });
 
-                labMap.overlayLayers['5. Watercourses'] = labMap.objDatasets['Watercourses'];
+                labMap.overlayLayers['3. Watercourses'] = labMap.objDatasets['Watercourses'];
                 labMap.updateLayerControl();
             });
             
-            // Flood risk dataset
+            // Flood risk overall dataset
             labAjax('https://www.trafforddatalab.io/open_data/flood_risk/trafford_flood_risk_styled.geojson', function (data) {
 
-                labMap.objDatasets['FloodRisk'] = L.geoJSON(data, { attribution: "&copy; Environment Agency copyright and/or database right 2025. All rights reserved.", style: styleOverlayData, onEachFeature: featureEvents, pane: 'pane_data_overlay' }).addTo(labMap.map);
-                labMap.floodRiskLegend = "<div class='legendKey legendKeyLine' style='border-bottom: 5px solid #3D4489;'></div> High: yearly risk greater than 1 in 30 (3.3%)<br /><div class='legendKey legendKeyLine' style='border-bottom: 5px solid #6699CD;'></div> Medium: yearly risk between 1 in 30 (3.3%) and 1 in 100 (1%)<br /><div class='legendKey legendKeyLine' style='border-bottom: 5px solid #A2CFFF;'></div> Low: yearly risk between 1 in 100 (1%) and 1 in 1000 (0.1%)<br /><div class='legendKey legendKeyLine' style='border-bottom: 5px solid #C4E1FF;'></div> Very Low: yearly risk less than 1 in 1000 (0.1%)";
+                labMap.objDatasets['FloodRiskOverall'] = L.geoJSON(data, { attribution: "&copy; Environment Agency copyright and/or database right 2025. All rights reserved.", style: styleOverlayData, onEachFeature: featureEvents, pane: 'pane_data_overlay' }).addTo(labMap.map);
 
-                labMap.overlayLayers['6. Flood risk'] = labMap.objDatasets['FloodRisk'];
+                labMap.overlayLayers['4. Flood risk overall'] = labMap.objDatasets['FloodRiskOverall'];
+                labMap.updateLegend(labMap.floodRiskLegend);
+                labMap.updateLayerControl();
+            });
+            
+            // Flood risk 0.3m dataset
+            labAjax('https://www.trafforddatalab.io/open_data/flood_risk/trafford_flood_risk_0_3m_depth_styled.geojson', function (data) {
+
+                labMap.objDatasets['FloodRisk0_3m'] = L.geoJSON(data, { attribution: "&copy; Environment Agency copyright and/or database right 2025. All rights reserved.", style: styleOverlayData, onEachFeature: featureEvents, pane: 'pane_data_overlay' });
+
+                labMap.overlayLayers['5. Flood risk to depth 0.3m'] = labMap.objDatasets['FloodRisk0_3m'];
+                labMap.updateLayerControl();
+            });
+            
+            // Flood risk 0.6m dataset
+            labAjax('https://www.trafforddatalab.io/open_data/flood_risk/trafford_flood_risk_0_6m_depth_styled.geojson', function (data) {
+
+                labMap.objDatasets['FloodRisk0_6m'] = L.geoJSON(data, { attribution: "&copy; Environment Agency copyright and/or database right 2025. All rights reserved.", style: styleOverlayData, onEachFeature: featureEvents, pane: 'pane_data_overlay' });
+
+                labMap.overlayLayers['6. Flood risk to depth 0.6m'] = labMap.objDatasets['FloodRisk0_6m'];
+                labMap.updateLayerControl();
+            });
+            
+            // Flood risk 0.9m dataset
+            labAjax('https://www.trafforddatalab.io/open_data/flood_risk/trafford_flood_risk_0_9m_depth_styled.geojson', function (data) {
+
+                labMap.objDatasets['FloodRisk0_9m'] = L.geoJSON(data, { attribution: "&copy; Environment Agency copyright and/or database right 2025. All rights reserved.", style: styleOverlayData, onEachFeature: featureEvents, pane: 'pane_data_overlay' });
+
+                labMap.overlayLayers['7. Flood risk to depth 0.9m'] = labMap.objDatasets['FloodRisk0_9m'];
+                labMap.updateLayerControl();
+            });
+            
+            // Flood risk 1.2m dataset
+            labAjax('https://www.trafforddatalab.io/open_data/flood_risk/trafford_flood_risk_1_2m_depth_styled.geojson', function (data) {
+
+                labMap.objDatasets['FloodRisk1_2m'] = L.geoJSON(data, { attribution: "&copy; Environment Agency copyright and/or database right 2025. All rights reserved.", style: styleOverlayData, onEachFeature: featureEvents, pane: 'pane_data_overlay' });
+
+                labMap.overlayLayers['8. Flood risk to depth 1.2m'] = labMap.objDatasets['FloodRisk1_2m'];
                 labMap.updateLayerControl();
             });
             
@@ -504,7 +513,7 @@
 
                 labMap.objDatasets['MonitoringStations'] = L.geoJSON(data, { attribution: "&copy; Environment Agency copyright and/or database right 2025. All rights reserved.", onEachFeature: featureEvents, pointToLayer: pointData, pane: 'pane_data_overlay' }).addTo(labMap.map);
         
-                labMap.overlayLayers['7. Monitoring stations'] = labMap.objDatasets['MonitoringStations'];
+                labMap.overlayLayers['9. Monitoring stations'] = labMap.objDatasets['MonitoringStations'];
                 labMap.updateLayerControl();
                 
                 // Call to Environment Agency API to get the latest level readings for the monitoring stations and then bind them to the dataset
