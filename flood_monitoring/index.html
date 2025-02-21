@@ -454,7 +454,7 @@
             labMap.objDatasets = {};    // object to hold all the dataset L.geoJSON objects so that we can test in a loop for which layer belongs to which dataset
             
             // Watercourses dataset
-            labAjax('https://www.trafforddatalab.io/open_data/watercourses/trafford_watercourses_styled.geojson', function (data) {
+            labAjax('https://www.trafforddatalab.io/open_data/watercourses/trafford_buffer_watercourses_styled.geojson', function (data) {
 
                 labMap.objDatasets['Watercourses'] = L.geoJSON(data, { attribution: "<a href='https://www.ordnancesurvey.co.uk' target='_blank'>Ordnance Survey</a>", style: styleOverlayData, onEachFeature: featureEvents, pane: 'pane_data_overlay' });
 
