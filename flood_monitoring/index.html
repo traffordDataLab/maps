@@ -62,6 +62,7 @@
         <script src="https://www.trafforddatalab.io/assets/leaflet/labCreateTileLayer.js"></script>
         <script src="https://www.trafforddatalab.io/assets/leaflet/labLeafletMap.js"></script>
         <script src="https://www.trafforddatalab.io/assets/javascript/changeLuminosity.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/javascript/labSpinner.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/trafforddatalab/lab_leaflet@v1.1.1/labMarkerSVG.min.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/trafforddatalab/lab_leaflet@v1.1.1/leaflet.reachability_lab_setup.min.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/trafforddatalab/leaflet.reachability@v2.0.1/leaflet.reachability.min.js"></script>
@@ -463,6 +464,8 @@
             });
             
             // Flood risk overall dataset
+            startLabSpinner()   // inform the user that something is loading
+            
             labAjax('https://www.trafforddatalab.io/open_data/flood_risk/trafford_flood_risk_styled.geojson', function (data) {
 
                 labMap.objDatasets['FloodRiskOverall'] = L.geoJSON(data, { attribution: "&copy; Environment Agency copyright and/or database right 2025. All rights reserved.", style: styleOverlayData, onEachFeature: featureEvents, pane: 'pane_data_overlay' }).addTo(labMap.map);
@@ -470,6 +473,8 @@
                 labMap.overlayLayers['4. Flood risk overall'] = labMap.objDatasets['FloodRiskOverall'];
                 labMap.updateLegend(labMap.floodRiskLegend);
                 labMap.updateLayerControl();
+                
+                stopLabSpinner()    // remove the spinner as the data has loaded
             });
             
             // Flood risk 0.3m dataset
