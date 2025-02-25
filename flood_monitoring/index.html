@@ -53,7 +53,7 @@
             {
                 font-family: 'Roboto', sans-serif;
                 color: #404040;
-                font-size: 12px;
+                font-size: 13px;
                 font-weight: bold;
                 text-transform: uppercase;
             }
@@ -397,7 +397,7 @@
                 }
                 
                 if (legendRisk) {
-                    strLegend += "<div><span class='legendTitle'>Flood risk scale</span><br /><span class='legendKey legendKeyLine' style='border-bottom: 6px solid #3D4489;'></span> High: yearly risk greater than 1 in 30 (3.3%)<br /><span class='legendKey legendKeyLine' style='border-bottom: 6px solid #6699CD;'></span> Medium: yearly risk between 1 in 30 (3.3%) and 1 in 100 (1%)<br /><span class='legendKey legendKeyLine' style='border-bottom: 6px solid #A2CFFF;'></span> Low: yearly risk between 1 in 100 (1%) and 1 in 1000 (0.1%)<br /><span class='legendKey legendKeyLine' style='border-bottom: 6px solid #C4E1FF;'></span> Very Low: yearly risk less than 1 in 1000 (0.1%)<br /><span class='legendKey legendKeyLine' style='border-bottom: 6px solid #B1B3B4;'></span> Unavailable</div>";
+                    strLegend += "<div><span class='legendTitle'>Flood risk likelihood</span></div><div><span class='legendKey' style='height:20px; background-color: #3D4489;'></span> <strong>High:</strong> yearly risk greater than 1 in 30 (3.3%)</div><div class='noFloat'><span class='legendKey' style='height:20px; background-color: #6699CD;'></span> <strong>Medium:</strong> yearly risk between 1 in 30 (3.3%) and 1 in 100 (1%)</div><div class='noFloat'><span class='legendKey' style='height:20px; background-color: #A2CFFF;'></span> <strong>Low:</strong> yearly risk between 1 in 100 (1%) and 1 in 1000 (0.1%)</div><div class='noFloat'><span class='legendKey' style='height:20px; background-color: #C4E1FF;'></span> <strong>Very low:</strong> yearly risk less than 1 in 1000 (0.1%)</div><div class='noFloat'><span class='legendKey' style='height:20px; background-color: #B1B3B4;'></span> <strong>Unavailable:</strong> risk category currently unavailable/unassigned</div>";
                 }
                 
                     
@@ -415,7 +415,7 @@
             // Set up the basic map environment
             var labMap = new LabLeafletMap({
                 title: 'Flood Risk Monitor',
-                about: '<p>Combining datasets from the <a href="https://www.gov.uk/government/organisations/environment-agency" target="_blank">Environment Agency</a> and <a href="https://www.ordnancesurvey.co.uk/" target="_blank">Ordnance Survey</a> showing <a href="https://environment.data.gov.uk/dataset/96ab4342-82c1-4095-87f1-0082e8d84ef1" target="_blank">flood risk</a> from <a href="https://www.ordnancesurvey.co.uk/products/os-open-rivers" target="_blank">watercourses</a> in and around Trafford and the latest available <a href="https://environment.data.gov.uk/dataset/ae80cf81-f3aa-4703-88e7-41fbe80c67b2" target="_blank">water level readings</a> from monitoring stations.<br /><br />More datasets are available from the layers menu: <img src="https://unpkg.com/leaflet@1.9.4/dist/images/layers-2x.png" alt="Layers menu icon" style="width: 20px;"/></p>',
+                about: '<p>Combining datasets from the <a href="https://www.gov.uk/government/organisations/environment-agency" target="_blank">Environment Agency</a> and <a href="https://www.ordnancesurvey.co.uk/" target="_blank">Ordnance Survey</a> showing <a href="https://environment.data.gov.uk/dataset/96ab4342-82c1-4095-87f1-0082e8d84ef1" target="_blank">flood risk</a> from <a href="https://www.ordnancesurvey.co.uk/products/os-open-rivers" target="_blank">watercourses</a> in and around Trafford and the latest available <a href="https://environment.data.gov.uk/dataset/ae80cf81-f3aa-4703-88e7-41fbe80c67b2" target="_blank">water level readings</a> from monitoring stations.<br /><br />More datasets and options are available from the layers menu: <img src="https://unpkg.com/leaflet@1.9.4/dist/images/layers-2x.png" alt="Layers menu icon" style="width: 20px;"/></p>',
                 aboutToggle: 1
             });
             
