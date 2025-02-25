@@ -397,7 +397,11 @@
                 }
                 
                 if (legendRisk) {
-                    strLegend += "<div><span class='legendTitle'>Flood risk likelihood</span></div><div><span class='legendKey' style='height:20px; background-color: #3D4489;'></span> <strong>High:</strong> yearly risk greater than 1 in 30 (3.3%)</div><div class='noFloat'><span class='legendKey' style='height:20px; background-color: #6699CD;'></span> <strong>Medium:</strong> yearly risk between 1 in 30 (3.3%) and 1 in 100 (1%)</div><div class='noFloat'><span class='legendKey' style='height:20px; background-color: #A2CFFF;'></span> <strong>Low:</strong> yearly risk between 1 in 100 (1%) and 1 in 1000 (0.1%)</div><div class='noFloat'><span class='legendKey' style='height:20px; background-color: #C4E1FF;'></span> <strong>Very low:</strong> yearly risk less than 1 in 1000 (0.1%)</div><div class='noFloat'><span class='legendKey' style='height:20px; background-color: #B1B3B4;'></span> <strong>Unavailable:</strong> risk category currently unavailable/unassigned</div>";
+                    strLegend += "<div><span class='legendTitle'>Flood risk likelihood</span></div><div><span class='legendKey' style='height:20px; background-color: #3D4489;'></span> <strong>High:</strong> yearly risk greater than 1 in 30 (3.3%)</div><div class='noFloat'><span class='legendKey' style='height:20px; background-color: #6699CD;'></span> <strong>Medium:</strong> yearly risk between 1 in 30 (3.3%) and 1 in 100 (1%)</div><div class='noFloat'><span class='legendKey' style='height:20px; background-color: #A2CFFF;'></span> <strong>Low:</strong> yearly risk between 1 in 100 (1%) and 1 in 1000 (0.1%)</div><div class='noFloat'><span class='legendKey' style='height:20px; background-color: #C4E1FF;'></span> <strong>Very low:</strong> yearly risk less than 1 in 1000 (0.1%)</div>";
+                    
+                    if (labMap.map.hasLayer(labMap.overlayLayers['5. Flood risk to depth 0.3m']) || labMap.map.hasLayer(labMap.overlayLayers['6. Flood risk to depth 0.6m']) || labMap.map.hasLayer(labMap.overlayLayers['7. Flood risk to depth 0.9m']) || labMap.map.hasLayer(labMap.overlayLayers['8. Flood risk to depth 1.2m'])) {
+                        strLegend += "<div class='noFloat'><span class='legendKey' style='height:20px; background-color: #B1B3B4;'></span> <strong>Unavailable:</strong> risk category currently unavailable/unassigned</div>";
+                    }
                 }
                 
                     
