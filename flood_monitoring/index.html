@@ -358,7 +358,7 @@
             }
             
             // Function to create the content of the legend based on the layers that are currently added to the map
-            function updateLegend() {
+            function createLegend() {
                 // The following boolean variables tell us what items are present in the legend so we can decide if we need the separator or not, and whether the legend is needed or not
                 var legendBoundaries = false;
                 var legendWatercourses = false;
@@ -397,8 +397,10 @@
                 }
                 
                 if (legendRisk) {
+                    // All flood risk datasets have these categories
                     strLegend += "<div><span class='legendTitle'>Flood risk likelihood</span></div><div><span class='legendKey' style='height:20px; background-color: #3D4489;'></span> <strong>High:</strong> yearly risk greater than 1 in 30 (3.3%)</div><div class='noFloat'><span class='legendKey' style='height:20px; background-color: #6699CD;'></span> <strong>Medium:</strong> yearly risk between 1 in 30 (3.3%) and 1 in 100 (1%)</div><div class='noFloat'><span class='legendKey' style='height:20px; background-color: #A2CFFF;'></span> <strong>Low:</strong> yearly risk between 1 in 100 (1%) and 1 in 1000 (0.1%)</div><div class='noFloat'><span class='legendKey' style='height:20px; background-color: #C4E1FF;'></span> <strong>Very low:</strong> yearly risk less than 1 in 1000 (0.1%)</div>";
                     
+                    // Only the flood risk at depth has the "Unavailable" category
                     if (labMap.map.hasLayer(labMap.overlayLayers['5. Flood risk to depth 0.3m']) || labMap.map.hasLayer(labMap.overlayLayers['6. Flood risk to depth 0.6m']) || labMap.map.hasLayer(labMap.overlayLayers['7. Flood risk to depth 0.9m']) || labMap.map.hasLayer(labMap.overlayLayers['8. Flood risk to depth 1.2m'])) {
                         strLegend += "<div class='noFloat'><span class='legendKey' style='height:20px; background-color: #B1B3B4;'></span> <strong>Unavailable:</strong> risk category currently unavailable/unassigned</div>";
                     }
@@ -425,6 +427,9 @@
             
             labMap.baseLayers['Low detail'].addTo(labMap.map);  // choose the basic map tile layer to begin with
             labMap.featureCache = null;                         // for caching the currently selected feature
+            
+            // default content for the legend, added once the overall flood risk dataset has loaded
+            labMap.defaultLegendContent = "<div><span class='legendKey legendKeyLine' style='border-bottom: 2px solid #fc6721;'></span> Trafford ward/locality boundaries</div><div><span class='legendKey legendKeyLine' style='border-bottom: 3px solid #40a4df;'></span> Watercourses within 10km of Trafford</div><div class='legendSeparator'></div><div><span class='legendTitle'>Flood risk likelihood</span></div><div><span class='legendKey' style='height:20px; background-color: #3D4489;'></span> <strong>High:</strong> yearly risk greater than 1 in 30 (3.3%)</div><div class='noFloat'><span class='legendKey' style='height:20px; background-color: #6699CD;'></span> <strong>Medium:</strong> yearly risk between 1 in 30 (3.3%) and 1 in 100 (1%)</div><div class='noFloat'><span class='legendKey' style='height:20px; background-color: #A2CFFF;'></span> <strong>Low:</strong> yearly risk between 1 in 100 (1%) and 1 in 1000 (0.1%)</div><div class='noFloat'><span class='legendKey' style='height:20px; background-color: #C4E1FF;'></span> <strong>Very low:</strong> yearly risk less than 1 in 1000 (0.1%)</div>";
             
             // Add the isochrones plugin
             labMap.reachabilityControl = labSetupReachabilityPlugin({
@@ -475,8 +480,8 @@
             });
             
             // Updates the content of the legend container
-            labMap.map.on('overlayadd', updateLegend);
-            labMap.map.on('overlayremove', updateLegend);
+            labMap.map.on('overlayadd', createLegend);
+            labMap.map.on('overlayremove', createLegend);
             
             
             // ######### SPATIAL GEOGRAPHY LAYERS/LABELS #########
@@ -491,7 +496,7 @@
                 }
                 
                 labMap.objGeographies['Localities'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: stylePoly, onEachFeature: featureEvents });
-                labMap.map.fitBounds(labMap.objGeographies['Localities'].getBounds());
+                //labMap.map.fitBounds(labMap.objGeographies['Localities'].getBounds());
 
                 labMap.overlayLayers['1. Trafford localities'] = labMap.objGeographies['Localities'];
                 labMap.updateLayerControl();
@@ -530,13 +535,15 @@
             labAjax('https://www.trafforddatalab.io/open_data/flood_risk/trafford_flood_risk_styled.geojson', function (data) {
 
                 labMap.objDatasets['FloodRiskOverall'] = L.geoJSON(data, { attribution: "&copy; Environment Agency copyright and/or database right 2025. All rights reserved.", style: styleOverlayData, onEachFeature: featureEvents, pane: 'pane_data_overlay' }).addTo(labMap.map);
+                labMap.map.fitBounds( labMap.objDatasets['FloodRiskOverall'].getBounds());
 
                 labMap.overlayLayers['4. Flood risk overall'] = labMap.objDatasets['FloodRiskOverall'];
                 labMap.updateLayerControl();
-                updateLegend();
+                labMap.updateLegend(labMap.defaultLegendContent);
                 
-                stopLabSpinner()    // remove the spinner as the data has loaded
-            });
+            }, { eventEnd: function () {
+                stopLabSpinner()    // remove the spinner no matter whether the dataset has loaded or failed
+            } });
             
             // Flood risk 0.3m dataset
             labAjax('https://www.trafforddatalab.io/open_data/flood_risk/trafford_flood_risk_0_3m_depth_styled.geojson', function (data) {
