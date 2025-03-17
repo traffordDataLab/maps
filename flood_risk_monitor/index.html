@@ -367,10 +367,23 @@
                 var strLegend = "";   // This is to hold the content to display in the legend
                 
                 
-                // Check if we have either of the Trafford boundary layers shown
-                if (labMap.map.hasLayer(labMap.overlayLayers['1. Trafford localities']) || labMap.map.hasLayer(labMap.overlayLayers['2. Trafford wards'])) {
+                // Check if we have either of the Trafford boundary layers shown.  We need to check separately due to also having to manage the dual polyline and polygon layers for each.
+                if (labMap.map.hasLayer(labMap.overlayLayers['1. Trafford localities'])) {
                     legendBoundaries = true;
+                    
+                    // If we do have the localities overlay geography on, ensure that we also have the interactive polygon layer added to the map as well
+                    if (!(labMap.map.hasLayer(labMap.objGeographies['Localities']))) labMap.map.addLayer(labMap.objGeographies['Localities']);
                 }
+                else if (labMap.map.hasLayer(labMap.objGeographies['Localities'])) labMap.map.removeLayer(labMap.objGeographies['Localities']); // otherwise, ensure we don't have the polygon layer added to the map
+                
+                if (labMap.map.hasLayer(labMap.overlayLayers['2. Trafford wards'])) {
+                    legendBoundaries = true;
+                    
+                    // If we do have the wards overlay geography on, ensure that we also have the interactive polygon layer added to the map as well
+                    if (!(labMap.map.hasLayer(labMap.objGeographies['Ward']))) labMap.map.addLayer(labMap.objGeographies['Ward']);
+                }
+                else if (labMap.map.hasLayer(labMap.objGeographies['Ward'])) labMap.map.removeLayer(labMap.objGeographies['Ward']); // otherwise, ensure we don't have the polygon layer added to the map
+                
                 
                 // Check if we have the watercourses layer shown
                 if (labMap.map.hasLayer(labMap.overlayLayers['3. Watercourses'])) {
@@ -445,7 +458,8 @@
             labMap.polySelected = {
                 color: '#ffea00',
                 weight: 5,
-                opacity: '1'
+                opacity: 1,
+                fillOpacity: 0.5
             };
             
             
@@ -489,30 +503,54 @@
             
             // Add Trafford localities (which came into effect from 2023-05-04)
             labAjax('https://www.trafforddatalab.io/spatial_data/council_defined/2023/trafford_localities_full_resolution.geojson', function (data) {
+                // This is the standard polygon version. This will appear underneath the data layers and be interactive but invisible, only added to the map when the overlay (polyline) version is on.
+                var stylePoly = {
+                    'opacity': 0,
+                    'fillOpacity': 0,
+                    'weight': '3'
+                }
+                
+                labMap.objGeographies['Localities'] = L.geoJSON(data, { style: stylePoly, onEachFeature: featureEvents });
+            });
+            
+            labAjax('https://www.trafforddatalab.io/spatial_data/council_defined/2023/trafford_localities_full_resolution_overlay.geojson', function (data) {
+                // This is the overlay polyline version. This will appear above the data layers and isn't interactive, instead you will interact with whatever is below it on the map.
                 var stylePoly = {
                     'color': '#fc6721',
                     'fillOpacity': 0,
                     'weight': '3'
                 }
                 
-                labMap.objGeographies['Localities'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: stylePoly, onEachFeature: featureEvents });
-                //labMap.map.fitBounds(labMap.objGeographies['Localities'].getBounds());
+                labMap.objGeographies['Localities_overlay'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: stylePoly, pane: 'pane_geography_overlay' });
 
-                labMap.overlayLayers['1. Trafford localities'] = labMap.objGeographies['Localities'];
+                labMap.overlayLayers['1. Trafford localities'] = labMap.objGeographies['Localities_overlay'];
                 labMap.updateLayerControl();
             });
             
+            
             // Add Trafford wards (which came into effect from 2023-05-04)
             labAjax('https://www.trafforddatalab.io/spatial_data/ward/2023/trafford_ward_full_resolution.geojson', function (data) {
+                // This is the standard polygon version. This will appear underneath the data layers and be interactive but invisible, only added to the map when the overlay (polyline) version is on.
+                var stylePoly = {
+                    'opacity': 0,
+                    'fillOpacity': 0,
+                    'weight': '1'
+                }
+                
+                labMap.objGeographies['Ward'] = L.geoJSON(data, { style: stylePoly, onEachFeature: featureEvents }).addTo(labMap.map);
+            });
+            
+            labAjax('https://www.trafforddatalab.io/spatial_data/ward/2023/trafford_ward_full_resolution_overlay.geojson', function (data) {
+                // This is the overlay polyline version. This will appear above the data layers and isn't interactive, instead you will interact with whatever is below it on the map.
                 var stylePoly = {
                     'color': '#fc6721',
                     'fillOpacity': 0,
                     'weight': '1'
                 }
                 
-                labMap.objGeographies['Ward'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: stylePoly, onEachFeature: featureEvents }).addTo(labMap.map);
+                labMap.objGeographies['Ward_overlay'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: stylePoly, pane: 'pane_geography_overlay' }).addTo(labMap.map);
 
-                labMap.overlayLayers['2. Trafford wards'] = labMap.objGeographies['Ward'];
+                labMap.overlayLayers['2. Trafford wards'] = labMap.objGeographies['Ward_overlay'];
                 labMap.updateLayerControl();
             });
             
