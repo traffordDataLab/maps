@@ -477,10 +477,11 @@
                 filterGUI: datasetSelector
             });
             
-            labMap.baseLayers['Low detail'].addTo(labMap.map);  // choose the basic map tile layer to begin with
-            labMap.featureCache = null;                         // for caching the currently selected feature
-            labMap.floodRiskUrlCache = null;                    // for caching the last loaded flood risk dataset URL (to prevent having to reload it if it has temporarily been removed from the map)
-            labMap.currentYear = new Date().getFullYear();      // used in the attribution to ensure we always show the current year
+            labMap.baseLayers['Low detail'].addTo(labMap.map);          // choose the basic map tile layer to begin with
+            labMap.featureCache = null;                                 // for caching the currently selected feature
+            labMap.floodRiskUrlCache = null;                            // for caching the last loaded flood risk dataset URL (to prevent having to reload it if it has temporarily been removed from the map)
+            labMap.currentYear = new Date().getFullYear();              // used in the attribution to ensure we always show the current year
+            labMap.todayDate = new Date().toISOString().split('T')[0];  // get just the date part of the dateTime of today to compare with the dates of water level readings from the stations
             
             // Objects to hold all the geography/boundary and dataset L.geoJSON objects so that we can test in a loop for which layer belongs to which geography/dataset
             labMap.objGeographies = {};
@@ -630,17 +631,15 @@
                         var arrDateTime;
                         var readingDate;
                         var readingTime;
-                        var todayDate;
                         
                         try {
                             latestLevel = data.items[0].value.toFixed(2) + 'm (';   // this is the current level reading - fixed to 2 decimal places (plus the 'm' for metres and the left bracket where the date and time of the reading will go)
                             arrDateTime = data.items[0].dateTime.split('T');        // split the dateTime into 2 separate parts (YYYY-MM-DDTHH:MM:SSZ)
                             readingDate = arrDateTime[0];                           // store just the YYYY-MM-DD part of the dateTime
                             readingTime = arrDateTime[1].replace(':00Z', '');       // store just the HH:MM part of the time (removing the minutes and UTC signifier 'Z')
-                            todayDate = new Date().toISOString().split('T')[0];     // get just the date part of the dateTime of today to compare with the reading date
                             
                             // Format the date: if the reading is from today say so, otherwise show in the format YYYY-MM-DD
-                            latestLevel += (readingDate == todayDate) ? 'Today at ' : readingDate + ' at ';
+                            latestLevel += (readingDate == labMap.todayDate) ? 'Today at ' : readingDate + ' at ';
                             
                             // Complete the information by adding the time of the reading
                             latestLevel +=  readingTime + ')';
