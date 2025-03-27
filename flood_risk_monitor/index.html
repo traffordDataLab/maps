@@ -28,6 +28,11 @@
             {
                max-height: 300px;
             }
+            
+            .datasetSelect
+            {
+                width: 100%;
+            }
 
             .propertiesTable
             {
@@ -203,6 +208,37 @@
                     labMap.featureCache = null; // clear the cache to prevent a situation where no feature is currently selected but the cache still contains the previously selected layer
                 }
             }
+            
+            // Load the chosen flood risk dataset, or remove the current one from the map
+            function selectFloodRiskDataset(url) {
+                if (url !== '') {
+                    // We have a url, so check if it matches the last loaded (currently in memory) flood risk dataset
+                    if (url == labMap.floodRiskUrlCache) {
+                        labMap.objDatasets['FloodRisk'].addTo(labMap.map);    // show the layer we already have loaded
+                        createLegend(); // update the legend control content to reflect the map state
+                    }
+                    else {
+                        // We want to load a new flood risk dataset
+                        
+                        if (labMap.objDatasets['FloodRisk'] !== undefined && labMap.map.hasLayer(labMap.objDatasets['FloodRisk'])) labMap.map.removeLayer(labMap.objDatasets['FloodRisk']);    // remove the current one
+                        startLabSpinner()   // inform the user that something is loading
+                        labMap.floodRiskUrlCache = url; // add the new url to the cache
+                        
+                        // Attempt to load and display the requested dataset
+                        labAjax(url, function (data) {
+                            labMap.objDatasets['FloodRisk'] = L.geoJSON(data, { attribution: "&copy; Environment Agency copyright and/or database right" + labMap.currentYear + ". All rights reserved.", style: styleOverlayData, onEachFeature: featureEvents, pane: 'pane_data_overlay' }).addTo(labMap.map);
+                        }, { eventEnd: function () {
+                            stopLabSpinner();   // remove the spinner no matter whether the dataset has loaded or failed
+                            createLegend();     // update the legend control content to reflect the map state
+                        } });
+                    }
+                }
+                else {
+                    // We don't want to display any flood risk dataset on the map at this time, so remove the current layer
+                    labMap.map.removeLayer(labMap.objDatasets['FloodRisk']);
+                    createLegend(); // update the legend control content to reflect the map state
+                }
+            }
 
             // Show the properties of a selected layer
             function showLayerProps(e) {
@@ -235,7 +271,7 @@
 
                     /*
                         Do we want to bring this layer to the front?  If it's a boundary geography definitely yes as they often have overlapping lines.  When we select one, we want the whole outline to be on top as it is highlighted in yellow, not have parts hidden under the black lines of neighbouring boundaries.  The same is true for certain datasets like the Agricultural land.  However, with reachability isolines, the user wouldn't be able to select the smaller intervals once they'd selected a larger one if the layers reordered, as the larger one would be covering the smaller layer(s).  The same is also true for certain other layered datasets like OS Greenspaces which have smaller polygons layered on top of larger ones and the ordering needs to be preserved.
-                        So, how to handle this?  Only bring the layer to the front if belongs to a geography layer, or if it belongs to a dataset and there isn't a flag in the datasets.json telling us not to.
+                        So, how to handle this?  Only bring the layer to the front if belongs to a geography layer, or if it belongs to a dataset and the flag isn't set telling us not to.
                     */
                     if (isGeography || (isDataset && labMap.preventLayerToFront == false)) layer.bringToFront();
                 }
@@ -368,32 +404,28 @@
                 
                 
                 // Check if we have either of the Trafford boundary layers shown.  We need to check separately due to also having to manage the dual polyline and polygon layers for each.
-                if (labMap.map.hasLayer(labMap.overlayLayers['1. Trafford localities'])) {
+                if (labMap.overlayLayers['1. Trafford localities'] !== undefined && labMap.map.hasLayer(labMap.overlayLayers['1. Trafford localities'])) {
                     legendBoundaries = true;
                     
                     // If we do have the localities overlay geography on, ensure that we also have the interactive polygon layer added to the map as well
                     if (!(labMap.map.hasLayer(labMap.objGeographies['Localities']))) labMap.map.addLayer(labMap.objGeographies['Localities']);
                 }
-                else if (labMap.map.hasLayer(labMap.objGeographies['Localities'])) labMap.map.removeLayer(labMap.objGeographies['Localities']); // otherwise, ensure we don't have the polygon layer added to the map
+                else if (labMap.objGeographies['Localities'] !== undefined && labMap.map.hasLayer(labMap.objGeographies['Localities'])) labMap.map.removeLayer(labMap.objGeographies['Localities']); // otherwise, ensure we don't have the polygon layer added to the map
                 
-                if (labMap.map.hasLayer(labMap.overlayLayers['2. Trafford wards'])) {
+                if (labMap.overlayLayers['2. Trafford wards'] !== undefined && labMap.map.hasLayer(labMap.overlayLayers['2. Trafford wards'])) {
                     legendBoundaries = true;
                     
                     // If we do have the wards overlay geography on, ensure that we also have the interactive polygon layer added to the map as well
                     if (!(labMap.map.hasLayer(labMap.objGeographies['Ward']))) labMap.map.addLayer(labMap.objGeographies['Ward']);
                 }
-                else if (labMap.map.hasLayer(labMap.objGeographies['Ward'])) labMap.map.removeLayer(labMap.objGeographies['Ward']); // otherwise, ensure we don't have the polygon layer added to the map
+                else if (labMap.objGeographies['Ward'] !== undefined && labMap.map.hasLayer(labMap.objGeographies['Ward'])) labMap.map.removeLayer(labMap.objGeographies['Ward']); // otherwise, ensure we don't have the polygon layer added to the map
                 
                 
                 // Check if we have the watercourses layer shown
-                if (labMap.map.hasLayer(labMap.overlayLayers['3. Watercourses'])) {
-                    legendWatercourses = true;
-                }
+                if (labMap.objDatasets['Watercourses'] !== undefined && labMap.map.hasLayer(labMap.objDatasets['Watercourses'])) legendWatercourses = true;
                 
                 // Check if we have any of the flood risk layers shown
-                if (labMap.map.hasLayer(labMap.overlayLayers['4. Flood risk overall']) || labMap.map.hasLayer(labMap.overlayLayers['5. Flood risk to depth 0.3m']) || labMap.map.hasLayer(labMap.overlayLayers['6. Flood risk to depth 0.6m']) || labMap.map.hasLayer(labMap.overlayLayers['7. Flood risk to depth 0.9m']) || labMap.map.hasLayer(labMap.overlayLayers['8. Flood risk to depth 1.2m'])) {
-                    legendRisk = true;
-                }
+                if (labMap.objDatasets['FloodRisk'] !== undefined && labMap.map.hasLayer(labMap.objDatasets['FloodRisk'])) legendRisk = true;
                 
                 
                 // Now build up the content of the legend based on the boolean values
@@ -414,7 +446,7 @@
                     strLegend += "<div><span class='legendTitle'>Flood risk likelihood</span></div><div><span class='legendKey' style='height:20px; background-color: #3D4489;'></span> <strong>High:</strong> yearly risk greater than 1 in 30 (3.3%)</div><div class='noFloat'><span class='legendKey' style='height:20px; background-color: #6699CD;'></span> <strong>Medium:</strong> yearly risk between 1 in 30 (3.3%) and 1 in 100 (1%)</div><div class='noFloat'><span class='legendKey' style='height:20px; background-color: #A2CFFF;'></span> <strong>Low:</strong> yearly risk between 1 in 100 (1%) and 1 in 1000 (0.1%)</div><div class='noFloat'><span class='legendKey' style='height:20px; background-color: #C4E1FF;'></span> <strong>Very low:</strong> yearly risk less than 1 in 1000 (0.1%)</div>";
                     
                     // Only the flood risk at depth has the "Unavailable" category
-                    if (labMap.map.hasLayer(labMap.overlayLayers['5. Flood risk to depth 0.3m']) || labMap.map.hasLayer(labMap.overlayLayers['6. Flood risk to depth 0.6m']) || labMap.map.hasLayer(labMap.overlayLayers['7. Flood risk to depth 0.9m']) || labMap.map.hasLayer(labMap.overlayLayers['8. Flood risk to depth 1.2m'])) {
+                    if (labMap.floodRiskUrlCache != 'https://www.trafforddatalab.io/open_data/flood_risk/trafford_flood_risk_styled.geojson') {
                         strLegend += "<div class='noFloat'><span class='legendKey' style='height:20px; background-color: #B1B3B4;'></span> <strong>Unavailable:</strong> risk category currently unavailable/unassigned</div>";
                     }
                 }
@@ -431,17 +463,36 @@
             
             
             // ######### INITIALISATION #########
+            // Build up the selector code
+            var datasetSelector = '<select name="frmDatasetList" onChange="selectFloodRiskDataset(this.value)" class="datasetSelect">';
+            datasetSelector += '<option value="">Do not show flood risk data</option>';
+            datasetSelector += '<option value="https://www.trafforddatalab.io/open_data/flood_risk/trafford_flood_risk_styled.geojson" selected="selected">Risk of flooding overall</option>';
+            datasetSelector += '<option value="https://www.trafforddatalab.io/open_data/flood_risk/trafford_flood_risk_0_2m_depth_styled.geojson">Risk of flooding to 0.2m depth</option>';
+            datasetSelector += '<option value="https://www.trafforddatalab.io/open_data/flood_risk/trafford_flood_risk_0_3m_depth_styled.geojson">Risk of flooding to 0.3m depth</option>';
+            datasetSelector += '<option value="https://www.trafforddatalab.io/open_data/flood_risk/trafford_flood_risk_0_6m_depth_styled.geojson">Risk of flooding to 0.6m depth</option>';
+            datasetSelector += '<option value="https://www.trafforddatalab.io/open_data/flood_risk/trafford_flood_risk_0_9m_depth_styled.geojson">Risk of flooding to 0.9m depth</option>';
+            datasetSelector += '<option value="https://www.trafforddatalab.io/open_data/flood_risk/trafford_flood_risk_1_2m_depth_styled.geojson">Risk of flooding to 1.2m depth</option>';
+            datasetSelector += '</select>';
+            
             // Set up the basic map environment
             var labMap = new LabLeafletMap({
                 title: 'Flood Risk Monitor',
-                about: '<p>Combining datasets from the <a href="https://www.gov.uk/government/organisations/environment-agency" target="_blank">Environment Agency</a> and <a href="https://www.ordnancesurvey.co.uk/" target="_blank">Ordnance Survey</a> showing <a href="https://environment.data.gov.uk/dataset/96ab4342-82c1-4095-87f1-0082e8d84ef1" target="_blank">flood risk</a> from <a href="https://www.ordnancesurvey.co.uk/products/os-open-rivers" target="_blank">watercourses</a> in and around Trafford and the latest available <a href="https://environment.data.gov.uk/dataset/ae80cf81-f3aa-4703-88e7-41fbe80c67b2" target="_blank">water level readings</a> from monitoring stations.<br /><br />More datasets and options are available from the layers menu: <img src="https://unpkg.com/leaflet@1.9.4/dist/images/layers-2x.png" alt="Layers menu icon" style="width: 20px;"/></p>',
-                aboutToggle: 1
+                about: '<p>Combining datasets from the <a href="https://www.gov.uk/government/organisations/environment-agency" target="_blank">Environment Agency</a> and <a href="https://www.ordnancesurvey.co.uk/" target="_blank">Ordnance Survey</a> showing <a href="https://environment.data.gov.uk/dataset/96ab4342-82c1-4095-87f1-0082e8d84ef1" target="_blank">flood risk</a> from <a href="https://www.ordnancesurvey.co.uk/products/os-open-rivers" target="_blank">watercourses</a> in and around Trafford and the latest available monitoring stations\' <a href="https://environment.data.gov.uk/dataset/ae80cf81-f3aa-4703-88e7-41fbe80c67b2" target="_blank">water level readings</a>.<br /><br />Select a flood risk dataset below. Further options are in the layers menu: <img src="https://unpkg.com/leaflet@1.9.4/dist/images/layers-2x.png" alt="Layers menu icon" style="width: 20px;"/></p>',
+                aboutToggle: 1, // Have the "about this app" info section toggled open by default
+                filterGUI: datasetSelector
             });
             
             labMap.baseLayers['Low detail'].addTo(labMap.map);  // choose the basic map tile layer to begin with
             labMap.featureCache = null;                         // for caching the currently selected feature
+            labMap.floodRiskUrlCache = null;                    // for caching the last loaded flood risk dataset URL (to prevent having to reload it if it has temporarily been removed from the map)
+            labMap.currentYear = new Date().getFullYear();      // used in the attribution to ensure we always show the current year
             
-            // default content for the legend, added once the overall flood risk dataset has loaded
+            // Objects to hold all the geography/boundary and dataset L.geoJSON objects so that we can test in a loop for which layer belongs to which geography/dataset
+            labMap.objGeographies = {};
+            labMap.objDatasets = {};
+            labMap.overlayLayers = {};  // this object holds copies of a selection of the geographies and datasets to appear in the layer control
+            
+            // Default content for the legend, added once the overall flood risk dataset has loaded
             labMap.defaultLegendContent = "<div><span class='legendKey legendKeyLine' style='border-bottom: 2px solid #fc6721;'></span> Trafford ward/locality boundaries</div><div><span class='legendKey legendKeyLine' style='border-bottom: 3px solid #40a4df;'></span> Watercourses within 10km of Trafford</div><div class='legendSeparator'></div><div><span class='legendTitle'>Flood risk likelihood</span></div><div><span class='legendKey' style='height:20px; background-color: #3D4489;'></span> <strong>High:</strong> yearly risk greater than 1 in 30 (3.3%)</div><div class='noFloat'><span class='legendKey' style='height:20px; background-color: #6699CD;'></span> <strong>Medium:</strong> yearly risk between 1 in 30 (3.3%) and 1 in 100 (1%)</div><div class='noFloat'><span class='legendKey' style='height:20px; background-color: #A2CFFF;'></span> <strong>Low:</strong> yearly risk between 1 in 100 (1%) and 1 in 1000 (0.1%)</div><div class='noFloat'><span class='legendKey' style='height:20px; background-color: #C4E1FF;'></span> <strong>Very low:</strong> yearly risk less than 1 in 1000 (0.1%)</div>";
             
             // Add the isochrones plugin
@@ -493,14 +544,13 @@
                 }
             });
             
-            // Updates the content of the legend container
+            // Updates the content of the legend container accordingly each time a layer is added or removed from the map by the layer control
+            // The selectFloodRiskDataset() function calls this for the flood risk datasets
             labMap.map.on('overlayadd', createLegend);
             labMap.map.on('overlayremove', createLegend);
             
             
             // ######### SPATIAL GEOGRAPHY LAYERS/LABELS #########
-            labMap.objGeographies = {}; // object to hold all the boundary L.geoJSON objects so that we can test in a loop for which layer belongs to which geography
-            
             // Add Trafford localities (which came into effect from 2023-05-04)
             labAjax('https://www.trafforddatalab.io/spatial_data/council_defined/2023/trafford_localities_full_resolution.geojson', function (data) {
                 // This is the standard polygon version. This will appear underneath the data layers and be interactive but invisible, only added to the map when the overlay (polyline) version is on.
@@ -556,7 +606,8 @@
             
             
             // ######### DATASET LAYERS #########
-            labMap.objDatasets = {};    // object to hold all the dataset L.geoJSON objects so that we can test in a loop for which layer belongs to which dataset
+            // Overall flood risk dataset - loaded via the same function triggered by the select list
+            selectFloodRiskDataset('https://www.trafforddatalab.io/open_data/flood_risk/trafford_flood_risk_styled.geojson');
             
             // Watercourses dataset
             labAjax('https://www.trafforddatalab.io/open_data/watercourses/trafford_buffer_watercourses_styled.geojson', function (data) {
@@ -567,64 +618,12 @@
                 labMap.updateLayerControl();
             });
             
-            // Flood risk overall dataset
-            startLabSpinner()   // inform the user that something is loading
-            
-            labAjax('https://www.trafforddatalab.io/open_data/flood_risk/trafford_flood_risk_styled.geojson', function (data) {
-
-                labMap.objDatasets['FloodRiskOverall'] = L.geoJSON(data, { attribution: "&copy; Environment Agency copyright and/or database right 2025. All rights reserved.", style: styleOverlayData, onEachFeature: featureEvents, pane: 'pane_data_overlay' }).addTo(labMap.map);
-                labMap.map.fitBounds( labMap.objDatasets['FloodRiskOverall'].getBounds());
-
-                labMap.overlayLayers['4. Flood risk overall'] = labMap.objDatasets['FloodRiskOverall'];
-                labMap.updateLayerControl();
-                labMap.updateLegend(labMap.defaultLegendContent);
-                
-            }, { eventEnd: function () {
-                stopLabSpinner()    // remove the spinner no matter whether the dataset has loaded or failed
-            } });
-            
-            // Flood risk 0.3m dataset
-            labAjax('https://www.trafforddatalab.io/open_data/flood_risk/trafford_flood_risk_0_3m_depth_styled.geojson', function (data) {
-
-                labMap.objDatasets['FloodRisk0_3m'] = L.geoJSON(data, { attribution: "&copy; Environment Agency copyright and/or database right 2025. All rights reserved.", style: styleOverlayData, onEachFeature: featureEvents, pane: 'pane_data_overlay' });
-
-                labMap.overlayLayers['5. Flood risk to depth 0.3m'] = labMap.objDatasets['FloodRisk0_3m'];
-                labMap.updateLayerControl();
-            });
-            
-            // Flood risk 0.6m dataset
-            labAjax('https://www.trafforddatalab.io/open_data/flood_risk/trafford_flood_risk_0_6m_depth_styled.geojson', function (data) {
-
-                labMap.objDatasets['FloodRisk0_6m'] = L.geoJSON(data, { attribution: "&copy; Environment Agency copyright and/or database right 2025. All rights reserved.", style: styleOverlayData, onEachFeature: featureEvents, pane: 'pane_data_overlay' });
-
-                labMap.overlayLayers['6. Flood risk to depth 0.6m'] = labMap.objDatasets['FloodRisk0_6m'];
-                labMap.updateLayerControl();
-            });
-            
-            // Flood risk 0.9m dataset
-            labAjax('https://www.trafforddatalab.io/open_data/flood_risk/trafford_flood_risk_0_9m_depth_styled.geojson', function (data) {
-
-                labMap.objDatasets['FloodRisk0_9m'] = L.geoJSON(data, { attribution: "&copy; Environment Agency copyright and/or database right 2025. All rights reserved.", style: styleOverlayData, onEachFeature: featureEvents, pane: 'pane_data_overlay' });
-
-                labMap.overlayLayers['7. Flood risk to depth 0.9m'] = labMap.objDatasets['FloodRisk0_9m'];
-                labMap.updateLayerControl();
-            });
-            
-            // Flood risk 1.2m dataset
-            labAjax('https://www.trafforddatalab.io/open_data/flood_risk/trafford_flood_risk_1_2m_depth_styled.geojson', function (data) {
-
-                labMap.objDatasets['FloodRisk1_2m'] = L.geoJSON(data, { attribution: "&copy; Environment Agency copyright and/or database right 2025. All rights reserved.", style: styleOverlayData, onEachFeature: featureEvents, pane: 'pane_data_overlay' });
-
-                labMap.overlayLayers['8. Flood risk to depth 1.2m'] = labMap.objDatasets['FloodRisk1_2m'];
-                labMap.updateLayerControl();
-            });
-            
             // Water level monitoring stations dataset
             labAjax('https://www.trafforddatalab.io/open_data/water_level_monitoring/water_level_monitoring_stations_trafford_and_environs.geojson', function (data) {
 
                 labMap.objDatasets['MonitoringStations'] = L.geoJSON(data, { attribution: "&copy; Environment Agency copyright and/or database right 2025. All rights reserved.", onEachFeature: featureEvents, pointToLayer: pointData, pane: 'pane_data_overlay' }).addTo(labMap.map);
         
-                labMap.overlayLayers['9. Monitoring stations'] = labMap.objDatasets['MonitoringStations'];
+                labMap.overlayLayers['4. Monitoring stations'] = labMap.objDatasets['MonitoringStations'];
                 labMap.updateLayerControl();
                 
                 // Call to Environment Agency API to get the latest level readings for the monitoring stations and then bind them to the dataset
@@ -659,7 +658,6 @@
                     });
                 });
             });
-            
         </script>
     </body>
 </html>
