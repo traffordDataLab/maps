@@ -267,13 +267,8 @@
                     );
                 }
                 else {
-                    layer.setStyle(labMap.polySelected);
-
-                    /*
-                        Do we want to bring this layer to the front?  If it's a boundary geography definitely yes as they often have overlapping lines.  When we select one, we want the whole outline to be on top as it is highlighted in yellow, not have parts hidden under the black lines of neighbouring boundaries.  The same is true for certain datasets like the Agricultural land.  However, with reachability isolines, the user wouldn't be able to select the smaller intervals once they'd selected a larger one if the layers reordered, as the larger one would be covering the smaller layer(s).  The same is also true for certain other layered datasets like OS Greenspaces which have smaller polygons layered on top of larger ones and the ordering needs to be preserved.
-                        So, how to handle this?  Only bring the layer to the front if belongs to a geography layer, or if it belongs to a dataset and the flag isn't set telling us not to.
-                    */
-                    if (isGeography || (isDataset && labMap.preventLayerToFront == false)) layer.bringToFront();
+                    layer.setStyle(labMap.polySelected);    // apply the 'selected layer' styling
+                    if (isGeography) layer.bringToFront();  // move the layer above the others in the same dataset if it belongs to a geography
                 }
 
                 // build the content for the properties table to be displayed
