@@ -624,31 +624,50 @@
                 
                 // Call to Environment Agency API to get the latest level readings for the monitoring stations and then bind them to the dataset
                 labMap.objDatasets['MonitoringStations'].eachLayer(function (layer) {
-                    var props = layer.feature.properties;
                     
-                    labAjax('https://environment.data.gov.uk/flood-monitoring/id/measures/' + props.station_reference + '-level-stage-i-15_min-m/readings?latest', function (data) {
-                        var latestLevel;
-                        var arrDateTime;
-                        var readingDate;
-                        var readingTime;
-                        
+                    // Create a new object with the properties in the order that we would prefer
+                    var props_reordered = {
+                        "station_name": layer.feature.properties.station_name,
+                        "station_reference": layer.feature.properties.station_reference,
+                        "river_name": layer.feature.properties.river_name,
+                        "catchment_name": layer.feature.properties.catchment_name,
+                        "town": layer.feature.properties.town,
+                        "measure": layer.feature.properties.measure,
+                        "latest_level": "Not available",    // make a placeholder for the latest level reading - and just in case something goes, wrong pre-set it
+                        "typical_range": layer.feature.properties.typical_range,
+                        "record_low": layer.feature.properties.record_low,
+                        "record_high": layer.feature.properties.record_high,
+                        "latest_levels_url": layer.feature.properties.latest_levels_url
+                    };
+                    
+                    layer.feature.properties = props_reordered;    // set the original object with the re-ordered one
+                    
+                    // Now make the API call to get the latest water level readings
+                    labAjax('https://environment.data.gov.uk/flood-monitoring/id/measures/' + layer.feature.properties.station_reference + '-level-stage-i-15_min-m/readings?latest', function (data) {
                         try {
-                            latestLevel = data.items[0].value.toFixed(2) + 'm (';   // this is the current level reading - fixed to 2 decimal places (plus the 'm' for metres and the left bracket where the date and time of the reading will go)
-                            arrDateTime = data.items[0].dateTime.split('T');        // split the dateTime into 2 separate parts (YYYY-MM-DDTHH:MM:SSZ)
-                            readingDate = arrDateTime[0];                           // store just the YYYY-MM-DD part of the dateTime
-                            readingTime = arrDateTime[1].replace(':00Z', '');       // store just the HH:MM part of the time (removing the minutes and UTC signifier 'Z')
+                            if (data.items.length > 0) {
+                                var latestLevel;
+                                var arrDateTime;
+                                var readingDate;
+                                var readingTime;
+                                
+                                latestLevel = data.items[0].value.toFixed(2) + 'm (';   // this is the current level reading - fixed to 2 decimal places (plus the 'm' for metres and the left bracket where the date and time of the reading will go)
+                                arrDateTime = data.items[0].dateTime.split('T');        // split the dateTime into 2 separate parts (YYYY-MM-DDTHH:MM:SSZ)
+                                readingDate = arrDateTime[0];                           // store just the YYYY-MM-DD part of the dateTime
+                                readingTime = arrDateTime[1].replace(':00Z', '');       // store just the HH:MM part of the time (removing the minutes and UTC signifier 'Z')
                             
-                            // Format the date: if the reading is from today say so, otherwise show in the format YYYY-MM-DD
-                            latestLevel += (readingDate == labMap.todayDate) ? 'Today at ' : readingDate + ' at ';
+                                // Format the date: if the reading is from today say so, otherwise show in the format YYYY-MM-DD
+                                latestLevel += (readingDate == labMap.todayDate) ? 'Today at ' : readingDate + ' at ';
                             
-                            // Complete the information by adding the time of the reading
-                            latestLevel +=  readingTime + ')';
+                                // Complete the information by adding the time of the reading
+                                latestLevel +=  readingTime + ')';
+                                
+                                layer.feature.properties.latest_level = latestLevel;   // add the completed reading and time to the data for the station
+                            }
                         }
                         catch(e) {
-                            latestLevel = "Not available";
+                            // something went wrong, nothing to do as the property has already been pre-set to "Not available"
                         }
-                        
-                        props.latest_level = latestLevel;   // add the completed reading and time to the data for the station
                     });
                 });
             });
