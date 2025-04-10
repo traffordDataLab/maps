@@ -3,8 +3,8 @@
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
         <meta charset="UTF-8"/>
-        <meta name="keywords" content="flooding, floods, flood, risk, monitoring, water, lakes, rivers, streams, brooks"/>
-        <meta name="description" content="Flood monitoring stations covering the Trafford area and environs."/>
+        <meta name="keywords" content="flooding, floods, flood, risk, monitoring, water, lakes, rivers, streams, brooks, water levels, watercourses"/>
+        <meta name="description" content="Water level monitoring stations covering the Trafford area and environs showing current water levels, mapped against flood risk from rivers and the sea."/>
         <title>Trafford Data Lab: Flood risk monitor</title>
 
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -226,7 +226,7 @@
                         
                         // Attempt to load and display the requested dataset
                         labAjax(url, function (data) {
-                            labMap.objDatasets['FloodRisk'] = L.geoJSON(data, { attribution: "&copy; Environment Agency copyright and/or database right" + labMap.currentYear + ". All rights reserved.", style: styleOverlayData, onEachFeature: featureEvents, pane: 'pane_data_overlay' }).addTo(labMap.map);
+                            labMap.objDatasets['FloodRisk'] = L.geoJSON(data, { attribution: "&copy; Environment Agency copyright and/or database right " + labMap.currentYear + ". All rights reserved", style: styleOverlayData, onEachFeature: featureEvents, pane: 'pane_data_overlay' }).addTo(labMap.map);
                         }, { eventEnd: function () {
                             stopLabSpinner();   // remove the spinner no matter whether the dataset has loaded or failed
                             createLegend();     // update the legend control content to reflect the map state
@@ -608,7 +608,7 @@
             // Watercourses dataset
             labAjax('https://www.trafforddatalab.io/open_data/watercourses/trafford_buffer_watercourses_styled.geojson', function (data) {
 
-                labMap.objDatasets['Watercourses'] = L.geoJSON(data, { attribution: "<a href='https://www.ordnancesurvey.co.uk' target='_blank'>Ordnance Survey</a>", style: styleOverlayData, onEachFeature: featureEvents, pane: 'pane_data_overlay' }).addTo(labMap.map);
+                labMap.objDatasets['Watercourses'] = L.geoJSON(data, { attribution: "OS Open Rivers provided by <a href='https://www.ordnancesurvey.co.uk' target='_blank'>Ordnance Survey</a>", style: styleOverlayData, onEachFeature: featureEvents, pane: 'pane_data_overlay' }).addTo(labMap.map);
 
                 labMap.overlayLayers['3. Watercourses'] = labMap.objDatasets['Watercourses'];
                 labMap.updateLayerControl();
@@ -617,7 +617,7 @@
             // Water level monitoring stations dataset
             labAjax('https://www.trafforddatalab.io/open_data/water_level_monitoring/water_level_monitoring_stations_trafford_and_environs.geojson', function (data) {
 
-                labMap.objDatasets['MonitoringStations'] = L.geoJSON(data, { attribution: "&copy; Environment Agency copyright and/or database right 2025. All rights reserved.", onEachFeature: featureEvents, pointToLayer: pointData, pane: 'pane_data_overlay' }).addTo(labMap.map);
+                labMap.objDatasets['MonitoringStations'] = L.geoJSON(data, { attribution: "&copy; Environment Agency copyright and/or database right " + labMap.currentYear + ". All rights reserved", onEachFeature: featureEvents, pointToLayer: pointData, pane: 'pane_data_overlay' }).addTo(labMap.map);
         
                 labMap.overlayLayers['4. Monitoring stations'] = labMap.objDatasets['MonitoringStations'];
                 labMap.updateLayerControl();
