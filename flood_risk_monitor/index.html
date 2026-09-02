@@ -11,9 +11,9 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans%7CRoboto"/>
         <link rel="stylesheet" href="https://www.trafforddatalab.io/css/labBase.css"/>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/trafforddatalab/lab_leaflet@v1.1.1/labLeafletMap.min.css"/>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/trafforddatalab/leaflet.reachability@v2.0.1/leaflet.reachability.min.css"/>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/trafforddatalab/lab_leaflet@v1.1.1/leaflet.reachability_lab.min.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/trafforddatalab/lab_leaflet@v1.2.1/labLeafletMap.min.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/trafforddatalab/leaflet.reachability@v2.0.2/leaflet.reachability.min.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/trafforddatalab/lab_leaflet@v1.2.1/leaflet.reachability_lab.min.css"/>
 
         <style>
             @media (min-width:621px)
@@ -76,15 +76,15 @@
  
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
         <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.82.0/dist/L.Control.Locate.min.js"></script>
-        <script src="https://www.trafforddatalab.io/assets/javascript/labError.js"></script>
-        <script src="https://www.trafforddatalab.io/assets/javascript/labAjax.js"></script>
-        <script src="https://www.trafforddatalab.io/assets/leaflet/labCreateTileLayer.js"></script>
-        <script src="https://www.trafforddatalab.io/assets/leaflet/labLeafletMap.js"></script>
         <script src="https://www.trafforddatalab.io/assets/javascript/changeLuminosity.js"></script>
         <script src="https://www.trafforddatalab.io/assets/javascript/labSpinner.js"></script>
-        <script src="https://cdn.jsdelivr.net/gh/trafforddatalab/lab_leaflet@v1.1.1/labMarkerSVG.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/gh/trafforddatalab/lab_leaflet@v1.1.1/leaflet.reachability_lab_setup.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/gh/trafforddatalab/leaflet.reachability@v2.0.1/leaflet.reachability.min.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/javascript/labError.js"></script>
+        <script src="https://www.trafforddatalab.io/assets/javascript/labAjax.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/trafforddatalab/lab_leaflet@v1.2.1/labCreateTileLayer.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/trafforddatalab/lab_leaflet@v1.2.1/labLeafletMap.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/trafforddatalab/lab_leaflet@v1.2.1/labMarkerSVG.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/trafforddatalab/lab_leaflet@v1.2.1/leaflet.reachability_lab_setup.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/trafforddatalab/leaflet.reachability@v2.0.2/leaflet.reachability.min.js"></script>
 
         <script>
             // ######### FUNCTIONS #########
@@ -477,6 +477,13 @@
                 filterGUI: datasetSelector
             });
             
+            labMap.baseLayers = {
+                'Aerial': labCreateTileLayer('Esri.WorldImagery'),
+                'High detail': labCreateTileLayer('OpenStreetMap.Mapnik'),
+                'Low detail': labCreateTileLayer('Esri.WorldTopoMap'),
+                'None': labCreateTileLayer(null)
+            }
+            
             labMap.baseLayers['Low detail'].addTo(labMap.map);          // choose the basic map tile layer to begin with
             labMap.featureCache = null;                                 // for caching the currently selected feature
             labMap.floodRiskUrlCache = null;                            // for caching the last loaded flood risk dataset URL (to prevent having to reload it if it has temporarily been removed from the map)
@@ -580,7 +587,7 @@
                 var stylePoly = {
                     'opacity': 0,
                     'fillOpacity': 0,
-                    'weight': '1'
+                    'weight': '2'
                 }
                 
                 labMap.objGeographies['Ward'] = L.geoJSON(data, { style: stylePoly, onEachFeature: featureEvents }).addTo(labMap.map);
@@ -591,7 +598,7 @@
                 var stylePoly = {
                     'color': '#fc6721',
                     'fillOpacity': 0,
-                    'weight': '1'
+                    'weight': '2'
                 }
                 
                 labMap.objGeographies['Ward_overlay'] = L.geoJSON(data, { attribution: labMap.attributionOS, style: stylePoly, pane: 'pane_geography_overlay' }).addTo(labMap.map);
