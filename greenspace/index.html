@@ -11,7 +11,7 @@
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin=""/>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
         <link rel="stylesheet" href="https://www.trafforddatalab.io/css/labBase.css"/>
-        <link rel="stylesheet" href="https://www.trafforddatalab.io/assets/leaflet/labLeafletMap.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/trafforddatalab/lab_leaflet@v1.2.1/labLeafletMap.css"/>
 
         <style>
             @media (min-width:621px)
@@ -59,7 +59,7 @@
             /* The legend keys for the different coloured boundary lines */
             .legendItemTrafford
             {
-                border-bottom: 3px dashed #212121;
+                border-bottom: 4px dashed #fc6721;
             }
 
             .legendItemAllotment
@@ -158,8 +158,8 @@
         <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.62.0/dist/L.Control.Locate.min.js"></script>
         <script src="https://www.trafforddatalab.io/assets/javascript/labError.js"></script>
         <script src="https://www.trafforddatalab.io/assets/javascript/labAjax.js"></script>
-        <script src="https://www.trafforddatalab.io/assets/leaflet/labCreateTileLayer.js"></script>
-        <script src="https://www.trafforddatalab.io/assets/leaflet/labLeafletMap.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/trafforddatalab/lab_leaflet@v1.2.1/labCreateTileLayer.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/trafforddatalab/lab_leaflet@v1.2.1/labLeafletMap.js"></script>
 
         <script>
             /*
@@ -169,12 +169,20 @@
             // create the template and map object
             var labMap = new LabLeafletMap({
                 title: 'Green spaces',
-                about: '<p>Explore the parks, playing fields, gardens and other green spaces that are likely to be publicly accessible in Trafford. Site access points are displayed at certain zoom levels.</p><p>You can toggle the types of green space using the legend and view information by selecting a site.</p>'
+                about: '<p>Explore the parks, playing fields, gardens and other green spaces that are likely to be publicly accessible in Trafford. Site access points are displayed at certain zoom levels.</p><p>You can toggle the types of green space using the legend and view information by selecting a site.</p>',
+                aboutToggle: 1  // Have the "about this app" info section toggled open by default
             });
-
+            
+            labMap.baseLayers = {
+                'Aerial': labCreateTileLayer('Esri.WorldImagery'),
+                'High detail': labCreateTileLayer('OpenStreetMap.Mapnik'),
+                'Low detail': labCreateTileLayer('Esri.WorldTopoMap'),
+                'None': labCreateTileLayer(null)
+            }
+            
+            labMap.baseLayers['Low detail'].addTo(labMap.map);
             labMap.featureCache = null; // to store the currently selected feature
             labMap.attributionGreenspace = 'Greenspaces data provided by <a href="https://www.ordnancesurvey.co.uk/getoutside/greenspaces/" target="_blank">OS Greenspace</a>';
-            labMap.baseLayers['Low detail'].addTo(labMap.map);
 
             // object to hold toggle state for the greenspace categories
             labMap.greenspaceCategories = {
@@ -371,10 +379,10 @@
             // Trafford boundary line
             labAjax('https://www.trafforddatalab.io/spatial_data/local_authority/2021/trafford_local_authority_full_resolution.geojson', function (data) {
                 var stylePoly = {
-                    'color': '#212121',
+                    'color': '#fc6721',
                     'fillOpacity': 0,
-                    'dashArray': '3',
-                    'weight': '2'
+                    'dashArray': '5',
+                    'weight': '3'
                 }
 
                 var traffordBoundary = L.geoJSON(data, { attribution: labMap.attributionOS, style: stylePoly }).addTo(labMap.map);
