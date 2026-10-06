@@ -1,25 +1,15 @@
-## Trafford's population map 2022##
+## Trafford's population map mid-2024 estimates ##
 
 # load libraries ---------------------------------------------------------------
-library(httr) ; library(readxl) ; library(tidyverse) ; library(sf) ; library(ggplot2) ; library(ggspatial) ; library(shadowtext) ; library(viridis) ; library(jsonlite)
+library(tidyverse) ; library(sf) ; library(ggplot2) ; library(ggspatial) ; library(shadowtext) ; library(viridis) ; library(jsonlite)
 
-# load mid-2022 population estimates
+# load mid-2024 population estimates
 
-# Source: Mid-year estimates 2022. Ward-level population estimates (official statistics in development
-# URL: https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/wardlevelmidyearpopulationestimatesexperimental
+# Source: ONS Population estimates - small area (2021 based) by single year of age - England and Wales for mid-2024
+# URL: https://www.nomisweb.co.uk/query/construct/summary.asp?mode=construct&version=0&dataset=2014
 # Licence: Open Government Licence
-
-tmp <- tempfile(fileext = ".xlsx")
-
-
-GET(url = "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/wardlevelmidyearpopulationestimatesexperimental/mid2021andmid2022/sapewardstablefinal.xlsx",
-    write_disk(tmp))
-
-df <- read_xlsx(tmp, sheet = 8, skip = 3) %>%
-  filter(`LAD 2023 Code` == "E08000009") %>%
-  select(area_code = `Ward 2023 Code`, n = Total)
-
-unlink(tmp) # remove temporary file
+df <- read_csv("https://www.nomisweb.co.uk/api/v01/dataset/NM_2014_1.data.csv?geography=763369116...763369136&date=latest&gender=0&c_age=200&measures=20100") %>%
+    select(area_code = GEOGRAPHY_CODE, n = OBS_VALUE)
 
 # load geospatial data ---------------------------------------------------------
 
@@ -59,9 +49,9 @@ ggplot() +
                        label.hjust = 0.5)) +
   annotation_scale(location = "bl", style = "ticks", line_col = "#212121", text_col = "#212121") +
   annotation_north_arrow(height = unit(0.8, "cm"), width = unit(0.8, "cm"), location = "tr", which_north = "true") +
-  labs(title = "Trafford's resident population (2022)",
+  labs(title = "Trafford's resident population (2024)",
        subtitle = NULL,
-       caption = "Source: Mid-2022 population estimates, ONS | @traffordDataLab\n Contains Ordnance Survey data © Crown copyright and database right 2024",
+       caption = "Source: Mid-2024 population estimates, ONS | @traffordDataLab\n Contains Ordnance Survey data © Crown copyright and database right 2026",
        x = NULL, y = NULL) +
   coord_sf(crs = st_crs(4326), datum = NA) +
   theme_void(base_family = "Roboto") +
@@ -74,4 +64,4 @@ ggplot() +
         legend.position = c(0.18, 0.95))
 
 # write results ----------------------------------------------------------------
-ggsave("output/trafford_population_2022.png", dpi = 300, scale = 1)
+ggsave("output/trafford_population_2024.png", dpi = 300, scale = 1, units = "px", width = 2574, height = 2154)
